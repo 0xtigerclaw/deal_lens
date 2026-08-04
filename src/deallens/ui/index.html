@@ -388,8 +388,9 @@
           <button class="dialog-close" type="button" data-action="close-api-key" aria-label="Close">×</button>
         </div>
         <p class="api-key-intro">
-          Use your Tavily account for this tab. DealLens sends the key to this
-          server, which uses it only for Tavily requests.
+          Public live screens use your Tavily account. DealLens sends the key
+          to this server only for the duration of Tavily requests and never
+          includes it in jobs, memos, logs, or traces.
         </p>
         <div class="field api-key-field">
           <label for="tavily-api-key">API key</label>
@@ -400,8 +401,8 @@
           <p class="field-help">Stored for this tab and cleared when it closes.</p>
         </div>
         <div class="api-key-actions">
-          <button class="remove-key-button" id="remove-api-key" type="button">Use server key</button>
-          <button class="primary-button api-key-save" type="submit"><span>Save and switch</span></button>
+          <button class="remove-key-button" id="remove-api-key" type="button">Clear key</button>
+          <button class="primary-button api-key-save" type="submit"><span>Use for this tab</span></button>
         </div>
         <p class="api-key-footnote">Need a key? <a href="https://app.tavily.com" target="_blank" rel="noreferrer">Open Tavily ↗</a></p>
       </form>

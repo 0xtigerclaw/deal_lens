@@ -18,6 +18,10 @@ function personalTavilyKey() {
   return sessionStorage.getItem(TAVILY_KEY_STORAGE) || "";
 }
 
+function requiresPersonalTavilyKey() {
+  return Boolean(state.health?.access?.personal_tavily_key_required);
+}
+
 const views = {
   intake: document.querySelector("#intake-view"),
   run: document.querySelector("#run-view"),
@@ -127,7 +131,11 @@ async function loadHealth() {
     const ready = providers.tavily && providers.nebius;
     light.classList.toggle("is-ready", ready);
     light.classList.toggle("is-error", !ready);
-    label.textContent = ready ? "Providers ready" : "Provider setup incomplete";
+    label.textContent = ready
+      ? "Providers ready"
+      : requiresPersonalTavilyKey() && !providers.tavily
+        ? "Add Tavily key for live screening"
+        : "Provider setup incomplete";
     updateApiKeyTrigger();
     document.querySelector("#model-badge").textContent = `${shortModel(state.health.model)} · Nebius`;
   } catch (error) {
@@ -142,7 +150,9 @@ function updateApiKeyTrigger() {
   trigger.classList.toggle("has-personal-key", personal);
   document.querySelector("#api-key-trigger-label").textContent = personal
     ? "Personal Tavily key"
-    : "Tavily key";
+    : requiresPersonalTavilyKey()
+      ? "Tavily key required"
+      : "Tavily key";
 }
 
 function openApiKeyDialog() {
@@ -179,7 +189,11 @@ function removeApiKey() {
   updateApiKeyTrigger();
   closeApiKeyDialog();
   loadHealth();
-  toast("Switched back to the server Tavily key.");
+  toast(
+    requiresPersonalTavilyKey()
+      ? "Personal Tavily key removed. Live screening is disabled in this tab."
+      : "Personal Tavily key removed.",
+  );
 }
 
 function activeStageLabel(stage) {
@@ -523,6 +537,11 @@ async function submitScreen(event) {
   }
   if (!looksLikeDomain(payload.domain)) {
     errorNode.textContent = "Enter a valid company domain, such as example.com.";
+    return;
+  }
+  if (requiresPersonalTavilyKey() && !personalTavilyKey()) {
+    errorNode.textContent = "Add your Tavily API key before starting live research.";
+    openApiKeyDialog();
     return;
   }
   submit.disabled = true;

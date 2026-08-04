@@ -197,6 +197,38 @@ _executor = ThreadPoolExecutor(
 )
 
 
+def _personal_tavily_key_required() -> bool:
+    return os.getenv("DEALLENS_REQUIRE_PERSONAL_TAVILY_KEY", "false").lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _request_tavily_api_key(provided: str | None) -> str | None:
+    if provided:
+        return provided
+    if _personal_tavily_key_required():
+        return None
+    return os.getenv("TAVILY_API_KEY")
+
+
+def _live_screen_limit() -> int | None:
+    raw = os.getenv("DEALLENS_LIVE_SCREEN_LIMIT", "").strip()
+    if not raw:
+        return None
+    try:
+        limit = int(raw)
+    except ValueError:
+        return None
+    return limit if limit > 0 else None
+
+
+def _live_screens_started() -> int:
+    return sum(not job.demo for job in _jobs.values())
+
+
 def _new_job(request: ScreenRequest, *, demo: bool = False) -> JobRecord:
     job = JobRecord(uuid.uuid4().hex[:12], request, demo=demo)
     with _jobs_lock:
@@ -250,6 +282,15 @@ def _new_live_job(
         )
         if existing is not None:
             return existing, False
+        limit = _live_screen_limit()
+        if limit is not None and _live_screens_started() >= limit:
+            raise HTTPException(
+                status_code=429,
+                detail=(
+                    "The public live-screen allowance has been reached. "
+                    "Archived memos and the deterministic fixture remain available."
+                ),
+            )
         job = JobRecord(
             uuid.uuid4().hex[:12], request, tavily_api_key=tavily_api_key
         )
@@ -416,12 +457,30 @@ def _execute_live(job_id: str) -> None:
 
 @app.get("/api/health")
 def health(x_tavily_api_key: str | None = Header(default=None)) -> dict:
+    personal_key_required = _personal_tavily_key_required()
+    server_tavily_available = bool(os.getenv("TAVILY_API_KEY"))
+    limit = _live_screen_limit()
+    with _jobs_lock:
+        started = _live_screens_started()
     return {
         "status": "ok",
         "providers": {
-            "tavily": bool(x_tavily_api_key or os.getenv("TAVILY_API_KEY")),
+            "tavily": bool(
+                x_tavily_api_key
+                or (server_tavily_available and not personal_key_required)
+            ),
             "nebius": bool(os.getenv("NEBIUS_API_KEY")),
             "langsmith": bool(os.getenv("LANGSMITH_API_KEY")),
+        },
+        "access": {
+            "personal_tavily_key_required": personal_key_required,
+            "server_tavily_fallback": bool(
+                server_tavily_available and not personal_key_required
+            ),
+            "live_screen_limit": limit,
+            "live_screens_remaining": (
+                max(0, limit - started) if limit is not None else None
+            ),
         },
         "model": os.getenv("DEALLENS_MODEL", "moonshotai/Kimi-K3"),
         "observability": {
@@ -456,11 +515,15 @@ def resolve_company_entity(
     x_tavily_api_key: str | None = Header(default=None),
 ) -> dict:
     """Return registry candidates for explicit user confirmation."""
-    tavily_api_key = x_tavily_api_key or os.getenv("TAVILY_API_KEY")
+    tavily_api_key = _request_tavily_api_key(x_tavily_api_key)
     if not tavily_api_key:
         raise HTTPException(
-            status_code=503,
-            detail="Missing provider configuration: TAVILY_API_KEY",
+            status_code=401 if _personal_tavily_key_required() else 503,
+            detail=(
+                "Add a personal Tavily API key to run live research."
+                if _personal_tavily_key_required()
+                else "Missing provider configuration: TAVILY_API_KEY"
+            ),
         )
     try:
         pack = load_jurisdiction(request.jurisdiction)
@@ -470,11 +533,7 @@ def resolve_company_entity(
     from .tavily_client import Tavily
 
     try:
-        tavily = (
-            Tavily(api_key=x_tavily_api_key, ledger=UsageLedger())
-            if x_tavily_api_key
-            else Tavily(ledger=UsageLedger())
-        )
+        tavily = Tavily(api_key=tavily_api_key, ledger=UsageLedger())
         resolution = resolve_entity(
             tavily,
             pack,
@@ -537,16 +596,20 @@ def create_screen(
     request: ScreenRequest,
     x_tavily_api_key: str | None = Header(default=None),
 ) -> dict:
-    tavily_api_key = x_tavily_api_key or os.getenv("TAVILY_API_KEY")
-    missing = [
-        name
-        for name in ("TAVILY_API_KEY", "NEBIUS_API_KEY")
-        if not (tavily_api_key if name == "TAVILY_API_KEY" else os.getenv(name))
-    ]
-    if missing:
+    tavily_api_key = _request_tavily_api_key(x_tavily_api_key)
+    if not tavily_api_key:
+        raise HTTPException(
+            status_code=401 if _personal_tavily_key_required() else 503,
+            detail=(
+                "Add a personal Tavily API key to run live research."
+                if _personal_tavily_key_required()
+                else "Missing provider configuration: TAVILY_API_KEY"
+            ),
+        )
+    if not os.getenv("NEBIUS_API_KEY"):
         raise HTTPException(
             status_code=503,
-            detail=f"Missing provider configuration: {', '.join(missing)}",
+            detail="Missing provider configuration: NEBIUS_API_KEY",
         )
     # Validate the jurisdiction before creating an asynchronous job.
     try:

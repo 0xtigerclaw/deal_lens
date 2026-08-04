@@ -19,14 +19,19 @@ def test_interface_shell_is_served():
     assert "Prepare IC memo" in response.text
     assert "Active screenings" in response.text
     assert "Fixture memo" not in response.text
+    assert "Use server key" not in response.text
+    assert "Clear key" in response.text
 
 
-def test_health_reports_provider_presence_without_exposing_secrets():
+def test_health_reports_provider_presence_without_exposing_secrets(monkeypatch):
+    monkeypatch.setenv("TAVILY_API_KEY", "server-tavily-secret")
+    monkeypatch.setenv("NEBIUS_API_KEY", "server-nebius-secret")
     payload = client.get("/api/health").json()
 
     assert payload["status"] == "ok"
     assert set(payload["providers"]) == {"tavily", "nebius", "langsmith"}
-    assert "api_key" not in str(payload).lower()
+    assert "server-tavily-secret" not in str(payload)
+    assert "server-nebius-secret" not in str(payload)
     assert "Kimi-K3" in payload["model"]
     assert payload["observability"]["root_span"] == "deallens.screen"
     assert payload["observability"]["project"] == "Deal_Lens"
@@ -41,6 +46,46 @@ def test_personal_tavily_key_is_accepted_without_being_exposed(monkeypatch):
     assert response.status_code == 200
     assert response.json()["providers"]["tavily"] is True
     assert "personal-secret" not in response.text
+
+
+def test_public_mode_requires_personal_tavily_key_and_caps_live_work(monkeypatch):
+    monkeypatch.setenv("DEALLENS_REQUIRE_PERSONAL_TAVILY_KEY", "true")
+    monkeypatch.setenv("DEALLENS_LIVE_SCREEN_LIMIT", "1")
+    monkeypatch.setenv("TAVILY_API_KEY", "server-key-must-not-be-used")
+    monkeypatch.setenv("NEBIUS_API_KEY", "server-nebius-key")
+    completed = web_module.JobRecord(
+        "completed-live",
+        ScreenRequest(company="Wise Limited", domain="wise.com"),
+    )
+    completed.status = "completed"
+    monkeypatch.setattr(web_module, "_jobs", {completed.id: completed})
+
+    health = client.get("/api/health").json()
+    assert health["providers"]["tavily"] is False
+    assert health["access"] == {
+        "personal_tavily_key_required": True,
+        "server_tavily_fallback": False,
+        "live_screen_limit": 1,
+        "live_screens_remaining": 0,
+    }
+
+    missing_key = client.post(
+        "/api/screens",
+        json={"company": "Revolut Ltd", "domain": "revolut.com"},
+    )
+    assert missing_key.status_code == 401
+    assert missing_key.json()["detail"] == (
+        "Add a personal Tavily API key to run live research."
+    )
+
+    capped = client.post(
+        "/api/screens",
+        headers={"X-Tavily-API-Key": "tvly-personal-secret"},
+        json={"company": "Revolut Ltd", "domain": "revolut.com"},
+    )
+    assert capped.status_code == 429
+    assert "allowance has been reached" in capped.json()["detail"]
+    assert "personal-secret" not in capped.text
 
 
 def test_company_presets_return_runnable_legal_entities():
@@ -77,7 +122,8 @@ def test_entity_endpoint_returns_candidates_without_starting_a_screen(
     monkeypatch.setenv("TAVILY_API_KEY", "test-key")
 
     class FakeTavily:
-        def __init__(self, ledger):
+        def __init__(self, api_key, ledger):
+            assert api_key == "test-key"
             self.ledger = ledger
 
     def fake_resolve(tavily, pack, company, domain):

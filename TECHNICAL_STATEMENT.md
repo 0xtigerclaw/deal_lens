@@ -141,7 +141,7 @@ product:
   index-page rejection, and registry entity mismatch.
 
 Measured result: 36/36 cases pass, with 0/11 false verifies and 4/4 correct
-entity abstentions. The 73-test pytest suite covers the surrounding typed
+entity abstentions. The 75-test pytest suite covers the surrounding typed
 contracts, usage, orchestration, UI API, memo, and risk roll-up.
 
 The harness emits a stable result for every labelled case and compares it to

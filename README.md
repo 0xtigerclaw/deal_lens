@@ -7,6 +7,10 @@
 **Hosting:** Google Cloud Platform (GCP), deployed as a containerized service
 on Cloud Run.
 
+**Public demo policy:** archived memos and the deterministic fixture are open;
+new live screens require the reviewer’s Tavily API key. The key is held only in
+the browser tab and request-scoped worker memory.
+
 When a target moves toward investment committee, analysts have to assemble the
 specific facts that could change the decision: leadership departures,
 regulatory scrutiny, litigation, breaches, and signs of financial distress.
@@ -28,6 +32,10 @@ applies the source, entity, and evidence rules.
 ## Product walkthrough
 
 [Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
+
+**AI-assisted build trace:** [review the Codex session that added the
+request-scoped bring-your-own Tavily key flow](https://traces.com/s/jn78m1dvf2pfgxbkwfxfvvr2058bt2h9).
+The link is unlisted and complements the sanitized [build log](BUILD_LOG.md).
 
 ## Why, when, and how
 
@@ -175,11 +183,13 @@ uv run deallens web
 ### Deploy to Google Cloud Run
 
 The repository includes a production container and Cloud Build configuration.
-Store provider credentials in Secret Manager rather than putting `.env` in the
-image. DealLens keeps active jobs in memory and writes completed reports to the
-container filesystem, so the initial Cloud Run deployment should use one
-always-allocated instance. Durable multi-instance job storage is a future
-architecture step.
+Store the server-funded Nebius and LangSmith credentials in Secret Manager
+rather than putting `.env` in the image. The public service deliberately has no
+server Tavily credential: each live request must supply the reviewer’s key.
+DealLens keeps active jobs and a per-container live-run allowance in memory and
+writes completed reports to the container filesystem, so this deployment uses
+one always-allocated instance with concurrency two. Durable multi-instance job
+storage is a future architecture step.
 
 ```bash
 gcloud builds submit \
@@ -194,8 +204,16 @@ gcloud run deploy deallens \
   --concurrency 2 \
   --timeout 3600 \
   --no-cpu-throttling \
-  --set-secrets TAVILY_API_KEY=deallens-tavily:latest,NEBIUS_API_KEY=deallens-nebius:latest
+  --set-env-vars DEALLENS_MODEL=moonshotai/Kimi-K3,DEALLENS_REQUIRE_PERSONAL_TAVILY_KEY=true,DEALLENS_LIVE_SCREEN_LIMIT=12,LANGSMITH_TRACING=true,LANGSMITH_PROJECT=Deal_Lens,LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com \
+  --set-secrets NEBIUS_API_KEY=deallens-nebius:latest,LANGSMITH_API_KEY=deallens-langsmith:latest
 ```
+
+This policy removes anonymous access to the project’s Tavily credits. Nebius
+inference remains server-funded so a Tavily reviewer can run the complete flow;
+the twelve-run container allowance, single instance, concurrency limit, and
+duplicate-active-run protection bound that exposure. Local development keeps
+the `.env` Tavily fallback unless `DEALLENS_REQUIRE_PERSONAL_TAVILY_KEY=true` is
+set explicitly.
 
 Open <http://127.0.0.1:8000>. A new analyst enters only a company name and
 website. If no company number is supplied, DealLens performs a Tavily search
@@ -298,7 +316,7 @@ uv run deallens eval --json-out reports/evals/local-run.json
 uv run deallens eval --promote  # after label and result review
 ```
 
-The pytest suite is **74/74 passing**. Labels, the promote/review loop,
+The pytest suite is **75/75 passing**. Labels, the promote/review loop,
 limitations, and the machine-readable command are documented in
 [docs/EVALUATION.md](docs/EVALUATION.md); the committed case-level baseline is
 [docs/evaluation-results.json](docs/evaluation-results.json).
@@ -322,6 +340,13 @@ LANGSMITH_ENDPOINT="https://eu.api.smith.langchain.com"
 Tests force tracing off before importing application modules, so fixtures do
 not pollute the production project. See [docs/LANGSMITH.md](docs/LANGSMITH.md)
 for the span contract and the verified Monzo run (`204` spans, `0` errors).
+
+![LangSmith trace history for the live DealLens application](docs/assets/langsmith-trace-history.png)
+
+*LangSmith EU captures successful and failed entity-resolution and screening
+runs with per-run status, latency, token, and cost data. The verified Monzo root
+shown here completed in 191.09 seconds; its nested 204-span contract is recorded
+in `docs/langsmith-verification.json`.*
 
 ## Configuration and outputs
 

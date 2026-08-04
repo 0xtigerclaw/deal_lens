@@ -2,6 +2,8 @@
 
 This document defines the runtime components, trust boundaries, retrieval
 sequence, failure semantics, and LangSmith span structure for DealLens.
+Tavily-owned retrieval components are highlighted in orange in every diagram
+where they participate.
 
 ## 1. System context
 
@@ -30,6 +32,9 @@ flowchart TB
     Worker -. "traces" .-> LS
     Tavily -. "nested spans" .-> LS
     Nebius -. "nested spans" .-> LS
+
+    classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
+    class Tavily tavily
 ```
 
 The web layer renders the typed `ScreenResult`; it does not reproduce the
@@ -64,6 +69,9 @@ flowchart TD
     SR --> P
     P --> X --> Q --> V --> G
     Y --> G --> O
+
+    classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
+    class R,S0,SV,SR,X tavily
 ```
 
 ### Component contracts
@@ -84,7 +92,9 @@ sequenceDiagram
     actor A as Analyst
     participant UI as Web UI
     participant API as Entity API
+    box rgb(255, 240, 232) Tavily retrieval
     participant T as Tavily Search
+    end
     participant R as Local ranker
     participant W as Screen worker
 
@@ -134,8 +144,8 @@ from Reported to Verified.
 
 ```mermaid
 flowchart LR
-    Failure["Failure"] --> Search["Search fails"]
-    Failure --> Extract["Extract fails / blocked"]
+    Failure["Failure"] --> Search["Tavily Search fails"]
+    Failure --> Extract["Tavily Extract fails / blocked"]
     Failure --> Model["Kimi structured output fails"]
     Failure --> Narrative["Narrative generation fails"]
 
@@ -143,6 +153,9 @@ flowchart LR
     Extract --> Unresolved["Candidate = UNRESOLVED<br/>failed URL retained"]
     Model --> Review["Category/claim = REVIEW REQUIRED"]
     Narrative --> Evidence["Validated evidence retained<br/>fallback prose used"]
+
+    classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
+    class Search,Extract tavily
 ```
 
 Missing observations are never converted to negative findings. The only clean
@@ -153,11 +166,11 @@ governed check and no surfaced qualifying finding or processing failure.
 
 ```mermaid
 flowchart LR
-    TR["Research response"] --> Candidate
-    TS["Search result"] --> Candidate
+    TR["Tavily Research response"] --> Candidate
+    TS["Tavily Search result"] --> Candidate
     Candidate --> Assertion["Atomic assertions"]
     TS --> URL["Governed URL"]
-    URL --> Content["Extracted content"]
+    URL --> Content["Tavily Extract content"]
     Content --> Quote["Verbatim quote"]
     Quote --> Relationship["supports[] / contradicts[]"]
     Assertion --> Relationship
@@ -167,6 +180,9 @@ flowchart LR
     Coverage --> Result["ScreenResult JSON"]
     Risk --> Result
     Result --> Memo["IC memo<br/>styled PDF + Markdown"]
+
+    classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
+    class TR,TS,Content tavily
 ```
 
 Every displayed source relationship survives in `evidence.json`, including
@@ -193,6 +209,9 @@ flowchart TB
     Root --> NarrativeN["ChatNebius narrative"]
 
     Entity["deallens.resolve_entity<br/>separate pre-confirmation trace"] --> EntitySearch["tavily.search"]
+
+    classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
+    class Research,Search4,SearchN,ExtractN,EntitySearch tavily
 ```
 
 Tests force `LANGSMITH_TRACING=false`; only explicit live operations enter the

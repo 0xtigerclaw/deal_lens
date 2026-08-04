@@ -2,6 +2,8 @@
 
 **The acquisition-intelligence layer for investment committee preparation.**
 
+**Live website:** [Open DealLens](https://deallens-rflyxruzvq-ez.a.run.app/)
+
 When a target moves toward investment committee, analysts have to assemble the
 specific facts that could change the decision: leadership departures,
 regulatory scrutiny, litigation, breaches, and signs of financial distress.
@@ -78,6 +80,9 @@ The model and retrieval providers sit outside the decision boundary. Only the
 deterministic gate can assign an evidence status or roll findings into the IC
 assessment.
 
+Tavily-owned retrieval components are highlighted in orange throughout the
+architecture diagrams.
+
 ```mermaid
 flowchart TB
     Analyst["Acquisition analyst"] --> UI["Web UI"]
@@ -101,6 +106,9 @@ flowchart TB
     Worker -. "root + child spans" .-> LangSmith["LangSmith EU"]
     Tavily -. "retrieval spans" .-> LangSmith
     Kimi -. "model spans" .-> LangSmith
+
+    classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
+    class Tavily tavily
 ```
 
 ### Retrieval and decision path
@@ -116,6 +124,9 @@ flowchart LR
     X --> K["Kimi K3 on Nebius<br/>quote/assertion mapping"]
     K --> G["Deterministic evidence gate"]
     G --> O["IC memo<br/>PDF + Markdown<br/>evidence.json"]
+
+    classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
+    class R,D,B,V,X tavily
 ```
 
 ### Evidence state machine
@@ -124,7 +135,7 @@ flowchart LR
 flowchart TD
     C["Candidate + atomic assertions"] --> E{"Qualifying evidence?"}
     E -->|"none + processing failure"| U["UNRESOLVED"]
-    E -->|"none, checks completed"| R["REJECTED"]
+    E -->|"none, checks completed"| R["NOT SUBSTANTIATED"]
     E -->|"yes"| X{"Support and contradiction?"}
     X -->|"both"| F["CONFLICTING"]
     X -->|"contradiction only"| D["CONTRADICTED"]
@@ -156,6 +167,31 @@ policy, coverage roll-up, and memo renderer without network calls or API keys.
 
 ```bash
 uv run deallens web
+```
+
+### Deploy to Google Cloud Run
+
+The repository includes a production container and Cloud Build configuration.
+Store provider credentials in Secret Manager rather than putting `.env` in the
+image. DealLens keeps active jobs in memory and writes completed reports to the
+container filesystem, so the initial Cloud Run deployment should use one
+always-allocated instance. Durable multi-instance job storage is a future
+architecture step.
+
+```bash
+gcloud builds submit \
+  --config cloudbuild.yaml \
+  --substitutions _IMAGE=europe-west4-docker.pkg.dev/PROJECT/deallens/app:latest
+
+gcloud run deploy deallens \
+  --image europe-west4-docker.pkg.dev/PROJECT/deallens/app:latest \
+  --region europe-west4 \
+  --allow-unauthenticated \
+  --min 1 --max 1 \
+  --concurrency 2 \
+  --timeout 3600 \
+  --no-cpu-throttling \
+  --set-secrets TAVILY_API_KEY=deallens-tavily:latest,NEBIUS_API_KEY=deallens-nebius:latest
 ```
 
 Open <http://127.0.0.1:8000>. A new analyst enters only a company name and
@@ -223,7 +259,7 @@ evaluated separately:
 | **Conflicting** | Qualifying evidence both supports and contradicts the claim |
 | **Contradicted** | Qualifying evidence directly refutes the claim |
 | **Unresolved** | Retrieval or classification failed; human review is required |
-| **Rejected** | Only unsupported, low-tier, or invalid evidence survived |
+| **Not substantiated** (`rejected` internally) | Available sources did not meet the evidence standard; this does not mean the claim is false |
 
 Additional invariants:
 

@@ -49,7 +49,7 @@ const statusLabels = {
   conflicting: "Conflicting",
   contradicted: "Contradicted",
   unresolved: "Unresolved",
-  rejected: "Rejected",
+  rejected: "Not substantiated",
 };
 
 const stageOrder = ["research", "coverage", "verification", "decision"];
@@ -815,7 +815,7 @@ function assessmentSentence(result) {
   const pipelineIssues = result.coverage.filter((item) => item.note).length;
   if (pipelineIssues) parts.push(`${pipelineIssues} pipeline review item${plural(pipelineIssues)}`);
   if (!parts.length) return "No candidate met the configured evidence threshold.";
-  return `${sentenceList(parts)}. ${counts.rejected || 0} candidate${plural(counts.rejected || 0)} rejected as weak or unsupported.`;
+  return `${sentenceList(parts)}. ${counts.rejected || 0} candidate claim${plural(counts.rejected || 0)} did not meet the evidence standard.`;
 }
 
 function buildMetrics(result) {
@@ -827,7 +827,7 @@ function buildMetrics(result) {
     [counts.reported, "Reported"],
     [counts.partial + counts.conflicting + counts.contradicted, "Needs review"],
     [counts.unresolved, "Unresolved"],
-    [counts.rejected, "Rejected"],
+    [counts.rejected, "Not substantiated"],
   ];
   metrics.forEach(([value, label]) => {
     const item = el("div", "metric");
@@ -840,28 +840,101 @@ function buildMetrics(result) {
 function buildResultBody(job, result) {
   const layout = el("div", "result-layout reveal");
   layout.style.setProperty("--delay", "190ms");
-  const main = el("section", "findings-column");
-  const surfaced = result.findings.filter((finding) => finding.status !== "rejected");
-  main.append(sectionHeading("Findings for IC review", `${surfaced.length} surfaced`));
-  const list = el("div", "finding-list");
-  if (!surfaced.length) {
-    list.append(el("p", "empty-findings", "No claim met the configured evidence threshold."));
-  } else {
-    surfaced.forEach((finding) => list.append(buildFinding(finding)));
-  }
-  const rejected = result.findings.filter((finding) => finding.status === "rejected");
-  rejected.forEach((finding) => list.append(buildFinding(finding)));
-  main.append(list);
+  const main = el("section", "risk-dossier");
+  main.append(sectionHeading("Risk coverage & claims", `${result.findings.length} claims assessed`));
+
+  const coverageCategories = result.coverage.map((item) => item.category);
+  const orphanCategories = result.findings
+    .map((finding) => finding.candidate.category)
+    .filter((category, index, categories) =>
+      !coverageCategories.includes(category) && categories.indexOf(category) === index
+    );
+  const coverageItems = [
+    ...result.coverage,
+    ...orphanCategories.map((category) => ({
+      category,
+      status: "review_required",
+      checks_run: 0,
+      sources_reviewed: 0,
+      note: "Coverage summary unavailable for this category.",
+    })),
+  ];
+
+  const sections = el("div", "risk-section-list");
+  coverageItems.forEach((item, index) => {
+    const findings = result.findings.filter(
+      (finding) => finding.candidate.category === item.category,
+    );
+    sections.append(buildRiskSection(item, findings, index));
+  });
+  main.append(sections);
 
   const sidebar = el("aside", "result-sidebar");
-  const coverage = el("section");
-  coverage.append(sectionHeading("Risk coverage", "Four risk areas"));
-  const coverageList = el("div", "coverage-list");
-  result.coverage.forEach((item) => coverageList.append(buildCoverage(item)));
-  coverage.append(coverageList);
-  sidebar.append(coverage, buildFootprint(job, result));
+  sidebar.append(buildCoverageIndex(coverageItems, result.findings), buildFootprint(job, result));
   layout.append(main, sidebar);
   return layout;
+}
+
+function riskSectionId(category) {
+  return `risk-${String(category).replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`;
+}
+
+function buildRiskSection(item, findings, index) {
+  const section = el("section", "risk-section");
+  section.id = riskSectionId(item.category);
+
+  const header = el("header", "risk-section-header");
+  const identity = el("div", "risk-section-identity");
+  identity.append(
+    el("span", "risk-section-number", String(index + 1).padStart(2, "0")),
+    el("h3", "", categoryLabels[item.category] || item.category),
+  );
+  const stateNode = el("span", `coverage-state coverage-${item.status}`, coverageLabels[item.status] || item.status);
+  header.append(identity, stateNode);
+
+  const ledger = el("div", "risk-section-ledger");
+  const surfacedCount = findings.filter((finding) => finding.status !== "rejected").length;
+  [
+    [findings.length, "Claims assessed"],
+    [surfacedCount, "Surfaced"],
+    [item.checks_run, "Checks run"],
+    [item.sources_reviewed, "Sources reviewed"],
+  ].forEach(([value, label]) => {
+    const metric = el("span");
+    metric.append(el("strong", "", value), el("small", "", label));
+    ledger.append(metric);
+  });
+
+  section.append(header, ledger);
+  if (item.note) section.append(el("p", "coverage-note", item.note));
+
+  const list = el("div", "finding-list");
+  if (!findings.length) {
+    list.append(el("p", "empty-findings", "No candidate claims were identified in this risk area."));
+  } else {
+    findings.forEach((finding, claimIndex) => list.append(buildFinding(finding, claimIndex + 1)));
+  }
+  section.append(list);
+  return section;
+}
+
+function buildCoverageIndex(items, findings) {
+  const nav = el("nav", "coverage-index");
+  nav.setAttribute("aria-label", "Risk coverage contents");
+  nav.append(sectionHeading("Coverage index", `${items.length} risk areas`));
+  items.forEach((item, index) => {
+    const link = el("a", "coverage-index-row");
+    link.href = `#${riskSectionId(item.category)}`;
+    const claims = findings.filter((finding) => finding.candidate.category === item.category);
+    link.append(
+      el("span", "coverage-index-number", String(index + 1).padStart(2, "0")),
+      el("strong", "", categoryLabels[item.category] || item.category),
+      el("small", "", `${claims.length} claim${plural(claims.length)}`),
+      el("i", `coverage-index-state coverage-${item.status}`, ""),
+    );
+    nav.append(link);
+  });
+  return nav;
 }
 
 function sectionHeading(title, meta) {
@@ -870,15 +943,27 @@ function sectionHeading(title, meta) {
   return heading;
 }
 
-function buildFinding(finding) {
+function buildFinding(finding, claimIndex = null) {
   const card = el("article", "finding-card");
   const meta = el("div", "finding-meta");
+  if (claimIndex !== null) {
+    meta.append(el("span", "claim-index", `Claim ${String(claimIndex).padStart(2, "0")}`));
+  }
   meta.append(el("span", `status-chip status-${finding.status}`, statusLabels[finding.status] || finding.status));
   if (finding.severity) {
     meta.append(el("span", "severity-chip", `${finding.severity} severity`));
   }
-  meta.append(el("span", "severity-chip", categoryLabels[finding.candidate.category] || finding.candidate.category));
   card.append(meta, el("h3", "", finding.candidate.claim));
+
+  if (finding.status === "rejected") {
+    card.append(
+      el(
+        "p",
+        "finding-narrative",
+        "Available sources did not meet the evidence standard. This does not mean the claim is false.",
+      ),
+    );
+  }
 
   if (finding.narrative) card.append(el("p", "finding-narrative", finding.narrative));
   if ((finding.candidate.assertions || []).length > 1) {
@@ -963,18 +1048,13 @@ function buildFootprint(job, result) {
     card.append(row);
   });
   (result.usage.usage_notes || []).forEach((note) => {
-    const displayNote = note === "Tavily Research credits unavailable from account usage endpoint"
-      ? "Research usage was not yet reflected when this memo completed; the displayed Tavily total may be incomplete."
-      : note;
-    card.append(el("p", "usage-warning", displayNote));
+    if (
+      note !== "Tavily Research credits unavailable from account usage endpoint" &&
+      !note.includes("Tavily total may be incomplete")
+    ) {
+      card.append(el("p", "usage-warning", note));
+    }
   });
-  card.append(
-    el(
-      "p",
-      "disclaimer",
-      "Public-source screen only. An absence of qualifying findings does not mean the target is risk-free.",
-    ),
-  );
   return card;
 }
 

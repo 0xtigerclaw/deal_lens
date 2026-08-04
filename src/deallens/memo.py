@@ -37,7 +37,7 @@ FINDING_LABELS = {
     "conflicting": "Conflicting evidence",
     "contradicted": "Contradicted",
     "unresolved": "Unresolved",
-    "rejected": "Rejected",
+    "rejected": "Not substantiated",
 }
 
 DISCLAIMER = (
@@ -75,9 +75,16 @@ def render_memo(result: ScreenResult) -> str:
 
     rejected = [f for f in result.findings if f.status == "rejected"]
     if rejected:
-        lines += ["", "## Rejected as weak or unsupported", ""]
         lines += [
-            f"- {f.candidate.claim} — no qualifying source survived verification"
+            "",
+            "## Claims not substantiated by qualifying evidence",
+            "",
+            "The available sources did not meet the configured evidence standard. "
+            "This does not mean these claims are false.",
+            "",
+        ]
+        lines += [
+            f"- {f.candidate.claim} — insufficient qualifying evidence"
             for f in rejected
         ]
 
@@ -423,7 +430,7 @@ def render_pdf(result: ScreenResult) -> bytes:
             "NEEDS REVIEW",
         ),
         (counts["unresolved"], "UNRESOLVED"),
-        (counts["rejected"], "REJECTED"),
+        (counts["rejected"], "NOT SUBSTANTIATED"),
     ]
     metric_cells = [
         [Paragraph(str(value), metric_value), Paragraph(label, small)]
@@ -541,7 +548,14 @@ def render_pdf(result: ScreenResult) -> bytes:
 
     rejected = [finding for finding in result.findings if finding.status == "rejected"]
     if rejected:
-        story.append(Paragraph("Rejected as weak or unsupported", heading))
+        story.append(Paragraph("Claims not substantiated by qualifying evidence", heading))
+        story.append(
+            Paragraph(
+                "The available sources did not meet the configured evidence standard. "
+                "This does not mean these claims are false.",
+                body,
+            )
+        )
         for finding in rejected:
             category = CATEGORY_LABELS.get(finding.candidate.category, finding.candidate.category)
             story.append(
@@ -669,8 +683,8 @@ def _assessment_sentence(result: ScreenResult) -> str:
         summary = " and ".join(parts)
     else:
         summary = ", ".join(parts[:-1]) + f", and {parts[-1]}"
-    rejected = phrase(counts["rejected"], "candidate")
-    return f"{summary}; {rejected} rejected as weak or unsupported."
+    not_substantiated = phrase(counts["rejected"], "candidate claim")
+    return f"{summary}; {not_substantiated} did not meet the evidence standard."
 
 
 def _finding_block(finding: Finding) -> list[str]:
@@ -750,7 +764,7 @@ def print_summary(result: ScreenResult, memo_path: Path, json_path: Path) -> Non
         f"{counts['conflicting']} conflicting claim(s)",
         f"{counts['unresolved']} unresolved check(s)",
         f"{pipeline_issues} baseline interpretation issue(s)",
-        f"{counts['rejected']} finding(s) rejected as weak or unsupported",
+        f"{counts['rejected']} candidate claim(s) not substantiated by qualifying evidence",
         "",
         f"Memo: {memo_path}",
         f"Evidence: {json_path}",

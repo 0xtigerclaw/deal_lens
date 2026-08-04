@@ -1,0 +1,16 @@
+.git
+.github
+.env
+.venv
+.pytest_cache
+.playwright-cli
+__pycache__
+*.py[cod]
+*.egg-info
+.DS_Store
+output
+reports
+tests
+docs
+BUILD_LOG.md
+TECHNICAL_STATEMENT.md

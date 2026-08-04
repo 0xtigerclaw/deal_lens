@@ -76,7 +76,7 @@ def run_screen(
                 "jurisdiction": jurisdiction_pack.name,
             }
         )
-    _notify(progress, "starting", "Starting acquisition screen", 2)
+    _notify(progress, "starting", "Starting memo research", 2)
     if tavily is not None:
         ledger = tavily.ledger
     elif llm is not None:
@@ -157,7 +157,7 @@ def run_screen(
         finding.narrative = _narrative(llm, finding)
         findings.append(finding)
 
-    _notify(progress, "decision", "Applying evidence policy", 91)
+    _notify(progress, "decision", "Preparing the IC memo", 91)
     ledger.wall_seconds = time.monotonic() - started
     coverage_rows = coverage(
         findings,
@@ -196,7 +196,7 @@ def run_screen(
                 "wall_seconds": round(ledger.wall_seconds, 3),
             }
         )
-    _notify(progress, "complete", "Acquisition screen complete", 100)
+    _notify(progress, "complete", "IC memo complete", 100)
     return result
 
 

@@ -1,4 +1,4 @@
-# Acquisition Red-Flag Screen
+# Investment Committee Diligence Memo
 
 Target: Wise Limited
 Domain: wise.com
@@ -10,7 +10,7 @@ Generated: 03 August 2026
 
 **REVIEW REQUIRED** — 1 partially supported claim(s), 3 unresolved check(s); 5 candidate(s) rejected as weak or unsupported.
 
-This screen is an initial review of public evidence, not a legal or financial diligence opinion. "No qualifying public findings" means the governed checks completed without a result that met the evidence standard — it is not a statement that no risk exists.
+This memo is an initial review of public evidence, not a legal or financial diligence opinion. "No qualifying public findings" means the governed checks completed without a result that met the evidence standard — it is not a statement that no risk exists.
 
 ## Partially supported — review required
 
@@ -103,7 +103,7 @@ Processing issue: Nebius could not classify the extracted passages (LengthFinish
 - In July 2024, a data breach at Evolve Bank & Trust potentially exposed personal data of some Wise customers. — no qualifying source survived verification
 - Wise filed a notice on 7 February 2025 to close its Tampa office, resulting in the layoff of approximately 307 employees. — no qualifying source survived verification
 
-## Coverage
+## Diligence coverage
 
 | Check | Status | Checks run | Sources retrieved |
 |---|---|---:|---:|
@@ -112,7 +112,7 @@ Processing issue: Nebius could not classify the extracted passages (LengthFinish
 | Cybersecurity | Checked — no qualifying finding | 2 | 15 |
 | Financial distress | Checked — no qualifying finding | 3 | 8 |
 
-## Run footprint
+## Research footprint
 
 - Tavily credits: 24 (extract 6, search 18)
 - LLM tokens: 21,896 in / 45,752 out

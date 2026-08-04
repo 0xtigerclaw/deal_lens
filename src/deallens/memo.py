@@ -1,4 +1,4 @@
-"""Renderers: screening memo (markdown), evidence file (JSON), console summary."""
+"""Renderers: investment committee memo, evidence file, and console summary."""
 
 from __future__ import annotations
 
@@ -28,7 +28,7 @@ COVERAGE_LABELS = {
 }
 
 DISCLAIMER = (
-    "This screen is an initial review of public evidence, not a legal or "
+    "This memo is an initial review of public evidence, not a legal or "
     "financial diligence opinion. \"No qualifying public findings\" means the "
     "governed checks completed without a result that met the evidence standard — it "
     "is not a statement that no risk exists."
@@ -37,7 +37,7 @@ DISCLAIMER = (
 
 def render_memo(result: ScreenResult) -> str:
     lines: list[str] = [
-        "# Acquisition Red-Flag Screen",
+        "# Investment Committee Diligence Memo",
         "",
         f"Target: {result.target}",
         f"Domain: {result.domain}",
@@ -70,7 +70,7 @@ def render_memo(result: ScreenResult) -> str:
 
     coverage_issues = [cov for cov in result.coverage if cov.note]
     if coverage_issues:
-        lines += ["", "## Pipeline review items", ""]
+        lines += ["", "## Research review items", ""]
         lines += [
             f"- {CATEGORY_LABELS[cov.category]}: {cov.note}"
             for cov in coverage_issues
@@ -78,7 +78,7 @@ def render_memo(result: ScreenResult) -> str:
 
     lines += [
         "",
-        "## Coverage",
+        "## Diligence coverage",
         "",
         "| Check | Status | Checks run | Sources retrieved |",
         "|---|---|---:|---:|",
@@ -95,7 +95,7 @@ def render_memo(result: ScreenResult) -> str:
     ) or "n/a"
     lines += [
         "",
-        "## Run footprint",
+        "## Research footprint",
         "",
         f"- Tavily credits: {usage.tavily_credits:g} ({by_endpoint})",
         f"- LLM tokens: {usage.llm_input_tokens:,} in / {usage.llm_output_tokens:,} out",
@@ -215,4 +215,4 @@ def print_summary(result: ScreenResult, memo_path: Path, json_path: Path) -> Non
         f"Evidence: {json_path}",
         f"Tavily usage: {result.usage.tavily_credits:g} credits",
     ])
-    console.print(Panel(body, title="DEALLENS SCREEN COMPLETE", border_style="cyan"))
+    console.print(Panel(body, title="DEALLENS IC MEMO READY", border_style="cyan"))

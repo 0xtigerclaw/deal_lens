@@ -189,7 +189,7 @@ function activeStageLabel(stage) {
     research: "Research",
     coverage: "Coverage",
     verification: "Verify",
-    decision: "Decide",
+    decision: "Memo",
   };
   return labels[stage] || "Running";
 }
@@ -340,7 +340,7 @@ function applyPreset(preset) {
   state.selectedPresetId = preset.id;
   updatePresetSelection();
   document.querySelector("#preset-status").textContent =
-    `${preset.company} loaded. Review the entity, then run the screen.`;
+    `${preset.company} loaded. Review the entity, then prepare the memo.`;
 }
 
 function updatePresetSelection() {
@@ -406,7 +406,7 @@ function newScreen() {
   clearEntityResolution();
   clearPresetSelection();
   document.querySelector("#form-error").textContent = "";
-  setTitle("New screening");
+  setTitle("New memo");
   setNav("new-screen");
   showView("intake");
   renderActiveScreens();
@@ -542,7 +542,7 @@ async function submitScreen(event) {
     errorNode.textContent = error.message;
   } finally {
     submit.disabled = false;
-    submit.querySelector("span").textContent = "Run acquisition screen";
+    submit.querySelector("span").textContent = "Prepare IC memo";
   }
 }
 
@@ -556,13 +556,13 @@ function looksLikeDomain(value) {
 }
 
 async function openArchive() {
-  setTitle("Archive");
+  setTitle("Memo archive");
   setNav("archive");
   showView("archive");
   const list = document.querySelector("#archive-list");
   const count = document.querySelector("#archive-count");
   clear(list);
-  list.append(el("p", "archive-empty", "Loading completed screenings…"));
+  list.append(el("p", "archive-empty", "Loading completed memos…"));
   count.textContent = "Loading";
   try {
     state.archive = await api("/api/archive");
@@ -578,9 +578,9 @@ function renderArchive() {
   const list = document.querySelector("#archive-list");
   const count = document.querySelector("#archive-count");
   clear(list);
-  count.textContent = `${state.archive.length} ${state.archive.length === 1 ? "screen" : "screens"}`;
+  count.textContent = `${state.archive.length} ${state.archive.length === 1 ? "memo" : "memos"}`;
   if (!state.archive.length) {
-    list.append(el("p", "archive-empty", "No completed screenings yet."));
+    list.append(el("p", "archive-empty", "No completed IC memos yet."));
     return;
   }
 
@@ -602,7 +602,7 @@ function renderArchive() {
     );
     const date = el("time", "archive-date", formatDate(record.generated_at));
     date.dateTime = record.generated_at;
-    const action = el("span", "archive-open", "Open assessment →");
+    const action = el("span", "archive-open", "Open IC memo");
     button.append(number, identity, assessment, date, action);
     button.addEventListener("click", () => loadArchivedScreen(record.id, button));
     list.append(button);
@@ -642,7 +642,7 @@ function beginJob(job) {
 
 function renderRun(job) {
   state.activeJobStatus = job.status;
-  setTitle("Screening in progress");
+  setTitle("Preparing IC memo");
   setNav("new-screen");
   showView("run");
   document.querySelector("#run-target").textContent = job.request.company;
@@ -707,9 +707,9 @@ function renderFailure(job) {
   state.activeJobId = null;
   state.activeJobStatus = "failed";
   resetStageRail();
-  setTitle("Screen incomplete");
+  setTitle("IC memo incomplete");
   document.querySelector("#failure-message").textContent =
-    job.error || "The screen stopped before it could produce a defensible acquisition memo.";
+    job.error || "Research stopped before it could produce an investment committee memo.";
   showView("failure");
 }
 
@@ -741,11 +741,11 @@ function buildResultHeader(job, result) {
   const kicker = el(
     "p",
     "result-kicker",
-    `${result.jurisdiction} acquisition intelligence · ${formatDate(result.generated_at)}`,
+    `${result.jurisdiction} investment committee memo · ${formatDate(result.generated_at)}`,
   );
   const actions = el("div", "result-actions");
   actions.append(
-    downloadLink(job.memo_url, "Memo · MD"),
+    downloadLink(job.memo_url, "IC memo · MD"),
     downloadLink(job.evidence_url, "Evidence · JSON"),
   );
   top.append(kicker, actions);
@@ -818,7 +818,7 @@ function buildResultBody(job, result) {
   layout.style.setProperty("--delay", "190ms");
   const main = el("section", "findings-column");
   const surfaced = result.findings.filter((finding) => finding.status !== "rejected");
-  main.append(sectionHeading("Findings for review", `${surfaced.length} surfaced`));
+  main.append(sectionHeading("Findings for IC review", `${surfaced.length} surfaced`));
   const list = el("div", "finding-list");
   if (!surfaced.length) {
     list.append(el("p", "empty-findings", "No claim met the configured evidence threshold."));
@@ -925,7 +925,7 @@ function buildCoverage(item) {
 
 function buildFootprint(job, result) {
   const card = el("section", "footprint-card");
-  card.append(el("h2", "", "Screen details"));
+  card.append(el("h2", "", "Memo details"));
   const rows = [
     ["Tavily", `${formatNumber(result.usage.tavily_credits)} credits`],
     ["Kimi input", `${formatNumber(result.usage.llm_input_tokens)} tokens`],

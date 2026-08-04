@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Acquisition intelligence for leadership, regulatory, cyber, and financial risk."
+      content="Acquisition intelligence for GPs preparing evidence-backed investment committee memos."
     />
-    <title>DealLens — Acquisition Intelligence</title>
+    <title>DealLens — Acquisition Intelligence for GPs</title>
     <script>
       if (window.location.protocol === "file:") {
         window.location.replace("http://127.0.0.1:8000/");
@@ -37,7 +37,7 @@
         <nav class="primary-nav">
           <button class="nav-item is-active" type="button" data-action="new-screen">
             <span class="nav-index">01</span>
-            <span>New screening</span>
+            <span>New memo</span>
           </button>
           <button class="nav-item" type="button" data-action="active-screens">
             <span class="nav-index">02</span>
@@ -49,17 +49,17 @@
           </button>
           <button class="nav-item" type="button" data-action="archive">
             <span class="nav-index">03</span>
-            <span>Archive</span>
+            <span>Memo archive</span>
           </button>
         </nav>
 
         <div class="rail-flow" aria-label="Evidence flow">
-          <p class="rail-kicker">Acquisition workflow</p>
+          <p class="rail-kicker">GP workflow</p>
           <ol>
-            <li data-stage="research"><span>Research</span><small>Find signals</small></li>
+            <li data-stage="research"><span>Research</span><small>Find deal signals</small></li>
             <li data-stage="coverage"><span>Coverage</span><small>Four risk areas</small></li>
-            <li data-stage="verification"><span>Verify</span><small>Check sources</small></li>
-            <li data-stage="decision"><span>Decide</span><small>Apply policy</small></li>
+            <li data-stage="verification"><span>Verify</span><small>Link evidence</small></li>
+            <li data-stage="decision"><span>Memo</span><small>Prepare for IC</small></li>
           </ol>
         </div>
 
@@ -77,7 +77,7 @@
           <div class="breadcrumb">
             <span>Acquisition intelligence</span>
             <span aria-hidden="true">/</span>
-            <strong id="view-title">New screening</strong>
+            <strong id="view-title">New memo</strong>
           </div>
           <div class="topbar-actions">
             <button
@@ -101,7 +101,7 @@
               <span id="api-key-trigger-label">Tavily key</span>
             </button>
             <button class="quiet-button" type="button" data-action="new-screen">
-              <span aria-hidden="true">＋</span> New target
+              <span aria-hidden="true">＋</span> New memo
             </button>
           </div>
         </header>
@@ -109,23 +109,23 @@
         <main id="workspace" tabindex="-1">
           <section class="intake-view" id="intake-view">
             <div class="intake-hero reveal" style="--delay: 0ms">
-              <p class="eyebrow"><span></span> Acquisition intelligence</p>
-              <h1>Know what could<br />change the deal.</h1>
+              <p class="eyebrow"><span></span> Acquisition intelligence for GPs</p>
+              <h1>From target to<br />IC memo.</h1>
               <p class="hero-copy">
-                Screen a target for leadership, regulatory, cyber, and financial risk
-                before you sign.
+                Research acquisition risk, verify the evidence, and prepare an
+                investment committee memo in one workflow.
               </p>
               <div class="trust-row" aria-label="Screen controls">
                 <span>Entity check</span>
                 <span>Linked sources</span>
-                <span>Risk policy</span>
+                <span>IC memo</span>
               </div>
             </div>
 
             <div class="intake-panel reveal" style="--delay: 110ms">
               <div class="panel-heading">
                 <div>
-                  <p class="section-number">New acquisition screen</p>
+                  <p class="section-number">New IC memo</p>
                   <h2>Enter a target company</h2>
                 </div>
               </div>
@@ -223,7 +223,7 @@
                 <div class="form-error" id="form-error" role="alert"></div>
 
                 <button class="primary-button" type="submit">
-                  <span>Run acquisition screen</span>
+                  <span>Prepare IC memo</span>
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12h13M13 6l6 6-6 6" />
                   </svg>
@@ -258,12 +258,12 @@
           <section class="run-view" id="run-view" hidden aria-live="polite">
             <div class="run-grid">
               <div class="run-main">
-                <p class="eyebrow"><span></span> Acquisition intelligence in progress</p>
+                <p class="eyebrow"><span></span> Preparing the IC memo</p>
                 <div class="run-target-line">
                   <h1 id="run-target">Target</h1>
                   <span id="run-entity">—</span>
                 </div>
-                <p class="run-message" id="run-message">Starting acquisition screen</p>
+                <p class="run-message" id="run-message">Starting memo research</p>
                 <div class="progress-track" aria-label="Screen progress">
                   <span id="progress-fill"></span>
                 </div>
@@ -279,7 +279,7 @@
             </div>
             <div class="run-note">
               <span>Runs in the background</span>
-              <p>Only source-backed findings reach the memo.</p>
+              <p>Only source-backed findings reach the IC memo.</p>
             </div>
           </section>
 
@@ -290,16 +290,16 @@
           <section class="active-view" id="active-view" hidden>
             <header class="active-view-header">
               <div>
-                <p class="eyebrow"><span></span> Acquisition intelligence</p>
-                <h1>Active screens.</h1>
+                <p class="eyebrow"><span></span> GP workspace</p>
+                <h1>IC memos in progress.</h1>
               </div>
-              <p>Track companies still under review.</p>
+              <p>Track targets being prepared for investment committee review.</p>
             </header>
             <div class="active-register">
               <div class="active-screens-heading">
                 <div>
-                  <p class="section-number">Live screening register</p>
-                  <h2 id="active-screens-title">Companies under review</h2>
+                  <p class="section-number">Active memo preparation</p>
+                  <h2 id="active-screens-title">Targets under review</h2>
                 </div>
                 <span id="active-screens-count">0 running</span>
               </div>
@@ -310,8 +310,8 @@
                 aria-live="polite"
               ></div>
               <div class="active-screens-empty" id="active-screens-empty">
-                <strong>No active screenings.</strong>
-                <span>Start a screening to track it here.</span>
+                <strong>No memos in progress.</strong>
+                <span>Start an IC memo to track it here.</span>
               </div>
               <p class="active-screens-note">Runs continue in the background.</p>
             </div>
@@ -320,32 +320,32 @@
           <section class="archive-view" id="archive-view" hidden>
             <header class="archive-header">
               <div>
-                <p class="eyebrow"><span></span> Acquisition intelligence</p>
-                <h1>Completed screens.</h1>
+                <p class="eyebrow"><span></span> IC memo archive</p>
+                <h1>Completed memos.</h1>
               </div>
-              <p>Review prior evidence without rerunning research.</p>
+              <p>Reopen the evidence and assessment for your next IC discussion.</p>
             </header>
             <div class="archive-ledger">
               <div class="archive-ledger-heading">
                 <div>
                   <p class="section-number">Decision record</p>
-                  <h2>Acquisition screens</h2>
+                  <h2>Investment committee memos</h2>
                 </div>
                 <span id="archive-count">Loading</span>
               </div>
               <div class="archive-list" id="archive-list" aria-live="polite">
-                <p class="archive-empty">Loading completed screenings…</p>
+                <p class="archive-empty">Loading completed memos…</p>
               </div>
             </div>
           </section>
 
           <section class="failure-view" id="failure-view" hidden>
             <div class="failure-card">
-              <p class="eyebrow"><span></span> Acquisition screen incomplete</p>
+              <p class="eyebrow"><span></span> IC memo incomplete</p>
               <h1>No memo produced.</h1>
               <p id="failure-message"></p>
               <button class="primary-button" type="button" data-action="new-screen">
-                Start new screening
+                Start new memo
               </button>
             </div>
           </section>

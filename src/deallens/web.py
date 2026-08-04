@@ -65,7 +65,7 @@ LEGACY_ARCHIVE_JSONS = (
 
 app = FastAPI(
     title="DealLens",
-    description="Evidence-backed acquisition intelligence",
+    description="Evidence-backed acquisition intelligence for IC memos",
     version="0.2.0",
     docs_url="/api/docs",
     redoc_url=None,
@@ -129,7 +129,7 @@ class JobRecord:
         )
         self.status: Literal["queued", "running", "completed", "failed"] = "queued"
         self.stage = "queued"
-        self.message = "Queued for screening"
+        self.message = "Queued for memo preparation"
         self.percent = 0
         self.created_at = now
         self.updated_at = now
@@ -362,7 +362,7 @@ def _execute_live(job_id: str) -> None:
     job = _get_job(job_id)
     job.status = "running"
     job.started_monotonic = time.monotonic()
-    job.update("starting", "Starting acquisition screen", 2)
+    job.update("starting", "Starting memo research", 2)
 
     def progress(stage: str, message: str, percent: int) -> None:
         with _jobs_lock:
@@ -396,7 +396,7 @@ def _execute_live(job_id: str) -> None:
             job.evidence_path = evidence_path
             job.status = "completed"
             job.finished_monotonic = time.monotonic()
-            job.update("complete", "Acquisition memo ready", 100)
+            job.update("complete", "IC memo ready", 100)
     except Exception as exc:
         with _jobs_lock:
             job.status = "failed"
@@ -404,7 +404,7 @@ def _execute_live(job_id: str) -> None:
             job.error = f"{type(exc).__name__}: {str(exc)[:500]}"
             job.update(
                 "failed",
-                "Screen incomplete; no memo produced",
+                "IC memo incomplete; no memo produced",
                 job.percent,
             )
 

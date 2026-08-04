@@ -15,8 +15,8 @@ def test_interface_shell_is_served():
     response = client.get("/")
 
     assert response.status_code == 200
-    assert "DealLens — Acquisition Intelligence" in response.text
-    assert "Run acquisition screen" in response.text
+    assert "DealLens — Acquisition Intelligence for GPs" in response.text
+    assert "Prepare IC memo" in response.text
     assert "Active screenings" in response.text
     assert "Fixture memo" not in response.text
 
@@ -205,7 +205,7 @@ def test_demo_endpoint_returns_a_complete_renderable_screen():
     memo = client.get(payload["memo_url"])
     evidence = client.get(payload["evidence_url"])
     assert memo.status_code == 200
-    assert "Acquisition Red-Flag Screen" in memo.text
+    assert "Investment Committee Diligence Memo" in memo.text
     assert evidence.status_code == 200
     assert evidence.json()["target"] == "Acme Industrial Ltd"
 

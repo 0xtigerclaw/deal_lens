@@ -8,12 +8,21 @@ const state = {
   archive: [],
   entityResolutionKey: null,
   skipResolutionKey: null,
+  activeScreens: [],
+  activeScreensTimer: null,
 };
+
+const TAVILY_KEY_STORAGE = "deallens.tavilyApiKey";
+
+function personalTavilyKey() {
+  return sessionStorage.getItem(TAVILY_KEY_STORAGE) || "";
+}
 
 const views = {
   intake: document.querySelector("#intake-view"),
   run: document.querySelector("#run-view"),
   result: document.querySelector("#result-view"),
+  active: document.querySelector("#active-view"),
   archive: document.querySelector("#archive-view"),
   failure: document.querySelector("#failure-view"),
 };
@@ -82,8 +91,17 @@ function toast(message) {
 }
 
 async function api(path, options = {}) {
+  const tavilyKey = personalTavilyKey();
+  const needsTavilyKey =
+    path === "/api/health" ||
+    path === "/api/entities/resolve" ||
+    (path === "/api/screens" && options.method === "POST");
   const response = await fetch(path, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    headers: {
+      "Content-Type": "application/json",
+      ...(tavilyKey && needsTavilyKey ? { "X-Tavily-API-Key": tavilyKey } : {}),
+      ...(options.headers || {}),
+    },
     ...options,
   });
   const contentType = response.headers.get("content-type") || "";
@@ -110,10 +128,169 @@ async function loadHealth() {
     light.classList.toggle("is-ready", ready);
     light.classList.toggle("is-error", !ready);
     label.textContent = ready ? "Providers ready" : "Provider setup incomplete";
+    updateApiKeyTrigger();
     document.querySelector("#model-badge").textContent = `${shortModel(state.health.model)} · Nebius`;
   } catch (error) {
     light.classList.add("is-error");
     label.textContent = "API unavailable";
+  }
+}
+
+function updateApiKeyTrigger() {
+  const personal = Boolean(personalTavilyKey());
+  const trigger = document.querySelector("#api-key-trigger");
+  trigger.classList.toggle("has-personal-key", personal);
+  document.querySelector("#api-key-trigger-label").textContent = personal
+    ? "Personal Tavily key"
+    : "Tavily key";
+}
+
+function openApiKeyDialog() {
+  const dialog = document.querySelector("#api-key-dialog");
+  const input = document.querySelector("#tavily-api-key");
+  input.value = personalTavilyKey();
+  input.type = "password";
+  document.querySelector("#toggle-api-key").textContent = "Show";
+  dialog.showModal();
+  window.setTimeout(() => input.focus(), 0);
+}
+
+function closeApiKeyDialog() {
+  document.querySelector("#api-key-dialog").close();
+}
+
+function saveApiKey(event) {
+  event.preventDefault();
+  const key = document.querySelector("#tavily-api-key").value.trim();
+  if (!key) {
+    document.querySelector("#tavily-api-key").focus();
+    return;
+  }
+  sessionStorage.setItem(TAVILY_KEY_STORAGE, key);
+  updateApiKeyTrigger();
+  closeApiKeyDialog();
+  loadHealth();
+  toast("Personal Tavily key is active for this tab.");
+}
+
+function removeApiKey() {
+  sessionStorage.removeItem(TAVILY_KEY_STORAGE);
+  document.querySelector("#tavily-api-key").value = "";
+  updateApiKeyTrigger();
+  closeApiKeyDialog();
+  loadHealth();
+  toast("Switched back to the server Tavily key.");
+}
+
+function activeStageLabel(stage) {
+  const labels = {
+    queued: "Queued",
+    starting: "Starting",
+    research: "Research",
+    coverage: "Coverage",
+    verification: "Verify",
+    decision: "Memo",
+  };
+  return labels[stage] || "Running";
+}
+
+function screenIdFromUrl() {
+  const jobId = new URL(window.location.href).searchParams.get("screen") || "";
+  return /^[a-zA-Z0-9_-]{6,64}$/.test(jobId) ? jobId : null;
+}
+
+function setScreenUrl(jobId) {
+  const url = new URL(window.location.href);
+  if (jobId) url.searchParams.set("screen", jobId);
+  else url.searchParams.delete("screen");
+  window.history.replaceState({}, "", url);
+}
+
+function renderActiveScreens() {
+  const jobs = state.activeScreens;
+  const trigger = document.querySelector("#active-run-trigger");
+  const list = document.querySelector("#active-screens-list");
+  const empty = document.querySelector("#active-screens-empty");
+  const count = jobs.length;
+
+  trigger.classList.toggle("has-active", count > 0);
+  document.querySelector("#active-run-label").textContent =
+    count ? `Active screenings · ${count}` : "Active screenings";
+  document.querySelector("#nav-active-count").textContent = String(count);
+  document.querySelector("#active-screens-count").textContent =
+    `${count} ${count === 1 ? "run" : "runs"}`;
+  trigger.setAttribute(
+    "aria-label",
+    count
+      ? `Open active screenings, ${count} ${count === 1 ? "company" : "companies"} running`
+      : "Open active screenings, no companies running",
+  );
+  list.hidden = count === 0;
+  empty.hidden = count > 0;
+
+  clear(list);
+  jobs.forEach((job, index) => {
+    const button = el("button", "active-screen-row");
+    button.type = "button";
+    button.dataset.jobId = job.id;
+    if (job.id === state.activeJobId) button.classList.add("is-current");
+
+    const marker = el("span", "active-screen-marker", String(index + 1).padStart(2, "0"));
+    const identity = el("span", "active-screen-identity");
+    identity.append(
+      el("strong", "", job.request.company),
+      el("span", "", `${job.request.jurisdiction} · ${job.request.domain}`),
+    );
+    const status = el("span", "active-screen-status", job.message);
+    const progress = el("span", "active-screen-progress");
+    progress.append(
+      el("strong", "", `${job.percent}%`),
+      el("span", "", `${activeStageLabel(job.stage)} · ${formatDuration(job.elapsed_seconds)}`),
+    );
+    const action = el("span", "active-screen-action", "Resume →");
+    button.append(marker, identity, status, progress, action);
+    button.addEventListener("click", () => openActiveScreen(job.id));
+    list.append(button);
+  });
+}
+
+async function loadActiveScreens() {
+  window.clearTimeout(state.activeScreensTimer);
+  try {
+    state.activeScreens = await api("/api/screens");
+    renderActiveScreens();
+  } catch (_) {
+    // Keep the last known ledger visible through a temporary connection issue.
+  } finally {
+    state.activeScreensTimer = window.setTimeout(loadActiveScreens, 3500);
+  }
+}
+
+function revealActiveScreens() {
+  window.clearTimeout(state.pollTimer);
+  state.pollTimer = null;
+  state.activeJobId = null;
+  state.activeJobStatus = null;
+  localStorage.removeItem("deallens.activeJob");
+  setScreenUrl(null);
+  resetStageRail();
+  setTitle("Active screenings");
+  setNav("active-screens");
+  showView("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function openActiveScreen(jobId) {
+  window.clearTimeout(state.pollTimer);
+  state.activeJobId = jobId;
+  localStorage.setItem("deallens.activeJob", jobId);
+  setScreenUrl(jobId);
+  try {
+    const job = await api(`/api/screens/${jobId}`);
+    beginJob(job);
+  } catch (error) {
+    toast(`Could not reopen screen: ${error.message}`);
+    loadActiveScreens();
   }
 }
 
@@ -130,8 +307,8 @@ async function loadPresets() {
     renderPresets();
   } catch (_) {
     clear(list);
-    list.append(el("span", "preset-loading", "Preset records unavailable"));
-    status.textContent = "Enter the legal entity manually below.";
+    list.append(el("span", "preset-loading", "Presets unavailable"));
+    status.textContent = "Enter a company manually.";
   }
 }
 
@@ -163,7 +340,7 @@ function applyPreset(preset) {
   state.selectedPresetId = preset.id;
   updatePresetSelection();
   document.querySelector("#preset-status").textContent =
-    `Loaded ${preset.company} · ${preset.domain}. Review the entity, then run.`;
+    `${preset.company} loaded. Review the entity, then prepare the memo.`;
 }
 
 function updatePresetSelection() {
@@ -178,7 +355,7 @@ function clearPresetSelection() {
   state.selectedPresetId = null;
   updatePresetSelection();
   document.querySelector("#preset-status").textContent =
-    "Optional — load a known record to see how it works.";
+    "Choose a target to prefill the form.";
 }
 
 function syncPresetSelection() {
@@ -194,7 +371,7 @@ function syncPresetSelection() {
   ) {
     clearPresetSelection();
     document.querySelector("#preset-status").textContent =
-      "Preset changed — this screen will use your edited entity details.";
+      "Using your edited company details.";
   }
 }
 
@@ -217,20 +394,22 @@ function updateStageRail(stage, status) {
 function newScreen() {
   if (state.pollTimer) window.clearTimeout(state.pollTimer);
   if (state.activeJobId && ["queued", "running"].includes(state.activeJobStatus)) {
-    toast("The previous screen continues safely in the background.");
+    toast("The previous screening continues in the background.");
   }
   state.pollTimer = null;
   state.activeJobId = null;
   state.activeJobStatus = null;
   localStorage.removeItem("deallens.activeJob");
+  setScreenUrl(null);
   resetStageRail();
   document.querySelector("#screen-form").reset();
   clearEntityResolution();
   clearPresetSelection();
   document.querySelector("#form-error").textContent = "";
-  setTitle("New screen");
+  setTitle("New memo");
   setNav("new-screen");
   showView("intake");
+  renderActiveScreens();
   document.querySelector("#company").focus();
 }
 
@@ -290,13 +469,13 @@ function renderEntityResolution(resolution, payload, lookupError = null) {
 
   if (lookupError) {
     status.textContent =
-      "The registry lookup is temporarily unavailable. Add a company number above, retry, or explicitly continue without a match.";
+      "Registry unavailable. Add a company number or continue without a match.";
   } else if (!resolution.candidates.length) {
     status.textContent =
-      `No confident ${resolution.jurisdiction} registry match was found. Check the legal name or continue without one.`;
+      `No confident ${resolution.jurisdiction} registry match. Check the legal name or continue without one.`;
   } else {
     status.textContent =
-      `${resolution.candidates.length} possible ${resolution.jurisdiction} ${resolution.candidates.length === 1 ? "entity" : "entities"} found. Select only the record you intend to screen.`;
+      `${resolution.candidates.length} possible ${resolution.jurisdiction} ${resolution.candidates.length === 1 ? "entity" : "entities"}. Select the legal entity under review.`;
   }
 
   (resolution?.candidates || []).forEach((candidate) => {
@@ -306,10 +485,10 @@ function renderEntityResolution(resolution, payload, lookupError = null) {
     choose.append(
       el("strong", "entity-candidate-name", candidate.legal_name),
       el("span", "entity-candidate-id", `Company no. ${candidate.company_id}`),
-      el("span", "entity-candidate-action", "Confirm and run →"),
+      el("span", "entity-candidate-action", "Use this entity →"),
     );
     choose.addEventListener("click", () => confirmEntity(candidate));
-    const source = el("a", "entity-source", "View registry record ↗");
+    const source = el("a", "entity-source", "Registry record ↗");
     source.href = candidate.registry_url;
     source.target = "_blank";
     source.rel = "noreferrer";
@@ -339,7 +518,7 @@ async function submitScreen(event) {
   const payload = formPayload();
   errorNode.textContent = "";
   if (!payload.company || !payload.domain) {
-    errorNode.textContent = "Enter the company name and website to continue.";
+    errorNode.textContent = "Enter a company name and website.";
     return;
   }
   if (!looksLikeDomain(payload.domain)) {
@@ -350,7 +529,7 @@ async function submitScreen(event) {
   try {
     const key = entityKey(payload);
     if (!payload.company_id && state.skipResolutionKey !== key) {
-      submit.querySelector("span").textContent = "Checking official registry…";
+      submit.querySelector("span").textContent = "Checking registry…";
       await resolveEntity(payload);
       return;
     }
@@ -363,7 +542,7 @@ async function submitScreen(event) {
     errorNode.textContent = error.message;
   } finally {
     submit.disabled = false;
-    submit.querySelector("span").textContent = "Run governed screen";
+    submit.querySelector("span").textContent = "Prepare IC memo";
   }
 }
 
@@ -376,23 +555,14 @@ function looksLikeDomain(value) {
   }
 }
 
-async function loadDemo() {
-  try {
-    const job = await api("/api/demo", { method: "POST", body: "{}" });
-    beginJob(job);
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
 async function openArchive() {
-  setTitle("Screen archive");
+  setTitle("Memo archive");
   setNav("archive");
   showView("archive");
   const list = document.querySelector("#archive-list");
   const count = document.querySelector("#archive-count");
   clear(list);
-  list.append(el("p", "archive-empty", "Loading archived screens…"));
+  list.append(el("p", "archive-empty", "Loading completed memos…"));
   count.textContent = "Loading";
   try {
     state.archive = await api("/api/archive");
@@ -408,16 +578,18 @@ function renderArchive() {
   const list = document.querySelector("#archive-list");
   const count = document.querySelector("#archive-count");
   clear(list);
-  count.textContent = `${state.archive.length} retained`;
+  count.textContent = `${state.archive.length} ${state.archive.length === 1 ? "memo" : "memos"}`;
   if (!state.archive.length) {
-    list.append(el("p", "archive-empty", "No completed live screens have been retained yet."));
+    list.append(el("p", "archive-empty", "No completed IC memos yet."));
     return;
   }
 
   state.archive.forEach((record, index) => {
-    const button = el("button", "archive-row");
+    const row = el("div", "archive-row");
+    const button = el("button", "archive-main");
     button.type = "button";
     button.dataset.archiveId = record.id;
+    button.setAttribute("aria-label", `Open ${record.target} IC memo`);
 
     const number = el("span", "archive-index", String(index + 1).padStart(2, "0"));
     const identity = el("span", "archive-identity");
@@ -432,11 +604,31 @@ function renderArchive() {
     );
     const date = el("time", "archive-date", formatDate(record.generated_at));
     date.dateTime = record.generated_at;
-    const action = el("span", "archive-open", "Open memo →");
+    const action = el("span", "archive-open", "Open IC memo");
     button.append(number, identity, assessment, date, action);
     button.addEventListener("click", () => loadArchivedScreen(record.id, button));
-    list.append(button);
+
+    const exports = el("div", "archive-exports");
+    exports.setAttribute("role", "group");
+    exports.setAttribute("aria-label", `Export ${record.target} memo`);
+    exports.append(
+      archiveDownloadLink(record.pdf_url, "PDF", `${record.target} PDF memo`),
+      archiveDownloadLink(record.memo_url, "MD", `${record.target} Markdown memo`),
+      archiveDownloadLink(record.evidence_url, "JSON", `${record.target} JSON evidence`),
+    );
+
+    row.append(button, exports);
+    list.append(row);
   });
+}
+
+function archiveDownloadLink(href, label, accessibleLabel) {
+  const link = el("a", "archive-export", label);
+  link.href = href;
+  link.setAttribute("download", "");
+  link.setAttribute("aria-label", `Download ${accessibleLabel}`);
+  link.title = `Download ${label}`;
+  return link;
 }
 
 async function loadArchivedScreen(archiveId, trigger) {
@@ -455,6 +647,13 @@ function beginJob(job) {
   state.activeJobId = job.id;
   state.activeJobStatus = job.status;
   localStorage.setItem("deallens.activeJob", job.id);
+  setScreenUrl(job.id);
+  const existing = state.activeScreens.findIndex((item) => item.id === job.id);
+  if (["queued", "running"].includes(job.status)) {
+    if (existing >= 0) state.activeScreens[existing] = job;
+    else state.activeScreens.push(job);
+    renderActiveScreens();
+  }
   if (job.status === "completed") {
     renderResult(job);
     return;
@@ -465,13 +664,13 @@ function beginJob(job) {
 
 function renderRun(job) {
   state.activeJobStatus = job.status;
-  setTitle("Screen in progress");
+  setTitle("Preparing IC memo");
   setNav("new-screen");
   showView("run");
   document.querySelector("#run-target").textContent = job.request.company;
   document.querySelector("#run-entity").textContent = job.request.company_id
     ? `${job.request.jurisdiction} · ${job.request.company_id}`
-    : `${job.request.jurisdiction} · Company number not supplied`;
+    : `${job.request.jurisdiction} · No company number`;
   document.querySelector("#run-message").textContent = job.message;
   document.querySelector("#progress-fill").style.width = `${job.percent}%`;
   document.querySelector("#progress-value").textContent = `${job.percent}%`;
@@ -502,11 +701,13 @@ async function pollJob() {
     state.activeJobStatus = job.status;
     if (job.status === "completed") {
       localStorage.removeItem("deallens.activeJob");
+      loadActiveScreens();
       renderResult(job);
       return;
     }
     if (job.status === "failed") {
       localStorage.removeItem("deallens.activeJob");
+      loadActiveScreens();
       renderFailure(job);
       return;
     }
@@ -519,7 +720,7 @@ async function pollJob() {
       newScreen();
       return;
     }
-    toast(`Connection interrupted: ${error.message}`);
+    toast(`Connection lost: ${error.message}`);
     schedulePoll(4000);
   }
 }
@@ -528,9 +729,9 @@ function renderFailure(job) {
   state.activeJobId = null;
   state.activeJobStatus = "failed";
   resetStageRail();
-  setTitle("Screen stopped");
+  setTitle("IC memo incomplete");
   document.querySelector("#failure-message").textContent =
-    job.error || "The pipeline stopped before a complete governed result was available.";
+    job.error || "Research stopped before it could produce an investment committee memo.";
   showView("failure");
 }
 
@@ -540,7 +741,7 @@ function renderResult(job) {
   if (state.pollTimer) window.clearTimeout(state.pollTimer);
   state.pollTimer = null;
   setTitle(job.request.company);
-  setNav(job.archived ? "archive" : job.demo ? "load-demo" : "new-screen");
+  setNav(job.archived ? "archive" : "new-screen");
   updateStageRail("decision", "completed");
   showView("result");
 
@@ -562,11 +763,12 @@ function buildResultHeader(job, result) {
   const kicker = el(
     "p",
     "result-kicker",
-    `${result.jurisdiction} acquisition screen · ${formatDate(result.generated_at)}`,
+    `${result.jurisdiction} investment committee memo · ${formatDate(result.generated_at)}`,
   );
   const actions = el("div", "result-actions");
   actions.append(
-    downloadLink(job.memo_url, "Memo · MD"),
+    downloadLink(job.pdf_url, "IC memo · PDF"),
+    downloadLink(job.memo_url, "IC memo · MD"),
     downloadLink(job.evidence_url, "Evidence · JSON"),
   );
   top.append(kicker, actions);
@@ -594,9 +796,9 @@ function buildAssessment(result) {
   const band = el("section", "assessment-band reveal");
   band.style.setProperty("--delay", "80ms");
   const risk = el("div", "risk-block");
-  risk.append(el("span", "", "Executive assessment"), el("strong", "", result.risk_level));
+  risk.append(el("span", "", "Acquisition assessment"), el("strong", "", result.risk_level));
   const copy = el("div", "assessment-copy");
-  copy.append(el("span", "", "Evidence posture"), el("p", "", assessmentSentence(result)));
+  copy.append(el("span", "", "Evidence summary"), el("p", "", assessmentSentence(result)));
   band.append(risk, copy);
   return band;
 }
@@ -608,6 +810,7 @@ function assessmentSentence(result) {
   if (counts.reported) parts.push(`${counts.reported} reported concern${plural(counts.reported)}`);
   if (counts.partial) parts.push(`${counts.partial} partially supported claim${plural(counts.partial)}`);
   if (counts.conflicting) parts.push(`${counts.conflicting} conflicting claim${plural(counts.conflicting)}`);
+  if (counts.contradicted) parts.push(`${counts.contradicted} contradicted claim${plural(counts.contradicted)}`);
   if (counts.unresolved) parts.push(`${counts.unresolved} unresolved check${plural(counts.unresolved)}`);
   const pipelineIssues = result.coverage.filter((item) => item.note).length;
   if (pipelineIssues) parts.push(`${pipelineIssues} pipeline review item${plural(pipelineIssues)}`);
@@ -622,7 +825,7 @@ function buildMetrics(result) {
   const metrics = [
     [counts.verified, "Verified"],
     [counts.reported, "Reported"],
-    [counts.partial + counts.conflicting, "Needs adjudication"],
+    [counts.partial + counts.conflicting + counts.contradicted, "Needs review"],
     [counts.unresolved, "Unresolved"],
     [counts.rejected, "Rejected"],
   ];
@@ -639,7 +842,7 @@ function buildResultBody(job, result) {
   layout.style.setProperty("--delay", "190ms");
   const main = el("section", "findings-column");
   const surfaced = result.findings.filter((finding) => finding.status !== "rejected");
-  main.append(sectionHeading("Surfaced claims", `${surfaced.length} for review`));
+  main.append(sectionHeading("Findings for IC review", `${surfaced.length} surfaced`));
   const list = el("div", "finding-list");
   if (!surfaced.length) {
     list.append(el("p", "empty-findings", "No claim met the configured evidence threshold."));
@@ -652,7 +855,7 @@ function buildResultBody(job, result) {
 
   const sidebar = el("aside", "result-sidebar");
   const coverage = el("section");
-  coverage.append(sectionHeading("Coverage", "Governed checks"));
+  coverage.append(sectionHeading("Risk coverage", "Four risk areas"));
   const coverageList = el("div", "coverage-list");
   result.coverage.forEach((item) => coverageList.append(buildCoverage(item)));
   coverage.append(coverageList);
@@ -746,9 +949,9 @@ function buildCoverage(item) {
 
 function buildFootprint(job, result) {
   const card = el("section", "footprint-card");
-  card.append(el("h2", "", "Run footprint"));
+  card.append(el("h2", "", "Memo details"));
   const rows = [
-    ["Tavily", `${formatNumber(result.usage.tavily_credits)} measured credits`],
+    ["Tavily", `${formatNumber(result.usage.tavily_credits)} credits`],
     ["Kimi input", `${formatNumber(result.usage.llm_input_tokens)} tokens`],
     ["Kimi output", `${formatNumber(result.usage.llm_output_tokens)} tokens`],
     ["Wall time", formatDuration(result.usage.wall_seconds)],
@@ -764,7 +967,7 @@ function buildFootprint(job, result) {
     el(
       "p",
       "disclaimer",
-      "Initial public-evidence screen only. No qualifying finding is not a statement that no risk exists.",
+      "Public-source screen only. An absence of qualifying findings does not mean the target is risk-free.",
     ),
   );
   return card;
@@ -827,9 +1030,10 @@ function formatEventTime(value) {
 }
 
 async function resumeJob() {
-  const jobId = localStorage.getItem("deallens.activeJob");
+  const jobId = screenIdFromUrl() || localStorage.getItem("deallens.activeJob");
   if (!jobId) return;
   state.activeJobId = jobId;
+  setScreenUrl(jobId);
   try {
     const job = await api(`/api/screens/${jobId}`);
     state.activeJobStatus = job.status;
@@ -841,6 +1045,7 @@ async function resumeJob() {
     }
   } catch (_) {
     localStorage.removeItem("deallens.activeJob");
+    setScreenUrl(null);
     state.activeJobId = null;
     state.activeJobStatus = null;
   }
@@ -850,8 +1055,8 @@ document.querySelector("#screen-form").addEventListener("submit", submitScreen);
 document.querySelectorAll("[data-action=new-screen]").forEach((button) => {
   button.addEventListener("click", newScreen);
 });
-document.querySelectorAll("[data-action=load-demo]").forEach((button) => {
-  button.addEventListener("click", loadDemo);
+document.querySelectorAll("[data-action=active-screens]").forEach((button) => {
+  button.addEventListener("click", revealActiveScreens);
 });
 document.querySelectorAll("[data-action=archive]").forEach((button) => {
   button.addEventListener("click", openArchive);
@@ -867,7 +1072,24 @@ document.querySelector("#entity-skip").addEventListener("click", () => {
   document.querySelector("#entity-resolution").hidden = true;
   document.querySelector("#screen-form").requestSubmit();
 });
+document.querySelector("#active-run-trigger").addEventListener("click", revealActiveScreens);
+document.querySelector("#api-key-trigger").addEventListener("click", openApiKeyDialog);
+document.querySelector("#api-key-form").addEventListener("submit", saveApiKey);
+document.querySelector("[data-action=close-api-key]").addEventListener("click", closeApiKeyDialog);
+document.querySelector("#remove-api-key").addEventListener("click", removeApiKey);
+document.querySelector("#toggle-api-key").addEventListener("click", (event) => {
+  const input = document.querySelector("#tavily-api-key");
+  const reveal = input.type === "password";
+  input.type = reveal ? "text" : "password";
+  event.currentTarget.textContent = reveal ? "Hide" : "Show";
+  event.currentTarget.setAttribute("aria-label", reveal ? "Hide API key" : "Show API key");
+});
+document.querySelector("#api-key-dialog").addEventListener("click", (event) => {
+  if (event.target === event.currentTarget) closeApiKeyDialog();
+});
 
+updateApiKeyTrigger();
 loadHealth();
 loadPresets();
+loadActiveScreens();
 resumeJob();

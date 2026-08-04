@@ -1,4 +1,4 @@
-# Acquisition Red-Flag Screen
+# Investment Committee Diligence Memo
 
 Target: Revolut Ltd
 Domain: revolut.com
@@ -10,7 +10,7 @@ Generated: 04 August 2026
 
 **REVIEW REQUIRED** — 1 reported concern(s), 4 partially supported claim(s), 1 unresolved check(s); 3 candidate(s) rejected as weak or unsupported.
 
-This screen is an initial review of public evidence, not a legal or financial diligence opinion. "No qualifying public findings" means the governed checks completed without a result that met the evidence standard — it is not a statement that no risk exists.
+This memo is an initial review of public evidence, not a legal or financial diligence opinion. "No qualifying public findings" means the governed checks completed without a result that met the evidence standard — it is not a statement that no risk exists.
 
 ## Reported concerns
 
@@ -136,7 +136,7 @@ Could not capture: https://www.telegraph.co.uk/technology/2019/03/01/revolut-fac
 - Revolut disclosed a data breach in September 2022 that exposed personal data of 50,150 customers. — no qualifying source survived verification
 - A cyber‑crime forum listed a purported database of 75 million Revolut user records on 29 July 2026. — no qualifying source survived verification
 
-## Coverage
+## Diligence coverage
 
 | Check | Status | Checks run | Sources retrieved |
 |---|---|---:|---:|
@@ -145,7 +145,7 @@ Could not capture: https://www.telegraph.co.uk/technology/2019/03/01/revolut-fac
 | Cybersecurity | Checked — no qualifying finding | 3 | 23 |
 | Financial distress | Reported concern | 3 | 10 |
 
-## Run footprint
+## Research footprint
 
 - Tavily credits: 25 (extract 6, search 19)
 - LLM tokens: 30,363 in / 4,189 out

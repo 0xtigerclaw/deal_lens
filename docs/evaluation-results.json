@@ -1,20 +1,485 @@
 {
-  "total_cases": 36,
-  "all_passed": true,
-  "evidence_gate": {
-    "passed": 16,
-    "total": 16,
-    "false_verifies": 0,
-    "non_verified_cases": 11
+  "schema_version": 2,
+  "summary": {
+    "total_cases": 36,
+    "all_passed": true,
+    "evidence_gate": {
+      "passed": 16,
+      "total": 16,
+      "false_verifies": 0,
+      "non_verified_cases": 11
+    },
+    "entity_resolution": {
+      "passed": 8,
+      "total": 8,
+      "correct_abstentions": 4,
+      "abstention_cases": 4
+    },
+    "source_governance": {
+      "passed": 12,
+      "total": 12
+    }
   },
-  "entity_resolution": {
-    "passed": 8,
-    "total": 8,
-    "correct_abstentions": 4,
-    "abstention_cases": 4
-  },
-  "source_governance": {
-    "passed": 12,
-    "total": 12
+  "cases": {
+    "evidence_gate": [
+      {
+        "name": "primary_alone_verifies",
+        "passed": true,
+        "expected": {
+          "status": "verified",
+          "discards": 0
+        },
+        "actual": {
+          "status": "verified",
+          "discards": 0
+        }
+      },
+      {
+        "name": "two_independent_secondaries_verify",
+        "passed": true,
+        "expected": {
+          "status": "verified",
+          "discards": 0
+        },
+        "actual": {
+          "status": "verified",
+          "discards": 0
+        }
+      },
+      {
+        "name": "syndication_same_domain_only_reports",
+        "passed": true,
+        "expected": {
+          "status": "reported",
+          "discards": 0
+        },
+        "actual": {
+          "status": "reported",
+          "discards": 0
+        }
+      },
+      {
+        "name": "single_secondary_reports",
+        "passed": true,
+        "expected": {
+          "status": "reported",
+          "discards": 0
+        },
+        "actual": {
+          "status": "reported",
+          "discards": 0
+        }
+      },
+      {
+        "name": "extraction_failure_unresolved",
+        "passed": true,
+        "expected": {
+          "status": "unresolved",
+          "discards": 0
+        },
+        "actual": {
+          "status": "unresolved",
+          "discards": 0
+        }
+      },
+      {
+        "name": "aggregator_only_rejected",
+        "passed": true,
+        "expected": {
+          "status": "rejected",
+          "discards": 0
+        },
+        "actual": {
+          "status": "rejected",
+          "discards": 0
+        }
+      },
+      {
+        "name": "nothing_found_rejected",
+        "passed": true,
+        "expected": {
+          "status": "rejected",
+          "discards": 0
+        },
+        "actual": {
+          "status": "rejected",
+          "discards": 0
+        }
+      },
+      {
+        "name": "paraphrase_discarded_then_rejected",
+        "passed": true,
+        "expected": {
+          "status": "rejected",
+          "discards": 1
+        },
+        "actual": {
+          "status": "rejected",
+          "discards": 1
+        }
+      },
+      {
+        "name": "paraphrased_primary_discarded_valid_secondary_reports",
+        "passed": true,
+        "expected": {
+          "status": "reported",
+          "discards": 1
+        },
+        "actual": {
+          "status": "reported",
+          "discards": 1
+        }
+      },
+      {
+        "name": "primary_wins_despite_other_failures",
+        "passed": true,
+        "expected": {
+          "status": "verified",
+          "discards": 0
+        },
+        "actual": {
+          "status": "verified",
+          "discards": 0
+        }
+      },
+      {
+        "name": "curly_punctuation_still_validates",
+        "passed": true,
+        "expected": {
+          "status": "verified",
+          "discards": 0
+        },
+        "actual": {
+          "status": "verified",
+          "discards": 0
+        }
+      },
+      {
+        "name": "empty_quote_discarded",
+        "passed": true,
+        "expected": {
+          "status": "rejected",
+          "discards": 1
+        },
+        "actual": {
+          "status": "rejected",
+          "discards": 1
+        }
+      },
+      {
+        "name": "compound_claim_partial_support_never_verifies",
+        "passed": true,
+        "expected": {
+          "status": "partial",
+          "discards": 0
+        },
+        "actual": {
+          "status": "partial",
+          "discards": 0
+        }
+      },
+      {
+        "name": "compound_claim_all_assertions_verify",
+        "passed": true,
+        "expected": {
+          "status": "verified",
+          "discards": 0
+        },
+        "actual": {
+          "status": "verified",
+          "discards": 0
+        }
+      },
+      {
+        "name": "primary_source_contradicts_candidate",
+        "passed": true,
+        "expected": {
+          "status": "contradicted",
+          "discards": 0
+        },
+        "actual": {
+          "status": "contradicted",
+          "discards": 0
+        }
+      },
+      {
+        "name": "qualifying_sources_conflict",
+        "passed": true,
+        "expected": {
+          "status": "conflicting",
+          "discards": 0
+        },
+        "actual": {
+          "status": "conflicting",
+          "discards": 0
+        }
+      }
+    ],
+    "entity_resolution": [
+      {
+        "name": "brand_name_resolves_legal_bank_entity",
+        "passed": true,
+        "expected": [
+          "09446231",
+          "12000001",
+          "15034063"
+        ],
+        "actual": [
+          "09446231",
+          "12000001",
+          "15034063"
+        ]
+      },
+      {
+        "name": "exact_legal_name_wins",
+        "passed": true,
+        "expected": [
+          "13211214",
+          "07209813"
+        ],
+        "actual": [
+          "13211214",
+          "07209813"
+        ]
+      },
+      {
+        "name": "legal_suffix_does_not_change_match",
+        "passed": true,
+        "expected": [
+          "08804411"
+        ],
+        "actual": [
+          "08804411"
+        ]
+      },
+      {
+        "name": "filing_and_overview_are_deduplicated",
+        "passed": true,
+        "expected": [
+          "06539496"
+        ],
+        "actual": [
+          "06539496"
+        ]
+      },
+      {
+        "name": "unrelated_result_causes_abstention",
+        "passed": true,
+        "expected": [],
+        "actual": []
+      },
+      {
+        "name": "lookalike_registry_host_is_rejected",
+        "passed": true,
+        "expected": [],
+        "actual": []
+      },
+      {
+        "name": "registry_search_page_is_not_an_entity",
+        "passed": true,
+        "expected": [],
+        "actual": []
+      },
+      {
+        "name": "empty_title_is_rejected",
+        "passed": true,
+        "expected": [],
+        "actual": []
+      }
+    ],
+    "source_governance": [
+      {
+        "name": "primary_subdomain",
+        "passed": true,
+        "expected": [
+          "primary",
+          false,
+          true,
+          true
+        ],
+        "actual": [
+          "primary",
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "lookalike_primary_domain",
+        "passed": true,
+        "expected": [
+          "other",
+          false,
+          true,
+          true
+        ],
+        "actual": [
+          "other",
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "credible_secondary_www",
+        "passed": true,
+        "expected": [
+          "credible_secondary",
+          false,
+          true,
+          true
+        ],
+        "actual": [
+          "credible_secondary",
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "excluded_domain",
+        "passed": true,
+        "expected": [
+          "other",
+          true,
+          true,
+          true
+        ],
+        "actual": [
+          "other",
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "excluded_subdomain",
+        "passed": true,
+        "expected": [
+          "other",
+          true,
+          true,
+          true
+        ],
+        "actual": [
+          "other",
+          true,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "unknown_source",
+        "passed": true,
+        "expected": [
+          "other",
+          false,
+          true,
+          true
+        ],
+        "actual": [
+          "other",
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "sitemap_is_not_evidence",
+        "passed": true,
+        "expected": [
+          "primary",
+          false,
+          false,
+          true
+        ],
+        "actual": [
+          "primary",
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "name": "author_index_is_not_evidence",
+        "passed": true,
+        "expected": [
+          "credible_secondary",
+          false,
+          false,
+          true
+        ],
+        "actual": [
+          "credible_secondary",
+          false,
+          false,
+          true
+        ]
+      },
+      {
+        "name": "correct_registry_entity",
+        "passed": true,
+        "expected": [
+          "primary",
+          false,
+          true,
+          true
+        ],
+        "actual": [
+          "primary",
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "wrong_registry_entity",
+        "passed": true,
+        "expected": [
+          "primary",
+          false,
+          true,
+          false
+        ],
+        "actual": [
+          "primary",
+          false,
+          true,
+          false
+        ]
+      },
+      {
+        "name": "registry_case_normalization",
+        "passed": true,
+        "expected": [
+          "primary",
+          false,
+          true,
+          true
+        ],
+        "actual": [
+          "primary",
+          false,
+          true,
+          true
+        ]
+      },
+      {
+        "name": "non_registry_sources_ignore_company_path",
+        "passed": true,
+        "expected": [
+          "primary",
+          false,
+          true,
+          true
+        ],
+        "actual": [
+          "primary",
+          false,
+          true,
+          true
+        ]
+      }
+    ]
   }
 }

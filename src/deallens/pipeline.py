@@ -76,7 +76,7 @@ def run_screen(
                 "jurisdiction": jurisdiction_pack.name,
             }
         )
-    _notify(progress, "starting", "Initializing governed screen", 2)
+    _notify(progress, "starting", "Starting memo research", 2)
     if tavily is not None:
         ledger = tavily.ledger
     elif llm is not None:
@@ -88,19 +88,19 @@ def run_screen(
     llm = llm or LLM(ledger)
     llm.ledger = ledger
 
-    _notify(progress, "research", "Running Tavily Research", 8)
+    _notify(progress, "research", "Researching acquisition signals", 8)
     research_candidates = discover(
         tavily, llm, company, domain, jurisdiction_pack.name, company_id
     )
     _notify(
         progress,
         "research",
-        f"Research proposed {len(research_candidates)} candidate checks",
+        f"Found {len(research_candidates)} signals to verify",
         22,
     )
-    _notify(progress, "coverage", "Running four-category baseline coverage", 26)
+    _notify(progress, "coverage", "Checking four risk areas", 26)
     baseline = baseline_checks(tavily, jurisdiction_pack, company, company_id)
-    _notify(progress, "coverage", "Interpreting governed baseline results", 34)
+    _notify(progress, "coverage", "Reviewing baseline evidence", 34)
     baseline_candidates, baseline_failures = discover_from_baseline(
         llm, company, baseline
     )
@@ -108,7 +108,7 @@ def run_screen(
     _notify(
         progress,
         "verification",
-        f"Verifying {len(candidates)} deduplicated candidate claims",
+        f"Verifying {len(candidates)} candidate findings",
         40,
     )
 
@@ -123,7 +123,7 @@ def run_screen(
         _notify(
             progress,
             "verification",
-            f"Checking {index + 1} of {len(candidates)}: {candidate.category}",
+            f"Checking {index + 1} of {len(candidates)} · {candidate.category.title()}",
             candidate_progress,
         )
         results, _reviewed, candidate_checks = verify(
@@ -157,7 +157,7 @@ def run_screen(
         finding.narrative = _narrative(llm, finding)
         findings.append(finding)
 
-    _notify(progress, "decision", "Applying evidence and policy gates", 91)
+    _notify(progress, "decision", "Preparing the IC memo", 91)
     ledger.wall_seconds = time.monotonic() - started
     coverage_rows = coverage(
         findings,
@@ -196,7 +196,7 @@ def run_screen(
                 "wall_seconds": round(ledger.wall_seconds, 3),
             }
         )
-    _notify(progress, "complete", "Screen complete", 100)
+    _notify(progress, "complete", "IC memo complete", 100)
     return result
 
 

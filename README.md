@@ -40,7 +40,7 @@ flowchart LR
     V --> X["Tavily Extract"]
     X --> K["Kimi K3 on Nebius<br/>quote/assertion mapping"]
     K --> G["Deterministic evidence gate"]
-    G --> O["Memo.md + evidence.json"]
+    G --> O["IC memo<br/>PDF + Markdown<br/>evidence.json"]
 ```
 
 The full component, sequence, trust-boundary, and trace diagrams are in
@@ -76,12 +76,16 @@ match before a paid screen starts.
 
 The interface also includes:
 
-- background jobs with resumable progress;
+- a server-backed active-screen ledger, so every queued or running target stays
+  visible and resumable across targets and browser tabs;
+- direct `?screen=<job-id>` resume links for reconnecting to a live run;
+- duplicate-run protection while the same target is already active;
 - retained Wise and Revolut example screens on a fresh clone;
 - category coverage and source-review counts;
 - atomic assertion support/contradiction relationships;
 - verbatim evidence with clickable source links; and
-- Markdown memo and JSON evidence downloads.
+- direct PDF, Markdown, and JSON exports from both completed memos and the
+  archive ledger.
 
 ### Live provider setup
 
@@ -140,8 +144,9 @@ Additional invariants:
 
 ## Evaluation
 
-`uv run deallens eval` is offline, deterministic, and CI-gating. Current
-measured result:
+`uv run deallens eval` is offline, deterministic, baseline-aware, and
+CI-gating. It reports case-level regressions, refuses silent coverage removal,
+and preserves a machine-readable CI artifact. Current measured result:
 
 | Suite | Result | Safety metric |
 |---|---:|---:|
@@ -150,9 +155,19 @@ measured result:
 | Source-governance contract | 12/12 | all tier/entity/document boundaries correct |
 | **Total** | **36/36** | **all gates pass** |
 
-The pytest suite is **65/65 passing**. Labels, methodology, limitations, and
-the machine-readable command are documented in
-[docs/EVALUATION.md](docs/EVALUATION.md); the latest committed summary is
+The improvement loop is explicit: an observed failure becomes a human-labelled
+offline fixture, production code is fixed against it, the result is compared
+case-by-case with the committed baseline, and `--promote` updates that baseline
+only after every safety gate holds.
+
+```bash
+uv run deallens eval --json-out reports/evals/local-run.json
+uv run deallens eval --promote  # after label and result review
+```
+
+The pytest suite is **73/73 passing**. Labels, the promote/review loop,
+limitations, and the machine-readable command are documented in
+[docs/EVALUATION.md](docs/EVALUATION.md); the committed case-level baseline is
 [docs/evaluation-results.json](docs/evaluation-results.json).
 
 ## LangSmith observability
@@ -185,6 +200,8 @@ for the span contract and the verified Monzo run (`204` spans, `0` errors).
 - `examples/screens/`: curated public example artifacts used by the archive.
 
 Each screen writes a Markdown memo and complete typed JSON evidence package.
+The web app also renders a styled, source-linked PDF memo on demand for every
+completed screen, including retained archive entries.
 The usage ledger records Tavily credits per endpoint, Nebius token counts, wall
 time, and an explicit `usage_complete` flag. If Research credit measurement is
 unavailable, the ledger says so rather than reporting a false total.
@@ -201,8 +218,8 @@ src/deallens/
   pipeline.py       orchestration, progress, trace metadata
   web.py            FastAPI job/archive/entity API
   ui/               dependency-free analyst interface
-  evalrun.py        three-suite offline evaluation harness
-  memo.py           Markdown/JSON/console renderers
+  evalrun.py        baseline-aware, three-suite evaluation harness
+  memo.py           PDF/Markdown/JSON/console renderers
 ```
 
 Submission documents:
@@ -211,7 +228,8 @@ Submission documents:
   assignment mapping.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — detailed GitHub-rendered
   diagrams and component contracts.
-- [docs/EVALUATION.md](docs/EVALUATION.md) — labels, metrics, and known gaps.
+- [docs/EVALUATION.md](docs/EVALUATION.md) — labels, baseline feedback loop,
+  metrics, and known gaps.
 - [docs/LANGSMITH.md](docs/LANGSMITH.md) — trace hierarchy and validation.
 - [BUILD_LOG.md](BUILD_LOG.md) — product and implementation decisions.
 
@@ -224,7 +242,8 @@ Submission documents:
 - Syndicated copy on genuinely different configured publisher domains may
   count twice; near-duplicate clustering is future work.
 - `/research` is used for recall, not accepted as evidence by itself.
-- Storage is local JSON/Markdown for this single-analyst MVP. MongoDB was
+- Storage is local JSON/Markdown for this single-analyst MVP, with PDFs
+  generated on demand from the typed result. MongoDB was
   deliberately deferred; adding infrastructure would not strengthen the core
   retrieval/evidence assignment.
 - Tavily Crawl is not used. Search locates claim-relevant sources and Extract

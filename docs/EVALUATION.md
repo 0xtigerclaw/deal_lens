@@ -9,12 +9,64 @@ source governance. All suites run offline from labelled JSON fixtures.
 ```bash
 uv sync
 uv run deallens eval
-uv run deallens eval --json-out evaluation-results.json
+uv run deallens eval --json-out reports/evals/local-run.json
 uv run pytest
 ```
 
-The command exits non-zero if any labelled case fails or if a false verify is
-introduced. CI runs both `pytest` and `deallens eval`.
+The command exits non-zero if any labelled case fails, a false verify is
+introduced, entity-abstention accuracy falls, a previously passing case
+regresses, or a labelled case is removed. CI runs both `pytest` and
+`deallens eval`, then preserves the case-level JSON report even on failure.
+
+## Feedback loop
+
+```mermaid
+flowchart LR
+    Live["Live screen or analyst review"] --> Candidate["Redacted failure candidate"]
+    Candidate --> Label["Human label + unique case name"]
+    Label --> Fixture["Committed offline fixture"]
+    Fixture --> Run["deallens eval"]
+    Run --> Delta["Case-level baseline delta"]
+    Delta -->|"regression"| Fix["Fix production code"]
+    Fix --> Run
+    Delta -->|"all safety gates hold"| Promote["Reviewed --promote"]
+    Promote --> CI["Committed baseline + CI artifact"]
+    CI --> Live
+```
+
+The loop deliberately separates human judgment from deterministic proof.
+An analyst decides the expected outcome; the harness runs the real production
+gate, entity ranker, and governance functions against that label. Live web
+content is not silently promoted into the fixture set.
+
+### Add and promote a regression case
+
+1. Reduce the observed failure to the smallest redacted fixture that still
+   reproduces it.
+2. Add it to the appropriate file under `fixtures/` with a unique case name.
+3. Run `uv run deallens eval --json-out reports/evals/local-run.json`.
+4. Fix the production behavior until the new case passes without weakening
+   false-verify or abstention metrics.
+5. Review the label and run `uv run deallens eval --promote`.
+6. Commit the fixture and updated `docs/evaluation-results.json` together.
+
+`--promote` refuses to replace the baseline while a case, safety metric, or
+coverage-retention gate is failing. Duplicate case names are also rejected so
+case history cannot be overwritten accidentally.
+
+### Machine-readable contract
+
+The versioned JSON report contains:
+
+- `summary`: suite totals plus false-verify and abstention measures;
+- `cases`: expected value, actual value, and pass/fail for every stable case
+  name; and
+- `baseline_comparison`: new, fixed, regressed, and removed cases plus metric
+  deltas.
+
+`docs/evaluation-results.json` is the reviewed baseline and intentionally omits
+the transient comparison block. Local and CI reports include it so a failing
+run remains diagnosable without rerunning the job.
 
 ## Current result
 
@@ -27,9 +79,9 @@ Measured on 2026-08-04 from the committed fixtures:
 | Source-governance contract | 12/12 | 12/12 full contract matches |
 | **Total** | **36/36** | **all gates pass** |
 
-The associated unit/API suite passes **65/65** tests.
+The associated unit/API suite passes **73/73** tests.
 
-The committed machine-readable summary is
+The committed machine-readable baseline, including every case result, is
 [evaluation-results.json](evaluation-results.json).
 
 ## Suite 1: evidence gate

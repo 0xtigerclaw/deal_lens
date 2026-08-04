@@ -23,4 +23,11 @@ jobs:
       - name: Unit and API tests
         run: uv run pytest
       - name: Deterministic safety evals
-        run: uv run deallens eval
+        run: uv run deallens eval --json-out reports/evals/ci-run.json
+      - name: Preserve evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deallens-evaluation-report
+          path: reports/evals/ci-run.json
+          if-no-files-found: error

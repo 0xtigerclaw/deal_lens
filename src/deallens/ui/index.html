@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="DealLens — evidence-governed acquisition red-flag screening."
+      content="Acquisition intelligence for GPs preparing evidence-backed investment committee memos."
     />
-    <title>DealLens — Acquisition Intelligence</title>
+    <title>DealLens — Acquisition Intelligence for GPs</title>
     <script>
       if (window.location.protocol === "file:") {
         window.location.replace("http://127.0.0.1:8000/");
@@ -37,25 +37,29 @@
         <nav class="primary-nav">
           <button class="nav-item is-active" type="button" data-action="new-screen">
             <span class="nav-index">01</span>
-            <span>New screen</span>
+            <span>New memo</span>
           </button>
-          <button class="nav-item" type="button" data-action="load-demo">
+          <button class="nav-item" type="button" data-action="active-screens">
             <span class="nav-index">02</span>
-            <span>Fixture memo</span>
+            <span class="nav-label">
+              <span class="nav-label-full">Active screenings</span>
+              <span class="nav-label-short">Active</span>
+            </span>
+            <span class="nav-count" id="nav-active-count">0</span>
           </button>
           <button class="nav-item" type="button" data-action="archive">
             <span class="nav-index">03</span>
-            <span>Screen archive</span>
+            <span>Memo archive</span>
           </button>
         </nav>
 
         <div class="rail-flow" aria-label="Evidence flow">
-          <p class="rail-kicker">Governed sequence</p>
+          <p class="rail-kicker">GP workflow</p>
           <ol>
-            <li data-stage="research"><span>Research</span><small>Recall first</small></li>
-            <li data-stage="coverage"><span>Coverage</span><small>Four checks</small></li>
-            <li data-stage="verification"><span>Verify</span><small>Trusted domains</small></li>
-            <li data-stage="decision"><span>Decide</span><small>Evidence gate</small></li>
+            <li data-stage="research"><span>Research</span><small>Find deal signals</small></li>
+            <li data-stage="coverage"><span>Coverage</span><small>Four risk areas</small></li>
+            <li data-stage="verification"><span>Verify</span><small>Link evidence</small></li>
+            <li data-stage="decision"><span>Memo</span><small>Prepare for IC</small></li>
           </ol>
         </div>
 
@@ -64,7 +68,7 @@
             <span class="status-light" id="provider-light"></span>
             <span id="provider-label">Checking providers</span>
           </div>
-          <p>Evidence before escalation.</p>
+          <p>Evidence, then escalation.</p>
         </div>
       </aside>
 
@@ -73,12 +77,43 @@
           <div class="breadcrumb">
             <span>Acquisition intelligence</span>
             <span aria-hidden="true">/</span>
-            <strong id="view-title">New screen</strong>
+            <strong id="view-title">New memo</strong>
           </div>
           <div class="topbar-actions">
+            <button
+              class="active-run-trigger"
+              id="active-run-trigger"
+              type="button"
+              aria-controls="active-view"
+            >
+              <span class="active-run-pulse" aria-hidden="true"></span>
+              <span id="active-run-label">Active screenings</span>
+            </button>
             <span class="model-badge" id="model-badge">Kimi K3 · Nebius</span>
+            <button
+              class="api-key-trigger"
+              id="api-key-trigger"
+              type="button"
+              aria-haspopup="dialog"
+              aria-controls="api-key-dialog"
+            >
+              <span class="key-status-dot" aria-hidden="true"></span>
+              <span id="api-key-trigger-label">Tavily key</span>
+            </button>
+            <a
+              class="github-link"
+              href="https://github.com/0xtigerclaw/deal_lens"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="View DealLens on GitHub (opens in a new tab)"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 .7a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2.23c-3.23.7-3.91-1.37-3.91-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.05-.72.08-.71.08-.71 1.16.08 1.78 1.2 1.78 1.2 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.58-.29-5.29-1.29-5.29-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.16 1.18a10.94 10.94 0 0 1 5.76 0c2.19-1.49 3.16-1.18 3.16-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.4-2.72 5.38-5.3 5.67.42.36.79 1.07.79 2.16v3.23c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .7Z" />
+              </svg>
+              <span>GitHub</span>
+            </a>
             <button class="quiet-button" type="button" data-action="new-screen">
-              <span aria-hidden="true">＋</span> New target
+              <span aria-hidden="true">＋</span> New memo
             </button>
           </div>
         </header>
@@ -86,26 +121,25 @@
         <main id="workspace" tabindex="-1">
           <section class="intake-view" id="intake-view">
             <div class="intake-hero reveal" style="--delay: 0ms">
-              <p class="eyebrow"><span></span> Pre-signing intelligence</p>
-              <h1>Find the detail<br />that changes the deal.</h1>
+              <p class="eyebrow"><span></span> Acquisition intelligence for GPs</p>
+              <h1>From target to<br />IC memo.</h1>
               <p class="hero-copy">
-                A governed public-evidence screen for leadership, regulatory,
-                cybersecurity, and financial-distress signals.
+                Research acquisition risk, verify the evidence, and prepare an
+                investment committee memo in one workflow.
               </p>
-              <div class="trust-row" aria-label="Screen guarantees">
-                <span>Entity-aware</span>
-                <span>Verbatim evidence</span>
-                <span>Source thresholds</span>
+              <div class="trust-row" aria-label="Screen controls">
+                <span>Entity check</span>
+                <span>Linked sources</span>
+                <span>IC memo</span>
               </div>
             </div>
 
             <div class="intake-panel reveal" style="--delay: 110ms">
               <div class="panel-heading">
                 <div>
-                  <p class="section-number">Screen / 001</p>
-                  <h2>Choose a company</h2>
+                  <p class="section-number">New IC memo</p>
+                  <h2>Enter a target company</h2>
                 </div>
-                <span class="time-note">Usually 4–8 min</span>
               </div>
 
               <form id="screen-form" novalidate>
@@ -135,10 +169,7 @@
 
                 <div class="identity-assurance">
                   <span aria-hidden="true">✓</span>
-                  <p>
-                    That’s enough to start. DealLens will check the official
-                    registry and ask you to confirm the legal entity first.
-                  </p>
+                  <p>We check the legal entity before research begins.</p>
                 </div>
 
                 <section
@@ -150,22 +181,22 @@
                 >
                   <div class="entity-resolution-heading">
                     <div>
-                      <p class="section-number">Identity checkpoint</p>
-                      <h3 id="entity-resolution-title">Confirm the legal entity</h3>
+                      <p class="section-number">Entity match</p>
+                      <h3 id="entity-resolution-title">Confirm legal entity</h3>
                     </div>
                     <span class="registry-mark">Official registry</span>
                   </div>
                   <p class="entity-resolution-status" id="entity-resolution-status"></p>
                   <div class="entity-candidates" id="entity-candidates"></div>
                   <button class="entity-skip" id="entity-skip" type="button">
-                    Continue without a registry match
+                    Continue without a match
                   </button>
                 </section>
 
                 <details class="advanced-fields" id="advanced-fields">
                   <summary>
-                    <span>Improve entity matching</span>
-                    <small>Optional details</small>
+                    <span>Entity and policy</span>
+                    <small>Optional</small>
                   </summary>
                   <div class="advanced-fields-body">
                     <div class="field field-wide">
@@ -179,7 +210,7 @@
                         placeholder="e.g. 09446231"
                       />
                       <p class="field-help">
-                        Used to reject Companies House records for similarly named entities.
+                        Helps exclude similarly named companies.
                       </p>
                     </div>
                     <div class="field-grid compact-grid">
@@ -204,7 +235,7 @@
                 <div class="form-error" id="form-error" role="alert"></div>
 
                 <button class="primary-button" type="submit">
-                  <span>Run governed screen</span>
+                  <span>Prepare IC memo</span>
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M5 12h13M13 6l6 6-6 6" />
                   </svg>
@@ -213,10 +244,10 @@
                 <section class="preset-docket" aria-labelledby="preset-title">
                   <div class="preset-docket-heading">
                     <div>
-                      <p class="section-number">Example targets</p>
-                      <h3 id="preset-title">Or try a known company</h3>
+                      <p class="section-number">Quick start</p>
+                      <h3 id="preset-title">Try an example</h3>
                     </div>
-                    <span class="preset-tag">One click</span>
+                    <span class="preset-tag">Prefill</span>
                   </div>
                   <div
                     class="preset-grid"
@@ -228,35 +259,23 @@
                     <span class="preset-loading">Loading target records…</span>
                   </div>
                   <p class="preset-status" id="preset-status" aria-live="polite">
-                    Optional — load a known record to see how it works.
+                    Choose a target to prefill the form.
                   </p>
                 </section>
               </form>
-
-              <div class="fixture-row">
-                <span>No keys or credits?</span>
-                <button type="button" data-action="load-demo">Open fixture memo</button>
-              </div>
             </div>
 
-            <div class="intake-footnote reveal" style="--delay: 220ms">
-              <span class="footnote-number">01</span>
-              <p>
-                DealLens is a first-pass screen, not a legal or financial opinion.
-                “No qualifying finding” is never presented as a clean bill of health.
-              </p>
-            </div>
           </section>
 
           <section class="run-view" id="run-view" hidden aria-live="polite">
             <div class="run-grid">
               <div class="run-main">
-                <p class="eyebrow"><span></span> Live governed screen</p>
+                <p class="eyebrow"><span></span> Preparing the IC memo</p>
                 <div class="run-target-line">
                   <h1 id="run-target">Target</h1>
                   <span id="run-entity">—</span>
                 </div>
-                <p class="run-message" id="run-message">Initializing governed screen</p>
+                <p class="run-message" id="run-message">Starting memo research</p>
                 <div class="progress-track" aria-label="Screen progress">
                   <span id="progress-fill"></span>
                 </div>
@@ -266,13 +285,13 @@
                 </div>
               </div>
               <aside class="run-ledger">
-                <p class="section-number">Execution ledger</p>
+                <p class="section-number">Screening log</p>
                 <ol id="run-events"></ol>
               </aside>
             </div>
             <div class="run-note">
-              <span>Safe to leave this tab</span>
-              <p>Incomplete observations cannot produce a clean memo.</p>
+              <span>Runs in the background</span>
+              <p>Only source-backed findings reach the IC memo.</p>
             </div>
           </section>
 
@@ -280,44 +299,99 @@
             <div id="result-root"></div>
           </section>
 
+          <section class="active-view" id="active-view" hidden>
+            <header class="active-view-header">
+              <div>
+                <p class="eyebrow"><span></span> GP workspace</p>
+                <h1>IC memos in progress.</h1>
+              </div>
+              <p>Track targets being prepared for investment committee review.</p>
+            </header>
+            <div class="active-register">
+              <div class="active-screens-heading">
+                <div>
+                  <p class="section-number">Active memo preparation</p>
+                  <h2 id="active-screens-title">Targets under review</h2>
+                </div>
+                <span id="active-screens-count">0 running</span>
+              </div>
+              <div
+                class="active-screens-list"
+                id="active-screens-list"
+                aria-labelledby="active-screens-title"
+                aria-live="polite"
+              ></div>
+              <div class="active-screens-empty" id="active-screens-empty">
+                <strong>No memos in progress.</strong>
+                <span>Start an IC memo to track it here.</span>
+              </div>
+              <p class="active-screens-note">Runs continue in the background.</p>
+            </div>
+          </section>
+
           <section class="archive-view" id="archive-view" hidden>
             <header class="archive-header">
               <div>
-                <p class="eyebrow"><span></span> Completed evidence packages</p>
-                <h1>Screen archive.</h1>
+                <p class="eyebrow"><span></span> IC memo archive</p>
+                <h1>Completed memos.</h1>
               </div>
-              <p>
-                Reopen a point-in-time assessment without rerunning research or
-                consuming provider credits.
-              </p>
+              <p>Reopen the evidence and assessment for your next IC discussion.</p>
             </header>
             <div class="archive-ledger">
               <div class="archive-ledger-heading">
                 <div>
-                  <p class="section-number">Evidence ledger</p>
-                  <h2>Completed screens</h2>
+                  <p class="section-number">Decision record</p>
+                  <h2>Investment committee memos</h2>
                 </div>
                 <span id="archive-count">Loading</span>
               </div>
               <div class="archive-list" id="archive-list" aria-live="polite">
-                <p class="archive-empty">Loading archived screens…</p>
+                <p class="archive-empty">Loading completed memos…</p>
               </div>
             </div>
           </section>
 
           <section class="failure-view" id="failure-view" hidden>
             <div class="failure-card">
-              <p class="eyebrow"><span></span> Screen stopped safely</p>
-              <h1>No clean memo was produced.</h1>
+              <p class="eyebrow"><span></span> IC memo incomplete</p>
+              <h1>No memo produced.</h1>
               <p id="failure-message"></p>
               <button class="primary-button" type="button" data-action="new-screen">
-                Start another screen
+                Start new memo
               </button>
             </div>
           </section>
         </main>
       </div>
     </div>
+    <dialog class="api-key-dialog" id="api-key-dialog" aria-labelledby="api-key-title">
+      <form class="api-key-card" id="api-key-form" method="dialog">
+        <div class="api-key-card-head">
+          <div>
+            <p class="section-number">Research provider</p>
+            <h2 id="api-key-title">Use your Tavily key</h2>
+          </div>
+          <button class="dialog-close" type="button" data-action="close-api-key" aria-label="Close">×</button>
+        </div>
+        <p class="api-key-intro">
+          Use your Tavily account for this tab. DealLens sends the key to this
+          server, which uses it only for Tavily requests.
+        </p>
+        <div class="field api-key-field">
+          <label for="tavily-api-key">API key</label>
+          <div class="secret-input-row">
+            <input id="tavily-api-key" name="tavily_api_key" type="password" autocomplete="off" spellcheck="false" placeholder="tvly-••••••••••••" />
+            <button id="toggle-api-key" type="button" aria-label="Show API key">Show</button>
+          </div>
+          <p class="field-help">Stored for this tab and cleared when it closes.</p>
+        </div>
+        <div class="api-key-actions">
+          <button class="remove-key-button" id="remove-api-key" type="button">Use server key</button>
+          <button class="primary-button api-key-save" type="submit"><span>Save and switch</span></button>
+        </div>
+        <p class="api-key-footnote">Need a key? <a href="https://app.tavily.com" target="_blank" rel="noreferrer">Open Tavily ↗</a></p>
+      </form>
+    </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </body>
 </html>

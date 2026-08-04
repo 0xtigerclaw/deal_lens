@@ -1,5 +1,7 @@
 """Local web interface contracts without external provider calls."""
 
+import time
+
 from fastapi.testclient import TestClient
 
 from deallens.entity import EntityCandidate, EntityResolution
@@ -13,8 +15,10 @@ def test_interface_shell_is_served():
     response = client.get("/")
 
     assert response.status_code == 200
-    assert "DealLens — Acquisition Intelligence" in response.text
-    assert "Run governed screen" in response.text
+    assert "DealLens — Acquisition Intelligence for GPs" in response.text
+    assert "Prepare IC memo" in response.text
+    assert "Active screenings" in response.text
+    assert "Fixture memo" not in response.text
 
 
 def test_health_reports_provider_presence_without_exposing_secrets():
@@ -26,6 +30,17 @@ def test_health_reports_provider_presence_without_exposing_secrets():
     assert "Kimi-K3" in payload["model"]
     assert payload["observability"]["root_span"] == "deallens.screen"
     assert payload["observability"]["project"] == "Deal_Lens"
+
+
+def test_personal_tavily_key_is_accepted_without_being_exposed(monkeypatch):
+    monkeypatch.delenv("TAVILY_API_KEY", raising=False)
+    response = client.get(
+        "/api/health", headers={"X-Tavily-API-Key": "tvly-personal-secret"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["providers"]["tavily"] is True
+    assert "personal-secret" not in response.text
 
 
 def test_company_presets_return_runnable_legal_entities():
@@ -99,6 +114,59 @@ def test_entity_endpoint_returns_candidates_without_starting_a_screen(
     assert response.json()["candidates"][0]["company_id"] == "09446231"
 
 
+def test_active_screen_ledger_lists_every_background_job(monkeypatch):
+    request = ScreenRequest(company="Arm Holdings", domain="arm.com")
+    running = web_module.JobRecord("arm-running", request)
+    running.status = "running"
+    running.started_monotonic = time.monotonic() - 12
+    running.update("verification", "Checking 3 of 9: regulatory", 51)
+    queued = web_module.JobRecord(
+        "shell-queued",
+        ScreenRequest(company="Shell", domain="shell.com"),
+    )
+    monkeypatch.setattr(
+        web_module,
+        "_jobs",
+        {running.id: running, queued.id: queued},
+    )
+
+    response = client.get("/api/screens")
+
+    assert response.status_code == 200
+    assert [job["id"] for job in response.json()] == ["arm-running", "shell-queued"]
+    assert response.json()[0]["request"]["company"] == "Arm Holdings"
+    assert response.json()[0]["percent"] == 51
+
+
+def test_duplicate_active_screen_submission_reuses_existing_job(
+    monkeypatch,
+):
+    monkeypatch.setenv("TAVILY_API_KEY", "test-key")
+    monkeypatch.setenv("NEBIUS_API_KEY", "test-key")
+    request = ScreenRequest(company="Arm Holdings", domain="arm.com")
+    running = web_module.JobRecord("arm-running", request)
+    running.status = "running"
+    running.started_monotonic = time.monotonic()
+    monkeypatch.setattr(web_module, "_jobs", {running.id: running})
+    submissions = []
+
+    class RecordingExecutor:
+        def submit(self, *args):
+            submissions.append(args)
+
+    monkeypatch.setattr(web_module, "_executor", RecordingExecutor())
+
+    response = client.post(
+        "/api/screens",
+        json={"company": "Arm Holdings", "domain": "arm.com"},
+    )
+
+    assert response.status_code == 202
+    assert response.json()["id"] == "arm-running"
+    assert len(web_module._jobs) == 1
+    assert submissions == []
+
+
 def test_archive_reopens_retained_wise_and_revolut_screens(
     monkeypatch, tmp_path
 ):
@@ -112,6 +180,9 @@ def test_archive_reopens_retained_wise_and_revolut_screens(
     assert {record["target"] for record in archive} >= {"Wise Limited", "Revolut Ltd"}
 
     wise_summary = next(record for record in archive if record["target"] == "Wise Limited")
+    assert wise_summary["pdf_url"].endswith("/pdf")
+    assert wise_summary["memo_url"].endswith("/memo")
+    assert wise_summary["evidence_url"].endswith("/evidence")
     detail = client.get(f"/api/archive/{wise_summary['id']}")
     payload = detail.json()
 
@@ -120,6 +191,12 @@ def test_archive_reopens_retained_wise_and_revolut_screens(
     assert payload["status"] == "completed"
     assert payload["result"]["target"] == "Wise Limited"
     assert client.get(payload["memo_url"]).status_code == 200
+    pdf = client.get(payload["pdf_url"])
+    assert pdf.status_code == 200
+    assert pdf.headers["content-type"] == "application/pdf"
+    assert pdf.headers["content-disposition"].endswith("ic-diligence-memo.pdf\"")
+    assert pdf.content.startswith(b"%PDF-")
+    assert len(pdf.content) > 10_000
     assert client.get(payload["evidence_url"]).status_code == 200
 
 
@@ -132,12 +209,16 @@ def test_demo_endpoint_returns_a_complete_renderable_screen():
     assert payload["percent"] == 100
     assert payload["result"]["risk_level"] == "REVIEW REQUIRED"
     assert payload["memo_url"].endswith("/memo")
+    assert payload["pdf_url"].endswith("/pdf")
     assert payload["evidence_url"].endswith("/evidence")
 
     memo = client.get(payload["memo_url"])
+    pdf = client.get(payload["pdf_url"])
     evidence = client.get(payload["evidence_url"])
     assert memo.status_code == 200
-    assert "Acquisition Red-Flag Screen" in memo.text
+    assert "Investment Committee Diligence Memo" in memo.text
+    assert pdf.status_code == 200
+    assert pdf.content.startswith(b"%PDF-")
     assert evidence.status_code == 200
     assert evidence.json()["target"] == "Acme Industrial Ltd"
 

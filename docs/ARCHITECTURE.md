@@ -15,7 +15,7 @@ flowchart TB
     Tavily["Tavily<br/>Research · Search · Extract"]
     Nebius["Nebius Token Factory<br/>Kimi K3"]
     Gate["Deterministic evidence gate"]
-    Artifacts["Local memo.md + evidence.json"]
+    Artifacts["Local memo.md + evidence.json<br/>memo.pdf on demand"]
     LS["LangSmith EU project"]
 
     Analyst --> UI --> API
@@ -53,7 +53,7 @@ flowchart TD
     V["Deterministic validators<br/>verbatim · tier · publisher · entity"]
     G["Assertion evidence gate"]
     Y["YAML severity policy"]
-    O["ScreenResult<br/>memo + JSON + usage"]
+    O["ScreenResult<br/>PDF/Markdown memo + JSON + usage"]
 
     I --> R --> N
     I --> S0 --> N
@@ -166,7 +166,7 @@ flowchart LR
     Finding --> Risk
     Coverage --> Result["ScreenResult JSON"]
     Risk --> Result
-    Result --> Memo["Executive Markdown memo"]
+    Result --> Memo["IC memo<br/>styled PDF + Markdown"]
 ```
 
 Every displayed source relationship survives in `evidence.json`, including
@@ -198,13 +198,35 @@ flowchart TB
 Tests force `LANGSMITH_TRACING=false`; only explicit live operations enter the
 `Deal_Lens` project.
 
-## 8. Persistence and concurrency
+## 8. Evaluation feedback loop
+
+```mermaid
+flowchart LR
+    Review["Live screen or analyst review"] --> Label["Human-labelled failure fixture"]
+    Label --> Harness["Production gate/ranker/governance eval"]
+    Baseline["Committed case-level baseline"] --> Delta["Behavior + coverage delta"]
+    Harness --> Delta
+    Delta -->|"regression"| Fix["Production-code fix"]
+    Fix --> Harness
+    Delta -->|"all gates hold"| Promote["Reviewed baseline promotion"]
+    Promote --> Baseline
+    Delta --> CI["CI gate + retained JSON artifact"]
+```
+
+The harness uses model or analyst judgment only to establish the expected
+label. Verification is deterministic and offline. A case deletion is treated
+as a regression, duplicate case names are rejected, and promotion cannot occur
+while a behavioral or safety-metric gate fails.
+
+## 9. Persistence and concurrency
 
 - `ThreadPoolExecutor(max_workers=2)` bounds local concurrent live screens.
 - Jobs persist in process for progress/resume; completed outputs persist on
   disk beneath ignored `reports/web/{job_id}` directories.
 - The archive discovers the latest output per legal entity and also serves two
-  committed public examples from `examples/screens`.
+  committed public examples from `examples/screens`. Both archived and newly
+  completed screens expose PDF and Markdown memo downloads; PDFs are generated
+  from the same typed `ScreenResult` used by the UI and JSON evidence package.
 - This is intentionally single-node MVP infrastructure. A production service
   would move job state to a durable queue/database without changing the typed
   pipeline or evidence gate.

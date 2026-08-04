@@ -78,6 +78,7 @@ The interface also includes:
 
 - a server-backed active-screen ledger, so every queued or running target stays
   visible and resumable across targets and browser tabs;
+- direct `?screen=<job-id>` resume links for reconnecting to a live run;
 - duplicate-run protection while the same target is already active;
 - retained Wise and Revolut example screens on a fresh clone;
 - category coverage and source-review counts;

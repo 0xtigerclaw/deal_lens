@@ -131,6 +131,18 @@ function activeStageLabel(stage) {
   return labels[stage] || "Running";
 }
 
+function screenIdFromUrl() {
+  const jobId = new URL(window.location.href).searchParams.get("screen") || "";
+  return /^[a-zA-Z0-9_-]{6,64}$/.test(jobId) ? jobId : null;
+}
+
+function setScreenUrl(jobId) {
+  const url = new URL(window.location.href);
+  if (jobId) url.searchParams.set("screen", jobId);
+  else url.searchParams.delete("screen");
+  window.history.replaceState({}, "", url);
+}
+
 function renderActiveScreens() {
   const jobs = state.activeScreens;
   const trigger = document.querySelector("#active-run-trigger");
@@ -201,6 +213,7 @@ async function openActiveScreen(jobId) {
   window.clearTimeout(state.pollTimer);
   state.activeJobId = jobId;
   localStorage.setItem("deallens.activeJob", jobId);
+  setScreenUrl(jobId);
   try {
     const job = await api(`/api/screens/${jobId}`);
     beginJob(job);
@@ -316,6 +329,7 @@ function newScreen() {
   state.activeJobId = null;
   state.activeJobStatus = null;
   localStorage.removeItem("deallens.activeJob");
+  setScreenUrl(null);
   resetStageRail();
   document.querySelector("#screen-form").reset();
   clearEntityResolution();
@@ -549,6 +563,7 @@ function beginJob(job) {
   state.activeJobId = job.id;
   state.activeJobStatus = job.status;
   localStorage.setItem("deallens.activeJob", job.id);
+  setScreenUrl(job.id);
   const existing = state.activeScreens.findIndex((item) => item.id === job.id);
   if (["queued", "running"].includes(job.status)) {
     if (existing >= 0) state.activeScreens[existing] = job;
@@ -929,9 +944,10 @@ function formatEventTime(value) {
 }
 
 async function resumeJob() {
-  const jobId = localStorage.getItem("deallens.activeJob");
+  const jobId = screenIdFromUrl() || localStorage.getItem("deallens.activeJob");
   if (!jobId) return;
   state.activeJobId = jobId;
+  setScreenUrl(jobId);
   try {
     const job = await api(`/api/screens/${jobId}`);
     state.activeJobStatus = job.status;
@@ -943,6 +959,7 @@ async function resumeJob() {
     }
   } catch (_) {
     localStorage.removeItem("deallens.activeJob");
+    setScreenUrl(null);
     state.activeJobId = null;
     state.activeJobStatus = null;
   }

@@ -1,18 +1,36 @@
 # DealLens
 
-**Evidence-governed acquisition screening for UK private-company diligence.**
+**The acquisition-intelligence layer for investment committee preparation.**
 
-DealLens turns a company name and website into a cited first-pass red-flag
-memo across leadership, regulatory/litigation, cybersecurity, and financial
-distress. Tavily provides live discovery, search, and extraction; Kimi K3 runs
-through Nebius Token Factory; deterministic Python decides whether evidence is
-verified, reported, unresolved, contradicted, conflicting, or rejected.
+When a target moves toward investment committee, analysts have to assemble the
+specific facts that could change the decision: leadership departures,
+regulatory scrutiny, litigation, breaches, and signs of financial distress.
+Those facts are scattered across the live web, easy to confuse with another
+legal entity, and difficult to cite consistently under time pressure.
+
+DealLens fits into that existing memo workflow. It turns a company name and
+website into a current, cited public-risk assessment that an analyst can
+review, edit, and export for IC. Tavily provides live discovery, search, and
+extraction; Kimi K3 runs through Nebius Token Factory; deterministic Python
+applies the source, entity, and evidence rules.
 
 > DealLens is a triage tool, not a legal or financial opinion. “No qualifying
 > findings” means four governed checks completed without qualifying public
 > evidence; it never means the company is cleared.
 
 ![DealLens evidence dashboard](docs/assets/deallens-result.png)
+
+## Why, when, and how
+
+| | Role in the analyst workflow |
+|---|---|
+| **Why** | IC memo preparation is evidence assembly, not just writing. Decision-relevant details must be current, entity-matched, and traceable to a source. |
+| **When** | Use DealLens after a target clears initial interest and before the IC discussion, when the team needs a defensible first-pass view of public risk. |
+| **How** | Confirm the legal entity, research four acquisition-risk areas, verify each claim against governed sources, review the evidence, and export the memo as PDF or Markdown. |
+
+DealLens does not make the investment decision or certify legal compliance. It
+gives the analyst a governed, auditable evidence package that supports IC,
+compliance, and specialist diligence review.
 
 ## Why this is different
 

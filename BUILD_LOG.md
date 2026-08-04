@@ -11,10 +11,12 @@ The initial exploration considered a general change-intelligence monitor. The
 scope was deliberately narrowed to one transaction workflow with an immediate
 output: enter one target and receive a source-backed public red-flag screen.
 
-The selected user is an acquisition/search-fund analyst screening UK private
-companies before commissioning full diligence. The four categories are fixed:
-leadership/ownership, regulatory/litigation, cybersecurity, and financial
-distress.
+The selected user is an acquisition/search-fund analyst preparing a target for
+investment committee. The product enters the workflow after initial interest
+and before full diligence: it assembles the current public evidence the analyst
+needs for the memo, while preserving the source trail for risk and compliance
+review. The four categories are fixed: leadership/ownership,
+regulatory/litigation, cybersecurity, and financial distress.
 
 The core product decision was made early: a generated research report was not
 enough. Discovery and verification had to be separate, and “no result” could

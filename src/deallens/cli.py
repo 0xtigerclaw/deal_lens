@@ -14,7 +14,10 @@ from .config import PACKAGE_ROOT, load_jurisdiction, load_policy
 
 load_dotenv()
 
-app = typer.Typer(add_completion=False, help="10-minute M&A red-flag screen on Tavily.")
+app = typer.Typer(
+    add_completion=False,
+    help="Acquisition intelligence for evidence-backed IC memo preparation.",
+)
 console = Console()
 
 

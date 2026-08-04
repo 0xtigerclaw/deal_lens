@@ -2,9 +2,17 @@
 
 ## Product thesis
 
-DealLens adapts live web research to a narrow acquisition workflow: the first
-public-evidence screen of a UK private company before an analyst invests time
-in full commercial, legal, financial, and cybersecurity diligence.
+DealLens is designed for the moment a target moves from initial interest to
+investment committee preparation. The analyst already knows how to write a
+memo; the hard part is assembling the current, deal-specific facts that could
+change the decision and preserving a defensible source trail for review.
+
+DealLens integrates that evidence step into the existing workflow. It performs
+the first public-evidence screen of a UK private company, organizes findings
+across four acquisition-risk areas, and exports a reviewable memo before the
+team commissions full commercial, legal, financial, and cybersecurity
+diligence. It supports compliance review through governed, auditable evidence;
+it does not certify compliance or replace specialist judgment.
 
 The expensive failure in this workflow is not missing polished prose. It is
 either escalating a weak allegation as fact or presenting retrieval failure as

@@ -113,12 +113,26 @@ def eval_cmd(
     json_out: Annotated[
         Path | None, typer.Option(help="Optional path for a machine-readable report")
     ] = None,
+    baseline: Annotated[
+        Path,
+        typer.Option(
+            help="Committed report used to detect regressions and removed coverage"
+        ),
+    ] = PACKAGE_ROOT / "docs" / "evaluation-results.json",
+    promote: Annotated[
+        bool,
+        typer.Option(
+            help="Replace the baseline after all cases and safety deltas pass"
+        ),
+    ] = False,
 ) -> None:
-    """Run all offline safety evals and print reproducible metrics."""
+    """Run offline safety evals, compare the baseline, and report regressions."""
     import json
 
     from .evalrun import (
-        evaluation_summary,
+        compare_reports,
+        evaluation_report,
+        print_comparison,
         print_report,
         run_entity_eval,
         run_gate_eval,
@@ -133,13 +147,32 @@ def eval_cmd(
     governance = run_governance_eval(
         PACKAGE_ROOT / "fixtures" / "governance_eval_cases.json", pack
     )
-    ok = print_report(gate, entity, governance)
+    current_report = evaluation_report(gate, entity, governance)
+    baseline_report = (
+        json.loads(baseline.read_text()) if baseline.exists() else None
+    )
+    comparison = compare_reports(current_report, baseline_report)
+    cases_ok = print_report(gate, entity, governance)
+    baseline_ok = print_comparison(comparison)
+    ok = cases_ok and baseline_ok
+
+    machine_report = {
+        **current_report,
+        "baseline_comparison": comparison,
+    }
     if json_out is not None:
         json_out.parent.mkdir(parents=True, exist_ok=True)
         json_out.write_text(
-            json.dumps(evaluation_summary(gate, entity, governance), indent=2) + "\n"
+            json.dumps(machine_report, indent=2) + "\n"
         )
         console.print(f"[dim]Machine-readable report: {json_out}[/dim]")
+    if promote:
+        if ok:
+            baseline.parent.mkdir(parents=True, exist_ok=True)
+            baseline.write_text(json.dumps(current_report, indent=2) + "\n")
+            console.print(f"[green]Baseline promoted:[/green] {baseline}")
+        else:
+            console.print("[red]Baseline not promoted: resolve regressions first.[/red]")
     raise typer.Exit(0 if ok else 1)
 
 

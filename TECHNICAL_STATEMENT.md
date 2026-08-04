@@ -133,7 +133,7 @@ product:
   index-page rejection, and registry entity mismatch.
 
 Measured result: 36/36 cases pass, with 0/11 false verifies and 4/4 correct
-entity abstentions. The 65-test pytest suite covers the surrounding typed
+entity abstentions. The 73-test pytest suite covers the surrounding typed
 contracts, usage, orchestration, UI API, memo, and risk roll-up.
 
 These evals do not measure web-wide recall or memo usefulness. A production
@@ -161,7 +161,7 @@ review acceptance, duplicate/syndicated evidence, and time saved.
 | Tavily used deeply | Research for recall, Search for baseline/verification/entity resolution, Extract for evidence capture |
 | Retrieval quality | Four-category coverage, trusted-domain filters, exact registry entity checks, focused extraction |
 | Source handling and citations | Publisher normalization, verbatim quote validator, atomic assertion relationships, clickable URLs |
-| Evaluation loop | `deallens eval`, 36 labelled cases, CI gate, documented metrics |
+| Evaluation loop | `deallens eval`, 36 labelled cases, case-level baseline deltas, reviewed promotion, CI artifact |
 | Context engineering | Kimi receives bounded snippets/query-focused chunks rather than an uncontrolled web corpus |
 | Observability | LangSmith root/child trace contract plus per-run Tavily/Nebius/latency ledger |
 | Customer adaptation | YAML jurisdiction tiers and two acquisition severity profiles |

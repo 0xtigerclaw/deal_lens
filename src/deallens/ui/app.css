@@ -577,6 +577,18 @@ a {
   border-right: 0;
 }
 
+.scope-note {
+  display: inline-block;
+  margin: 18px 0 0;
+  padding: 7px 9px;
+  color: #56564f;
+  font-family: var(--mono);
+  font-size: 9px;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(23, 24, 19, 0.22);
+}
+
 .intake-panel {
   position: relative;
   width: 100%;

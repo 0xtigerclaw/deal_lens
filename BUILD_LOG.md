@@ -205,22 +205,41 @@ Development was distributed across three local Codex task streams:
 3. **GCP deployment:** container packaging, Cloud Run configuration, secret
    wiring, deployment verification, and the public live application.
 
-The focused [bring-your-own Tavily key Codex
-session](https://traces.com/s/jn78m1dvf2pfgxbkwfxfvvr2058bt2h9) is shared as
-an unlisted Traces link. It is a real 117-event implementation record covering
-the UI, request-scoped secret handling, tests, review, and publication. Before
-upload, the source task was scanned for provider, OAuth, GitHub, bearer-token,
-private-key, `.env`, and email patterns; it contains no real credential or
-email. The deliberate fake key used by its tests and local workspace paths are
-visible.
+The [complete DealLens Codex build
+trace](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc) is shared as an
+unlisted Traces link. Its title and opening guide identify both build models:
+`gpt-5.6-sol` and `fable`. Its eight chapters cover:
 
-The much broader core-product task remains local because its history includes
-credential-shaped output from environment debugging. Publishing that raw task
-would rely on third-party redaction for safety. This sanitized log, the audited
-Traces session, repository commit history,
+1. assignment review, starter analysis, and product choice;
+2. Nebius/Kimi K3 migration, Tavily Research polling, and the first live run;
+3. assertion-level evidence governance and fail-closed redesign;
+4. legal-entity confirmation and the analyst UI;
+5. architecture, LangSmith, and deterministic evaluation work;
+6. the IC-memo narrative, exports, UK-first validation, and documentation;
+7. GCP hosting, live screening, and the reviewer walkthrough; and
+8. assignment mapping, public-demo security, and submission hardening.
+
+It closes with a consolidated observability and evaluation appendix: a fresh
+read-only verification of the successful 204-span LangSmith root and separate
+entity-resolution root, followed by the exact pytest, labelled-suite,
+false-verify, abstention, baseline-comparison, and CI-gate results.
+
+The trace contains 1,540 events: 77 authentic user prompts, 403 assistant build
+updates, 530 substantive tool calls, and their 530 results. It was generated
+from 4,839 source events. Hidden reasoning, repeated polling and browser-control
+mechanics, environment-file contents, credentials, email addresses, personal
+paths, and unrelated machine output were omitted; short chapter markers are the
+only editorial additions. The source file and the rendered remote copy were
+both scanned for Tavily, LangSmith, OpenAI, Google, GitHub, bearer-token, OAuth,
+email, and personal-path patterns, with zero matches after redaction.
+
+The raw core-product task remains local because its environment-debugging
+history contains credential-shaped output. The audited Traces export preserves
+the real decisions, patches, failures, tests, evaluations, pull requests, and
+deployment evidence without depending on third-party redaction. Together with
+this build log, repository commit history,
 [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr), and
-the product walkthrough form the shareable build record without exposing API
-keys or environment values.
+the product walkthrough, it forms the shareable build record.
 
 ## 10. Known next work
 

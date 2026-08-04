@@ -4,6 +4,9 @@
 
 **Live website:** [Open DealLens](https://deallens-rflyxruzvq-ez.a.run.app/)
 
+**Hosting:** Google Cloud Platform (GCP), deployed as a containerized service
+on Cloud Run.
+
 When a target moves toward investment committee, analysts have to assemble the
 specific facts that could change the decision: leadership departures,
 regulatory scrutiny, litigation, breaches, and signs of financial distress.

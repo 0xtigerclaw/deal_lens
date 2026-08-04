@@ -179,7 +179,6 @@ a {
 .rail-kicker,
 .eyebrow,
 .model-badge,
-.time-note,
 .footnote-number {
   font-family: var(--mono);
   font-size: 10px;
@@ -426,6 +425,52 @@ a {
 
 .quiet-button:hover {
   color: var(--signal-dark);
+}
+
+.api-key-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--line, #d9d6ce);
+  background: transparent;
+  color: var(--ink, #1f211d);
+  font: 500 11px/1 "IBM Plex Mono", monospace;
+  letter-spacing: .03em;
+  cursor: pointer;
+}
+
+.api-key-trigger:hover { border-color: currentColor; }
+.key-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #b2b0a9; }
+.api-key-trigger.has-personal-key .key-status-dot { background: #16865a; box-shadow: 0 0 0 3px rgba(22, 134, 90, .12); }
+
+.api-key-dialog {
+  width: min(520px, calc(100vw - 32px));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+.api-key-dialog::backdrop { background: rgba(22, 24, 20, .62); backdrop-filter: blur(5px); }
+.api-key-card { padding: 30px; border: 1px solid #d7d3c8; background: #f6f4ed; box-shadow: 0 28px 80px rgba(0,0,0,.24); }
+.api-key-card-head { display: flex; justify-content: space-between; gap: 24px; align-items: flex-start; }
+.api-key-card h2 { margin: 5px 0 0; font: 500 30px/1.05 "Newsreader", serif; }
+.dialog-close { border: 0; background: transparent; font: 300 28px/1 sans-serif; cursor: pointer; color: #6d6d64; }
+.api-key-intro { margin: 20px 0 24px; max-width: 48ch; color: #62635b; font-size: 14px; line-height: 1.55; }
+.secret-input-row { display: grid; grid-template-columns: 1fr auto; }
+.secret-input-row input { min-width: 0; border-right: 0; font-family: "IBM Plex Mono", monospace; }
+.secret-input-row button { padding: 0 16px; border: 1px solid #c9c6bc; background: #ebe8df; font: 500 11px/1 "IBM Plex Mono", monospace; cursor: pointer; }
+.api-key-actions { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 26px; }
+.api-key-save { width: auto; margin: 0; padding-inline: 22px; }
+.remove-key-button { border: 0; border-bottom: 1px solid #99978f; padding: 4px 0; background: transparent; color: #62635b; cursor: pointer; }
+.api-key-footnote { margin: 22px 0 0; padding-top: 18px; border-top: 1px solid #ddd9ce; color: #77766e; font-size: 12px; }
+.api-key-footnote a { color: inherit; }
+
+@media (max-width: 700px) {
+  .api-key-trigger { padding-inline: 9px; }
+  #api-key-trigger-label { display: none; }
+  .api-key-card { padding: 24px 20px; }
 }
 
 #workspace {
@@ -777,12 +822,6 @@ a {
   font-size: 33px;
   font-weight: 500;
   letter-spacing: -0.035em;
-}
-
-.time-note {
-  padding: 5px 7px;
-  color: var(--signal-dark);
-  border: 1px solid rgba(142, 47, 32, 0.28);
 }
 
 .preset-docket {

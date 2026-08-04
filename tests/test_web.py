@@ -16,7 +16,7 @@ def test_interface_shell_is_served():
 
     assert response.status_code == 200
     assert "DealLens — Acquisition Intelligence" in response.text
-    assert "Run governed screen" in response.text
+    assert "Run acquisition screen" in response.text
     assert "Active screenings" in response.text
     assert "Fixture memo" not in response.text
 
@@ -30,6 +30,17 @@ def test_health_reports_provider_presence_without_exposing_secrets():
     assert "Kimi-K3" in payload["model"]
     assert payload["observability"]["root_span"] == "deallens.screen"
     assert payload["observability"]["project"] == "Deal_Lens"
+
+
+def test_personal_tavily_key_is_accepted_without_being_exposed(monkeypatch):
+    monkeypatch.delenv("TAVILY_API_KEY", raising=False)
+    response = client.get(
+        "/api/health", headers={"X-Tavily-API-Key": "tvly-personal-secret"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["providers"]["tavily"] is True
+    assert "personal-secret" not in response.text
 
 
 def test_company_presets_return_runnable_legal_entities():

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 import threading
@@ -14,7 +15,7 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import urlparse
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Header, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
@@ -64,7 +65,7 @@ LEGACY_ARCHIVE_JSONS = (
 
 app = FastAPI(
     title="DealLens",
-    description="Evidence-governed acquisition red-flag screening",
+    description="Evidence-backed acquisition intelligence",
     version="0.2.0",
     docs_url="/api/docs",
     redoc_url=None,
@@ -107,14 +108,28 @@ class ScreenRequest(BaseModel):
 
 
 class JobRecord:
-    def __init__(self, job_id: str, request: ScreenRequest, *, demo: bool = False):
+    def __init__(
+        self,
+        job_id: str,
+        request: ScreenRequest,
+        *,
+        demo: bool = False,
+        tavily_api_key: str | None = None,
+    ):
         now = datetime.now(timezone.utc)
         self.id = job_id
         self.request = request
         self.demo = demo
+        # Request-scoped secret. It is deliberately omitted from public().
+        self.tavily_api_key = tavily_api_key
+        self.tavily_key_fingerprint = (
+            hashlib.sha256(tavily_api_key.encode()).hexdigest()
+            if tavily_api_key
+            else None
+        )
         self.status: Literal["queued", "running", "completed", "failed"] = "queued"
         self.stage = "queued"
-        self.message = "Waiting for a worker"
+        self.message = "Queued for screening"
         self.percent = 0
         self.created_at = now
         self.updated_at = now
@@ -210,9 +225,16 @@ def _active_jobs() -> list[JobRecord]:
     return sorted(jobs, key=lambda job: job.created_at)
 
 
-def _new_live_job(request: ScreenRequest) -> tuple[JobRecord, bool]:
+def _new_live_job(
+    request: ScreenRequest, tavily_api_key: str | None = None
+) -> tuple[JobRecord, bool]:
     """Atomically create a live job or return its active identical run."""
     request_data = request.model_dump()
+    key_fingerprint = (
+        hashlib.sha256(tavily_api_key.encode()).hexdigest()
+        if tavily_api_key
+        else None
+    )
     with _jobs_lock:
         existing = next(
             (
@@ -221,12 +243,15 @@ def _new_live_job(request: ScreenRequest) -> tuple[JobRecord, bool]:
                 if job.status in ("queued", "running")
                 and job.request.model_dump() == request_data
                 and not job.demo
+                and job.tavily_key_fingerprint == key_fingerprint
             ),
             None,
         )
         if existing is not None:
             return existing, False
-        job = JobRecord(uuid.uuid4().hex[:12], request)
+        job = JobRecord(
+            uuid.uuid4().hex[:12], request, tavily_api_key=tavily_api_key
+        )
         _jobs[job.id] = job
     return job, True
 
@@ -337,7 +362,7 @@ def _execute_live(job_id: str) -> None:
     job = _get_job(job_id)
     job.status = "running"
     job.started_monotonic = time.monotonic()
-    job.update("starting", "Initializing governed screen", 2)
+    job.update("starting", "Starting acquisition screen", 2)
 
     def progress(stage: str, message: str, percent: int) -> None:
         with _jobs_lock:
@@ -350,13 +375,17 @@ def _execute_live(job_id: str) -> None:
             else None
         )
         ledger = UsageLedger()
+        tavily_api_key = job.tavily_api_key
+        # Keep the request secret only long enough for the worker to claim it.
+        job.tavily_api_key = None
+        tavily = Tavily(api_key=tavily_api_key, ledger=ledger)
         result = run_screen(
             company=job.request.company,
             domain=job.request.domain,
             company_id=job.request.company_id,
             jurisdiction_pack=load_jurisdiction(job.request.jurisdiction),
             policy=load_policy(policy_path),
-            tavily=Tavily(ledger=ledger),
+            tavily=tavily,
             llm=LLM(ledger),
             progress=progress,
         )
@@ -367,7 +396,7 @@ def _execute_live(job_id: str) -> None:
             job.evidence_path = evidence_path
             job.status = "completed"
             job.finished_monotonic = time.monotonic()
-            job.update("complete", "Memo and evidence package ready", 100)
+            job.update("complete", "Acquisition memo ready", 100)
     except Exception as exc:
         with _jobs_lock:
             job.status = "failed"
@@ -375,17 +404,17 @@ def _execute_live(job_id: str) -> None:
             job.error = f"{type(exc).__name__}: {str(exc)[:500]}"
             job.update(
                 "failed",
-                "Screen failed safely; no clean memo was produced",
+                "Screen incomplete; no memo produced",
                 job.percent,
             )
 
 
 @app.get("/api/health")
-def health() -> dict:
+def health(x_tavily_api_key: str | None = Header(default=None)) -> dict:
     return {
         "status": "ok",
         "providers": {
-            "tavily": bool(os.getenv("TAVILY_API_KEY")),
+            "tavily": bool(x_tavily_api_key or os.getenv("TAVILY_API_KEY")),
             "nebius": bool(os.getenv("NEBIUS_API_KEY")),
             "langsmith": bool(os.getenv("LANGSMITH_API_KEY")),
         },
@@ -417,9 +446,13 @@ def list_screens() -> list[dict]:
 
 
 @app.post("/api/entities/resolve")
-def resolve_company_entity(request: ScreenRequest) -> dict:
+def resolve_company_entity(
+    request: ScreenRequest,
+    x_tavily_api_key: str | None = Header(default=None),
+) -> dict:
     """Return registry candidates for explicit user confirmation."""
-    if not os.getenv("TAVILY_API_KEY"):
+    tavily_api_key = x_tavily_api_key or os.getenv("TAVILY_API_KEY")
+    if not tavily_api_key:
         raise HTTPException(
             status_code=503,
             detail="Missing provider configuration: TAVILY_API_KEY",
@@ -432,8 +465,13 @@ def resolve_company_entity(request: ScreenRequest) -> dict:
     from .tavily_client import Tavily
 
     try:
+        tavily = (
+            Tavily(api_key=x_tavily_api_key, ledger=UsageLedger())
+            if x_tavily_api_key
+            else Tavily(ledger=UsageLedger())
+        )
         resolution = resolve_entity(
-            Tavily(ledger=UsageLedger()),
+            tavily,
             pack,
             request.company,
             request.domain,
@@ -477,11 +515,15 @@ def download_archived_evidence(archive_id: str) -> FileResponse:
 
 
 @app.post("/api/screens", status_code=202)
-def create_screen(request: ScreenRequest) -> dict:
+def create_screen(
+    request: ScreenRequest,
+    x_tavily_api_key: str | None = Header(default=None),
+) -> dict:
+    tavily_api_key = x_tavily_api_key or os.getenv("TAVILY_API_KEY")
     missing = [
         name
         for name in ("TAVILY_API_KEY", "NEBIUS_API_KEY")
-        if not os.getenv(name)
+        if not (tavily_api_key if name == "TAVILY_API_KEY" else os.getenv(name))
     ]
     if missing:
         raise HTTPException(
@@ -493,7 +535,7 @@ def create_screen(request: ScreenRequest) -> dict:
         load_jurisdiction(request.jurisdiction)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    job, created = _new_live_job(request)
+    job, created = _new_live_job(request, x_tavily_api_key)
     if created:
         _executor.submit(_execute_live, job.id)
     return _public_job(job)

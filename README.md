@@ -34,7 +34,7 @@ applies the source, entity, and evidence rules.
 [Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
 
 **Build record — start here:** [review the shipped system in 31
-events](https://traces.com/s/jn71d8mqr5yc5fpj7qsmne15q18bvqc3). This
+events](https://traces.com/s/jn7fwtf041r9vj75mx6v4n83fh8bv2vg). This
 reviewer-first record opens with the live product, final commit, 75/75 tests,
 36/36 safety evals, 204-span LangSmith run, and deployment security. It then
 groups labelled excerpts from `fable` planning and `gpt-5.6-sol`
@@ -43,7 +43,7 @@ Watchtower appear only as explicitly rejected context; neither is the submitted
 product.
 
 **Full audit trail — optional:** [inspect the chronological 1,540-event
-record](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc) for exact
+record](https://traces.com/s/jn7c8v6q9rah96gah5gzq7hxm98btx28) for exact
 intermediate tool work, failures, tests, and publication history. Both links
 are unlisted, credential-scrubbed, and complement the sanitized
 [build log](BUILD_LOG.md).

@@ -203,7 +203,7 @@ Development used two models with different responsibilities:
   deployment.
 
 The primary [reviewer build
-record](https://traces.com/s/jn71d8mqr5yc5fpj7qsmne15q18bvqc3) is an
+record](https://traces.com/s/jn7fwtf041r9vj75mx6v4n83fh8bv2vg) is an
 unlisted 31-event index. It is intentionally grouped by reviewer question
 instead of chronology:
 
@@ -223,7 +223,7 @@ section labelled as rejected context. Selected source excerpts are labelled by
 model and original event number; editorial summaries are explicit.
 
 The [full chronological audit
-trail](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc) remains
+trail](https://traces.com/s/jn7c8v6q9rah96gah5gzq7hxm98btx28) remains
 available for exact intermediate tool work. It contains 1,540 events: 77 user
 prompts, 403 assistant build updates, 530 substantive tool calls, and their 530
 results. It closes with the live LangSmith verification and deterministic eval

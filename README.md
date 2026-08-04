@@ -34,14 +34,20 @@ Factory; deterministic Python applies the source, entity, and evidence rules.
 [Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
 
 **Build record — start here:** [review the shipped system in 31
-events](https://traces.com/s/jn7e2xwnd56pq2b3bdhgvgw2g18btyp5). This
+events](https://traces.com/s/jn7e7qtmxcms61t0x82tdm73b98bv5mh). This
 reviewer-first record opens with the live product, final commit, 75/75 tests,
 36/36 safety evals, 204-span LangSmith run, and deployment security. It then
 groups labelled excerpts from `fable` planning and `gpt-5.6-sol`
 implementation by decision—not by raw chronology. The generic starter and
 Watchtower appear only as explicitly rejected context; neither is the submitted
-product. The unlisted, credential-scrubbed record complements the sanitized
-[build log](BUILD_LOG.md).
+product.
+
+**Detailed build record:** [follow the 1,535-event standalone
+chronology](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) from
+assignment and starter review through product selection, provider integration,
+evidence hardening, UI, evals, LangSmith, GCP deployment, and submission. Both
+records are unlisted, credential-scrubbed, identify Fable and GPT-5.6 Sol, and
+complement the sanitized [build log](BUILD_LOG.md).
 
 ## Why, when, and how
 

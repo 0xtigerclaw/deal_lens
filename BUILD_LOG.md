@@ -203,7 +203,7 @@ Development used two models with different responsibilities:
   deployment.
 
 The primary [reviewer build
-record](https://traces.com/s/jn7e2xwnd56pq2b3bdhgvgw2g18btyp5) is an
+record](https://traces.com/s/jn7e7qtmxcms61t0x82tdm73b98bv5mh) is an
 unlisted 31-event index. It is intentionally grouped by reviewer question
 instead of chronology:
 
@@ -225,8 +225,19 @@ labelled by model and original event number; editorial summaries are explicit.
 
 The public record was scanned locally and after upload for provider and GitHub
 tokens, bearer credentials, email addresses, personal paths, and unrelated
-workflow framing, with zero matches after redaction. Together with this log,
-repository history,
+workflow framing, with zero matches after redaction.
+
+The [detailed standalone build
+record](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) contains
+1,535 rendered events: 77 user prompts, 402 assistant build updates, 528
+substantive tool calls, and their 528 results. It begins with the assignment,
+starter review, and explicit DealLens product origin; eight chapters then cover
+provider integration, evidence correctness, analyst workflow, evaluation,
+LangSmith observability, GCP deployment, and final hardening. Its complete
+source and all eight remote page renderings passed the same narrative,
+credential, email, and personal-path audit.
+
+Together with this log, repository history,
 [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr), and
 the walkthrough, they satisfy the assignment's build-record deliverable without
 letting rejected concepts define the submitted product.

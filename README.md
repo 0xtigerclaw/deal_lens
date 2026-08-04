@@ -40,7 +40,7 @@ flowchart LR
     V --> X["Tavily Extract"]
     X --> K["Kimi K3 on Nebius<br/>quote/assertion mapping"]
     K --> G["Deterministic evidence gate"]
-    G --> O["Memo.md + evidence.json"]
+    G --> O["IC memo<br/>PDF + Markdown<br/>evidence.json"]
 ```
 
 The full component, sequence, trust-boundary, and trace diagrams are in
@@ -84,7 +84,8 @@ The interface also includes:
 - category coverage and source-review counts;
 - atomic assertion support/contradiction relationships;
 - verbatim evidence with clickable source links; and
-- polished PDF and Markdown IC memo exports, plus the complete JSON evidence package.
+- direct PDF, Markdown, and JSON exports from both completed memos and the
+  archive ledger.
 
 ### Live provider setup
 
@@ -154,9 +155,19 @@ and preserves a machine-readable CI artifact. Current measured result:
 | Source-governance contract | 12/12 | all tier/entity/document boundaries correct |
 | **Total** | **36/36** | **all gates pass** |
 
+The improvement loop is explicit: an observed failure becomes a human-labelled
+offline fixture, production code is fixed against it, the result is compared
+case-by-case with the committed baseline, and `--promote` updates that baseline
+only after every safety gate holds.
+
+```bash
+uv run deallens eval --json-out reports/evals/local-run.json
+uv run deallens eval --promote  # after label and result review
+```
+
 The pytest suite is **73/73 passing**. Labels, the promote/review loop,
 limitations, and the machine-readable command are documented in
-[docs/EVALUATION.md](docs/EVALUATION.md); the latest committed summary is
+[docs/EVALUATION.md](docs/EVALUATION.md); the committed case-level baseline is
 [docs/evaluation-results.json](docs/evaluation-results.json).
 
 ## LangSmith observability
@@ -207,7 +218,7 @@ src/deallens/
   pipeline.py       orchestration, progress, trace metadata
   web.py            FastAPI job/archive/entity API
   ui/               dependency-free analyst interface
-  evalrun.py        three-suite offline evaluation harness
+  evalrun.py        baseline-aware, three-suite evaluation harness
   memo.py           PDF/Markdown/JSON/console renderers
 ```
 
@@ -217,7 +228,8 @@ Submission documents:
   assignment mapping.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — detailed GitHub-rendered
   diagrams and component contracts.
-- [docs/EVALUATION.md](docs/EVALUATION.md) — labels, metrics, and known gaps.
+- [docs/EVALUATION.md](docs/EVALUATION.md) — labels, baseline feedback loop,
+  metrics, and known gaps.
 - [docs/LANGSMITH.md](docs/LANGSMITH.md) — trace hierarchy and validation.
 - [BUILD_LOG.md](BUILD_LOG.md) — product and implementation decisions.
 

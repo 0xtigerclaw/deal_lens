@@ -136,6 +136,13 @@ Measured result: 36/36 cases pass, with 0/11 false verifies and 4/4 correct
 entity abstentions. The 73-test pytest suite covers the surrounding typed
 contracts, usage, orchestration, UI API, memo, and risk roll-up.
 
+The harness emits a stable result for every labelled case and compares it to
+the committed reviewed baseline. It fails CI when behavior regresses, a case
+is removed, false verification rises, or entity-abstention accuracy falls.
+After a new human-labelled case and its fix both pass, `deallens eval
+--promote` advances the baseline explicitly; CI retains the machine-readable
+run artifact even when evaluation fails.
+
 These evals do not measure web-wide recall or memo usefulness. A production
 pilot should add analyst-labelled live targets and track missed-event recall,
 review acceptance, duplicate/syndicated evidence, and time saved.

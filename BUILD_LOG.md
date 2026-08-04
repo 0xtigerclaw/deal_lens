@@ -105,6 +105,10 @@ abstention degradation, and removed fixture coverage. An explicit `--promote`
 step updates the baseline only after every gate passes; CI retains the report
 as a downloadable artifact even when the gate fails.
 
+GitHub-facing documentation now exposes the same loop in the README,
+architecture, technical statement, PR validation summary, and CI workflow so
+the evaluation claim is directly reproducible from a fresh clone.
+
 ## 7. LangSmith completion
 
 LangSmith EU configuration was verified from environment/SDK access. The root

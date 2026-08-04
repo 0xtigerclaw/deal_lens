@@ -54,6 +54,20 @@ content is not silently promoted into the fixture set.
 coverage-retention gate is failing. Duplicate case names are also rejected so
 case history cannot be overwritten accidentally.
 
+### Machine-readable contract
+
+The versioned JSON report contains:
+
+- `summary`: suite totals plus false-verify and abstention measures;
+- `cases`: expected value, actual value, and pass/fail for every stable case
+  name; and
+- `baseline_comparison`: new, fixed, regressed, and removed cases plus metric
+  deltas.
+
+`docs/evaluation-results.json` is the reviewed baseline and intentionally omits
+the transient comparison block. Local and CI reports include it so a failing
+run remains diagnosable without rerunning the job.
+
 ## Current result
 
 Measured on 2026-08-04 from the committed fixtures:

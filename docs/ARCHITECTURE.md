@@ -198,7 +198,27 @@ flowchart TB
 Tests force `LANGSMITH_TRACING=false`; only explicit live operations enter the
 `Deal_Lens` project.
 
-## 8. Persistence and concurrency
+## 8. Evaluation feedback loop
+
+```mermaid
+flowchart LR
+    Review["Live screen or analyst review"] --> Label["Human-labelled failure fixture"]
+    Label --> Harness["Production gate/ranker/governance eval"]
+    Baseline["Committed case-level baseline"] --> Delta["Behavior + coverage delta"]
+    Harness --> Delta
+    Delta -->|"regression"| Fix["Production-code fix"]
+    Fix --> Harness
+    Delta -->|"all gates hold"| Promote["Reviewed baseline promotion"]
+    Promote --> Baseline
+    Delta --> CI["CI gate + retained JSON artifact"]
+```
+
+The harness uses model or analyst judgment only to establish the expected
+label. Verification is deterministic and offline. A case deletion is treated
+as a regression, duplicate case names are rejected, and promotion cannot occur
+while a behavioral or safety-metric gate fails.
+
+## 9. Persistence and concurrency
 
 - `ThreadPoolExecutor(max_workers=2)` bounds local concurrent live screens.
 - Jobs persist in process for progress/resume; completed outputs persist on

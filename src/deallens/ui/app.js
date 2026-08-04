@@ -585,9 +585,11 @@ function renderArchive() {
   }
 
   state.archive.forEach((record, index) => {
-    const button = el("button", "archive-row");
+    const row = el("div", "archive-row");
+    const button = el("button", "archive-main");
     button.type = "button";
     button.dataset.archiveId = record.id;
+    button.setAttribute("aria-label", `Open ${record.target} IC memo`);
 
     const number = el("span", "archive-index", String(index + 1).padStart(2, "0"));
     const identity = el("span", "archive-identity");
@@ -605,8 +607,28 @@ function renderArchive() {
     const action = el("span", "archive-open", "Open IC memo");
     button.append(number, identity, assessment, date, action);
     button.addEventListener("click", () => loadArchivedScreen(record.id, button));
-    list.append(button);
+
+    const exports = el("div", "archive-exports");
+    exports.setAttribute("role", "group");
+    exports.setAttribute("aria-label", `Export ${record.target} memo`);
+    exports.append(
+      archiveDownloadLink(record.pdf_url, "PDF", `${record.target} PDF memo`),
+      archiveDownloadLink(record.memo_url, "MD", `${record.target} Markdown memo`),
+      archiveDownloadLink(record.evidence_url, "JSON", `${record.target} JSON evidence`),
+    );
+
+    row.append(button, exports);
+    list.append(row);
   });
+}
+
+function archiveDownloadLink(href, label, accessibleLabel) {
+  const link = el("a", "archive-export", label);
+  link.href = href;
+  link.setAttribute("download", "");
+  link.setAttribute("aria-label", `Download ${accessibleLabel}`);
+  link.title = `Download ${label}`;
+  return link;
 }
 
 async function loadArchivedScreen(archiveId, trigger) {

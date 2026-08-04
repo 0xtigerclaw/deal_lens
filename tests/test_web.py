@@ -180,6 +180,9 @@ def test_archive_reopens_retained_wise_and_revolut_screens(
     assert {record["target"] for record in archive} >= {"Wise Limited", "Revolut Ltd"}
 
     wise_summary = next(record for record in archive if record["target"] == "Wise Limited")
+    assert wise_summary["pdf_url"].endswith("/pdf")
+    assert wise_summary["memo_url"].endswith("/memo")
+    assert wise_summary["evidence_url"].endswith("/evidence")
     detail = client.get(f"/api/archive/{wise_summary['id']}")
     payload = detail.json()
 

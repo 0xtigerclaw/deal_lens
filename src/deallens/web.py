@@ -325,6 +325,9 @@ def _archive_summary(record: ArchiveRecord) -> dict:
         "risk_level": result.risk_level,
         "surfaced_findings": surfaced,
         "total_findings": len(result.findings),
+        "memo_url": f"/api/archive/{record.id}/memo",
+        "pdf_url": f"/api/archive/{record.id}/pdf",
+        "evidence_url": f"/api/archive/{record.id}/evidence",
     }
 
 

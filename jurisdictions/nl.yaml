@@ -1,0 +1,26 @@
+# Netherlands source pack — STUB shipped to show jurisdiction = configuration.
+# Untested: KVK document access is partly paywalled; verify extraction before
+# relying on it (see README "Adding a jurisdiction").
+
+primary:
+  - kvk.nl                    # Kamer van Koophandel — company register
+  - afm.nl                    # financial markets regulator
+  - acm.nl                    # competition & consumer authority
+  - rechtspraak.nl            # published court rulings
+  - officielebekendmakingen.nl # official government publications
+
+credible_secondary:
+  - fd.nl                     # Het Financieele Dagblad
+  - nrc.nl
+  - nos.nl
+  - volkskrant.nl
+
+exclude:
+  - crunchbase.com
+  - zoominfo.com
+  - signalhire.com
+  - glassdoor.com
+  - trustpilot.com
+  - pitchbook.com
+
+registry_query: 'site:kvk.nl "{company}"'

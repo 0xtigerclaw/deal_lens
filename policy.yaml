@@ -1,0 +1,48 @@
+# Severity policy — generic fund M&A defaults.
+# The gate decides verification status; this file only decides how loud a
+# finding is. `base` applies when a rule matches its category; `escalate_when`
+# keywords (matched case-insensitively against claim + evidence quotes) raise
+# severity one level, capped at high.
+
+rules:
+  leadership:
+    base: medium
+    escalate_when:
+      - ceo
+      - cfo
+      - founder
+      - chair
+      - multiple departures
+      - ownership change
+      - share transfer
+
+  regulatory:
+    base: medium
+    escalate_when:
+      - enforcement
+      - fine
+      - penalty
+      - investigation
+      - prosecution
+      - tribunal
+
+  cyber:
+    base: high            # incidents that reach public record are rarely minor
+    escalate_when:
+      - customer data
+      - personal data
+      - ransomware
+      - regulator notified
+      - ico
+
+  distress:
+    base: medium
+    escalate_when:
+      - insolvency
+      - administration
+      - winding up
+      - strike-off
+      - overdue accounts
+      - charge registered
+      - covenant
+      - redundancies

@@ -1,0 +1,17 @@
+{
+  "comment": "Source-governance contract eval for tiering, exclusions, document filtering, and registry entity boundaries.",
+  "cases": [
+    {"name": "primary_subdomain", "url": "https://news.fca.org.uk/action/1", "company_id": "09446231", "expected": ["primary", false, true, true]},
+    {"name": "lookalike_primary_domain", "url": "https://notfca.org.uk/action/1", "company_id": "09446231", "expected": ["other", false, true, true]},
+    {"name": "credible_secondary_www", "url": "https://www.reuters.com/world/1", "company_id": "09446231", "expected": ["credible_secondary", false, true, true]},
+    {"name": "excluded_domain", "url": "https://www.crunchbase.com/organization/x", "company_id": "09446231", "expected": ["other", true, true, true]},
+    {"name": "excluded_subdomain", "url": "https://profiles.zoominfo.com/c/x", "company_id": "09446231", "expected": ["other", true, true, true]},
+    {"name": "unknown_source", "url": "https://randomblog.example/post/1", "company_id": "09446231", "expected": ["other", false, true, true]},
+    {"name": "sitemap_is_not_evidence", "url": "https://www.fca.org.uk/sitemap_news.xml", "company_id": "09446231", "expected": ["primary", false, false, true]},
+    {"name": "author_index_is_not_evidence", "url": "https://www.reuters.com/authors/example", "company_id": "09446231", "expected": ["credible_secondary", false, false, true]},
+    {"name": "correct_registry_entity", "url": "https://find-and-update.company-information.service.gov.uk/company/09446231", "company_id": "09446231", "expected": ["primary", false, true, true]},
+    {"name": "wrong_registry_entity", "url": "https://find-and-update.company-information.service.gov.uk/company/00000000", "company_id": "09446231", "expected": ["primary", false, true, false]},
+    {"name": "registry_case_normalization", "url": "https://find-and-update.company-information.service.gov.uk/company/sc123456", "company_id": "SC-123456", "expected": ["primary", false, true, true]},
+    {"name": "non_registry_sources_ignore_company_path", "url": "https://www.fca.org.uk/company/00000000", "company_id": "09446231", "expected": ["primary", false, true, true]}
+  ]
+}

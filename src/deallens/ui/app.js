@@ -1,0 +1,873 @@
+const state = {
+  activeJobId: null,
+  activeJobStatus: null,
+  pollTimer: null,
+  health: null,
+  presets: [],
+  selectedPresetId: null,
+  archive: [],
+  entityResolutionKey: null,
+  skipResolutionKey: null,
+};
+
+const views = {
+  intake: document.querySelector("#intake-view"),
+  run: document.querySelector("#run-view"),
+  result: document.querySelector("#result-view"),
+  archive: document.querySelector("#archive-view"),
+  failure: document.querySelector("#failure-view"),
+};
+
+const categoryLabels = {
+  leadership: "Leadership & ownership",
+  regulatory: "Regulatory & litigation",
+  cyber: "Cybersecurity",
+  distress: "Financial distress",
+};
+
+const coverageLabels = {
+  verified_finding: "Verified finding",
+  reported: "Reported concern",
+  review_required: "Review required",
+  checked_no_finding: "Checked · no qualifying finding",
+  not_checked: "Not independently checked",
+};
+
+const statusLabels = {
+  verified: "Verified",
+  reported: "Reported",
+  partial: "Partial support",
+  conflicting: "Conflicting",
+  contradicted: "Contradicted",
+  unresolved: "Unresolved",
+  rejected: "Rejected",
+};
+
+const stageOrder = ["research", "coverage", "verification", "decision"];
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined && text !== null) node.textContent = String(text);
+  return node;
+}
+
+function clear(node) {
+  while (node.firstChild) node.removeChild(node.firstChild);
+}
+
+function showView(name) {
+  Object.entries(views).forEach(([key, node]) => {
+    node.hidden = key !== name;
+  });
+  document.querySelector("#workspace").focus({ preventScroll: true });
+}
+
+function setNav(action) {
+  document.querySelectorAll(".nav-item").forEach((item) => {
+    item.classList.toggle("is-active", item.dataset.action === action);
+  });
+}
+
+function setTitle(value) {
+  document.querySelector("#view-title").textContent = value;
+}
+
+function toast(message) {
+  const node = document.querySelector("#toast");
+  node.textContent = message;
+  node.classList.add("is-visible");
+  window.clearTimeout(node._timer);
+  node._timer = window.setTimeout(() => node.classList.remove("is-visible"), 3200);
+}
+
+async function api(path, options = {}) {
+  const response = await fetch(path, {
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    ...options,
+  });
+  const contentType = response.headers.get("content-type") || "";
+  const payload = contentType.includes("application/json")
+    ? await response.json()
+    : await response.text();
+  if (!response.ok) {
+    let message = payload?.detail || payload || `Request failed (${response.status})`;
+    if (Array.isArray(message)) {
+      message = message.map((item) => item.msg).join(" · ");
+    }
+    throw new Error(message);
+  }
+  return payload;
+}
+
+async function loadHealth() {
+  const light = document.querySelector("#provider-light");
+  const label = document.querySelector("#provider-label");
+  try {
+    state.health = await api("/api/health");
+    const providers = state.health.providers;
+    const ready = providers.tavily && providers.nebius;
+    light.classList.toggle("is-ready", ready);
+    light.classList.toggle("is-error", !ready);
+    label.textContent = ready ? "Providers ready" : "Provider setup incomplete";
+    document.querySelector("#model-badge").textContent = `${shortModel(state.health.model)} · Nebius`;
+  } catch (error) {
+    light.classList.add("is-error");
+    label.textContent = "API unavailable";
+  }
+}
+
+function shortModel(model) {
+  const name = (model || "Kimi-K3").split("/").pop().replaceAll("-", " ");
+  return name.replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+async function loadPresets() {
+  const list = document.querySelector("#company-presets");
+  const status = document.querySelector("#preset-status");
+  try {
+    state.presets = await api("/api/presets");
+    renderPresets();
+  } catch (_) {
+    clear(list);
+    list.append(el("span", "preset-loading", "Preset records unavailable"));
+    status.textContent = "Enter the legal entity manually below.";
+  }
+}
+
+function renderPresets() {
+  const list = document.querySelector("#company-presets");
+  clear(list);
+  state.presets.forEach((preset) => {
+    const button = el("button", "preset-option");
+    button.type = "button";
+    button.dataset.presetId = preset.id;
+    button.setAttribute("aria-pressed", "false");
+    button.append(
+      el("span", "preset-name", preset.company),
+      el("span", "preset-meta", `${preset.descriptor} · ${preset.jurisdiction}`),
+      el("span", "preset-id", preset.company_id),
+    );
+    button.addEventListener("click", () => applyPreset(preset));
+    list.append(button);
+  });
+}
+
+function applyPreset(preset) {
+  clearEntityResolution();
+  document.querySelector("#company").value = preset.company;
+  document.querySelector("#domain").value = preset.domain;
+  document.querySelector("#company-id").value = preset.company_id;
+  document.querySelector("#jurisdiction").value = preset.jurisdiction;
+  document.querySelector("#form-error").textContent = "";
+  state.selectedPresetId = preset.id;
+  updatePresetSelection();
+  document.querySelector("#preset-status").textContent =
+    `Loaded ${preset.company} · ${preset.domain}. Review the entity, then run.`;
+}
+
+function updatePresetSelection() {
+  document.querySelectorAll(".preset-option").forEach((button) => {
+    const selected = button.dataset.presetId === state.selectedPresetId;
+    button.classList.toggle("is-selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+}
+
+function clearPresetSelection() {
+  state.selectedPresetId = null;
+  updatePresetSelection();
+  document.querySelector("#preset-status").textContent =
+    "Optional — load a known record to see how it works.";
+}
+
+function syncPresetSelection() {
+  if (!state.selectedPresetId) return;
+  const preset = state.presets.find((item) => item.id === state.selectedPresetId);
+  const payload = formPayload();
+  if (
+    !preset ||
+    payload.company !== preset.company ||
+    payload.domain !== preset.domain ||
+    payload.company_id !== preset.company_id ||
+    payload.jurisdiction !== preset.jurisdiction
+  ) {
+    clearPresetSelection();
+    document.querySelector("#preset-status").textContent =
+      "Preset changed — this screen will use your edited entity details.";
+  }
+}
+
+function resetStageRail() {
+  document.querySelectorAll(".rail-flow li").forEach((item) => {
+    item.classList.remove("is-current", "is-complete");
+  });
+}
+
+function updateStageRail(stage, status) {
+  const effective = stage === "starting" || stage === "queued" ? "research" : stage;
+  const index = stageOrder.indexOf(effective);
+  document.querySelectorAll(".rail-flow li").forEach((item) => {
+    const itemIndex = stageOrder.indexOf(item.dataset.stage);
+    item.classList.toggle("is-complete", status === "completed" || (index > itemIndex && itemIndex >= 0));
+    item.classList.toggle("is-current", status !== "completed" && itemIndex === index);
+  });
+}
+
+function newScreen() {
+  if (state.pollTimer) window.clearTimeout(state.pollTimer);
+  if (state.activeJobId && ["queued", "running"].includes(state.activeJobStatus)) {
+    toast("The previous screen continues safely in the background.");
+  }
+  state.pollTimer = null;
+  state.activeJobId = null;
+  state.activeJobStatus = null;
+  localStorage.removeItem("deallens.activeJob");
+  resetStageRail();
+  document.querySelector("#screen-form").reset();
+  clearEntityResolution();
+  clearPresetSelection();
+  document.querySelector("#form-error").textContent = "";
+  setTitle("New screen");
+  setNav("new-screen");
+  showView("intake");
+  document.querySelector("#company").focus();
+}
+
+function formPayload() {
+  const form = document.querySelector("#screen-form");
+  const data = new FormData(form);
+  return {
+    company: String(data.get("company") || "").trim(),
+    domain: String(data.get("domain") || "").trim(),
+    company_id: String(data.get("company_id") || "").trim(),
+    jurisdiction: String(data.get("jurisdiction") || "UK"),
+    policy_profile: String(data.get("policy_profile") || "default"),
+  };
+}
+
+function entityKey(payload) {
+  return [payload.company.toLowerCase(), payload.domain.toLowerCase(), payload.jurisdiction].join("|");
+}
+
+function clearEntityResolution() {
+  state.entityResolutionKey = null;
+  state.skipResolutionKey = null;
+  const section = document.querySelector("#entity-resolution");
+  section.hidden = true;
+  clear(document.querySelector("#entity-candidates"));
+  document.querySelector("#entity-resolution-status").textContent = "";
+}
+
+function syncEntityResolution() {
+  const payload = formPayload();
+  const key = entityKey(payload);
+  if (
+    (state.entityResolutionKey && state.entityResolutionKey !== key) ||
+    (state.skipResolutionKey && state.skipResolutionKey !== key) ||
+    payload.company_id
+  ) {
+    clearEntityResolution();
+  }
+}
+
+function confirmEntity(candidate) {
+  document.querySelector("#company").value = candidate.legal_name;
+  document.querySelector("#company-id").value = candidate.company_id;
+  state.entityResolutionKey = null;
+  state.skipResolutionKey = null;
+  document.querySelector("#entity-resolution").hidden = true;
+  document.querySelector("#screen-form").requestSubmit();
+}
+
+function renderEntityResolution(resolution, payload, lookupError = null) {
+  const section = document.querySelector("#entity-resolution");
+  const status = document.querySelector("#entity-resolution-status");
+  const list = document.querySelector("#entity-candidates");
+  clear(list);
+  state.entityResolutionKey = entityKey(payload);
+  section.hidden = false;
+
+  if (lookupError) {
+    status.textContent =
+      "The registry lookup is temporarily unavailable. Add a company number above, retry, or explicitly continue without a match.";
+  } else if (!resolution.candidates.length) {
+    status.textContent =
+      `No confident ${resolution.jurisdiction} registry match was found. Check the legal name or continue without one.`;
+  } else {
+    status.textContent =
+      `${resolution.candidates.length} possible ${resolution.jurisdiction} ${resolution.candidates.length === 1 ? "entity" : "entities"} found. Select only the record you intend to screen.`;
+  }
+
+  (resolution?.candidates || []).forEach((candidate) => {
+    const row = el("article", "entity-candidate");
+    const choose = el("button", "entity-candidate-select");
+    choose.type = "button";
+    choose.append(
+      el("strong", "entity-candidate-name", candidate.legal_name),
+      el("span", "entity-candidate-id", `Company no. ${candidate.company_id}`),
+      el("span", "entity-candidate-action", "Confirm and run →"),
+    );
+    choose.addEventListener("click", () => confirmEntity(candidate));
+    const source = el("a", "entity-source", "View registry record ↗");
+    source.href = candidate.registry_url;
+    source.target = "_blank";
+    source.rel = "noreferrer";
+    row.append(choose, source);
+    list.append(row);
+  });
+
+  section.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+async function resolveEntity(payload) {
+  try {
+    const resolution = await api("/api/entities/resolve", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    renderEntityResolution(resolution, payload);
+  } catch (error) {
+    renderEntityResolution({ candidates: [], jurisdiction: payload.jurisdiction }, payload, error);
+  }
+}
+
+async function submitScreen(event) {
+  event.preventDefault();
+  const errorNode = document.querySelector("#form-error");
+  const submit = event.currentTarget.querySelector("button[type=submit]");
+  const payload = formPayload();
+  errorNode.textContent = "";
+  if (!payload.company || !payload.domain) {
+    errorNode.textContent = "Enter the company name and website to continue.";
+    return;
+  }
+  if (!looksLikeDomain(payload.domain)) {
+    errorNode.textContent = "Enter a valid company domain, such as example.com.";
+    return;
+  }
+  submit.disabled = true;
+  try {
+    const key = entityKey(payload);
+    if (!payload.company_id && state.skipResolutionKey !== key) {
+      submit.querySelector("span").textContent = "Checking official registry…";
+      await resolveEntity(payload);
+      return;
+    }
+    const job = await api("/api/screens", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    beginJob(job);
+  } catch (error) {
+    errorNode.textContent = error.message;
+  } finally {
+    submit.disabled = false;
+    submit.querySelector("span").textContent = "Run governed screen";
+  }
+}
+
+function looksLikeDomain(value) {
+  try {
+    const url = new URL(value.includes("://") ? value : `https://${value}`);
+    return url.hostname.includes(".") && /^[a-z0-9.-]+$/i.test(url.hostname);
+  } catch (_) {
+    return false;
+  }
+}
+
+async function loadDemo() {
+  try {
+    const job = await api("/api/demo", { method: "POST", body: "{}" });
+    beginJob(job);
+  } catch (error) {
+    toast(error.message);
+  }
+}
+
+async function openArchive() {
+  setTitle("Screen archive");
+  setNav("archive");
+  showView("archive");
+  const list = document.querySelector("#archive-list");
+  const count = document.querySelector("#archive-count");
+  clear(list);
+  list.append(el("p", "archive-empty", "Loading archived screens…"));
+  count.textContent = "Loading";
+  try {
+    state.archive = await api("/api/archive");
+    renderArchive();
+  } catch (error) {
+    clear(list);
+    list.append(el("p", "archive-empty", `Archive unavailable · ${error.message}`));
+    count.textContent = "Unavailable";
+  }
+}
+
+function renderArchive() {
+  const list = document.querySelector("#archive-list");
+  const count = document.querySelector("#archive-count");
+  clear(list);
+  count.textContent = `${state.archive.length} retained`;
+  if (!state.archive.length) {
+    list.append(el("p", "archive-empty", "No completed live screens have been retained yet."));
+    return;
+  }
+
+  state.archive.forEach((record, index) => {
+    const button = el("button", "archive-row");
+    button.type = "button";
+    button.dataset.archiveId = record.id;
+
+    const number = el("span", "archive-index", String(index + 1).padStart(2, "0"));
+    const identity = el("span", "archive-identity");
+    identity.append(
+      el("strong", "", record.target),
+      el("span", "", `${record.domain} · ${record.company_id || "No entity ID"}`),
+    );
+    const assessment = el("span", "archive-assessment");
+    assessment.append(
+      el("strong", "", record.risk_level),
+      el("span", "", `${record.surfaced_findings} surfaced · ${record.total_findings} reviewed`),
+    );
+    const date = el("time", "archive-date", formatDate(record.generated_at));
+    date.dateTime = record.generated_at;
+    const action = el("span", "archive-open", "Open memo →");
+    button.append(number, identity, assessment, date, action);
+    button.addEventListener("click", () => loadArchivedScreen(record.id, button));
+    list.append(button);
+  });
+}
+
+async function loadArchivedScreen(archiveId, trigger) {
+  trigger.disabled = true;
+  try {
+    const job = await api(`/api/archive/${archiveId}`);
+    renderResult(job);
+  } catch (error) {
+    toast(error.message);
+  } finally {
+    trigger.disabled = false;
+  }
+}
+
+function beginJob(job) {
+  state.activeJobId = job.id;
+  state.activeJobStatus = job.status;
+  localStorage.setItem("deallens.activeJob", job.id);
+  if (job.status === "completed") {
+    renderResult(job);
+    return;
+  }
+  renderRun(job);
+  schedulePoll(600);
+}
+
+function renderRun(job) {
+  state.activeJobStatus = job.status;
+  setTitle("Screen in progress");
+  setNav("new-screen");
+  showView("run");
+  document.querySelector("#run-target").textContent = job.request.company;
+  document.querySelector("#run-entity").textContent = job.request.company_id
+    ? `${job.request.jurisdiction} · ${job.request.company_id}`
+    : `${job.request.jurisdiction} · Company number not supplied`;
+  document.querySelector("#run-message").textContent = job.message;
+  document.querySelector("#progress-fill").style.width = `${job.percent}%`;
+  document.querySelector("#progress-value").textContent = `${job.percent}%`;
+  document.querySelector("#elapsed-value").textContent = `${formatDuration(job.elapsed_seconds)} elapsed`;
+  updateStageRail(job.stage, job.status);
+
+  const eventList = document.querySelector("#run-events");
+  clear(eventList);
+  const events = (job.events || []).slice(-7);
+  events.forEach((event) => {
+    const item = el("li");
+    const time = el("time", "", formatEventTime(event.at));
+    const message = el("span", "", event.message);
+    item.append(time, message);
+    eventList.append(item);
+  });
+}
+
+function schedulePoll(delay = 1800) {
+  window.clearTimeout(state.pollTimer);
+  state.pollTimer = window.setTimeout(pollJob, delay);
+}
+
+async function pollJob() {
+  if (!state.activeJobId) return;
+  try {
+    const job = await api(`/api/screens/${state.activeJobId}`);
+    state.activeJobStatus = job.status;
+    if (job.status === "completed") {
+      localStorage.removeItem("deallens.activeJob");
+      renderResult(job);
+      return;
+    }
+    if (job.status === "failed") {
+      localStorage.removeItem("deallens.activeJob");
+      renderFailure(job);
+      return;
+    }
+    renderRun(job);
+    schedulePoll();
+  } catch (error) {
+    if (error.message === "Screen not found") {
+      localStorage.removeItem("deallens.activeJob");
+      state.activeJobId = null;
+      newScreen();
+      return;
+    }
+    toast(`Connection interrupted: ${error.message}`);
+    schedulePoll(4000);
+  }
+}
+
+function renderFailure(job) {
+  state.activeJobId = null;
+  state.activeJobStatus = "failed";
+  resetStageRail();
+  setTitle("Screen stopped");
+  document.querySelector("#failure-message").textContent =
+    job.error || "The pipeline stopped before a complete governed result was available.";
+  showView("failure");
+}
+
+function renderResult(job) {
+  state.activeJobId = job.id;
+  state.activeJobStatus = "completed";
+  if (state.pollTimer) window.clearTimeout(state.pollTimer);
+  state.pollTimer = null;
+  setTitle(job.request.company);
+  setNav(job.archived ? "archive" : job.demo ? "load-demo" : "new-screen");
+  updateStageRail("decision", "completed");
+  showView("result");
+
+  const result = job.result;
+  const root = document.querySelector("#result-root");
+  clear(root);
+  root.append(
+    buildResultHeader(job, result),
+    buildAssessment(result),
+    buildMetrics(result),
+    buildResultBody(job, result),
+  );
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function buildResultHeader(job, result) {
+  const header = el("header", "result-header reveal");
+  const top = el("div", "result-header-top");
+  const kicker = el(
+    "p",
+    "result-kicker",
+    `${result.jurisdiction} acquisition screen · ${formatDate(result.generated_at)}`,
+  );
+  const actions = el("div", "result-actions");
+  actions.append(
+    downloadLink(job.memo_url, "Memo · MD"),
+    downloadLink(job.evidence_url, "Evidence · JSON"),
+  );
+  top.append(kicker, actions);
+
+  const titleRow = el("div", "result-title-row");
+  const title = el("h1", "", result.target);
+  const entity = el("div", "entity-stack");
+  entity.append(
+    el("span", "", "Legal entity"),
+    el("strong", "", `${result.company_id || "Not supplied"} · ${result.domain}`),
+  );
+  titleRow.append(title, entity);
+  header.append(top, titleRow);
+  return header;
+}
+
+function downloadLink(href, label) {
+  const link = el("a", "download-button", label);
+  link.href = href || "#";
+  link.setAttribute("download", "");
+  return link;
+}
+
+function buildAssessment(result) {
+  const band = el("section", "assessment-band reveal");
+  band.style.setProperty("--delay", "80ms");
+  const risk = el("div", "risk-block");
+  risk.append(el("span", "", "Executive assessment"), el("strong", "", result.risk_level));
+  const copy = el("div", "assessment-copy");
+  copy.append(el("span", "", "Evidence posture"), el("p", "", assessmentSentence(result)));
+  band.append(risk, copy);
+  return band;
+}
+
+function assessmentSentence(result) {
+  const counts = countStatuses(result.findings);
+  const parts = [];
+  if (counts.verified) parts.push(`${counts.verified} verified red flag${plural(counts.verified)}`);
+  if (counts.reported) parts.push(`${counts.reported} reported concern${plural(counts.reported)}`);
+  if (counts.partial) parts.push(`${counts.partial} partially supported claim${plural(counts.partial)}`);
+  if (counts.conflicting) parts.push(`${counts.conflicting} conflicting claim${plural(counts.conflicting)}`);
+  if (counts.unresolved) parts.push(`${counts.unresolved} unresolved check${plural(counts.unresolved)}`);
+  const pipelineIssues = result.coverage.filter((item) => item.note).length;
+  if (pipelineIssues) parts.push(`${pipelineIssues} pipeline review item${plural(pipelineIssues)}`);
+  if (!parts.length) return "No candidate met the configured evidence threshold.";
+  return `${sentenceList(parts)}. ${counts.rejected || 0} candidate${plural(counts.rejected || 0)} rejected as weak or unsupported.`;
+}
+
+function buildMetrics(result) {
+  const counts = countStatuses(result.findings);
+  const strip = el("section", "metric-strip reveal");
+  strip.style.setProperty("--delay", "140ms");
+  const metrics = [
+    [counts.verified, "Verified"],
+    [counts.reported, "Reported"],
+    [counts.partial + counts.conflicting, "Needs adjudication"],
+    [counts.unresolved, "Unresolved"],
+    [counts.rejected, "Rejected"],
+  ];
+  metrics.forEach(([value, label]) => {
+    const item = el("div", "metric");
+    item.append(el("strong", "", value), el("span", "", label));
+    strip.append(item);
+  });
+  return strip;
+}
+
+function buildResultBody(job, result) {
+  const layout = el("div", "result-layout reveal");
+  layout.style.setProperty("--delay", "190ms");
+  const main = el("section", "findings-column");
+  const surfaced = result.findings.filter((finding) => finding.status !== "rejected");
+  main.append(sectionHeading("Surfaced claims", `${surfaced.length} for review`));
+  const list = el("div", "finding-list");
+  if (!surfaced.length) {
+    list.append(el("p", "empty-findings", "No claim met the configured evidence threshold."));
+  } else {
+    surfaced.forEach((finding) => list.append(buildFinding(finding)));
+  }
+  const rejected = result.findings.filter((finding) => finding.status === "rejected");
+  rejected.forEach((finding) => list.append(buildFinding(finding)));
+  main.append(list);
+
+  const sidebar = el("aside", "result-sidebar");
+  const coverage = el("section");
+  coverage.append(sectionHeading("Coverage", "Governed checks"));
+  const coverageList = el("div", "coverage-list");
+  result.coverage.forEach((item) => coverageList.append(buildCoverage(item)));
+  coverage.append(coverageList);
+  sidebar.append(coverage, buildFootprint(job, result));
+  layout.append(main, sidebar);
+  return layout;
+}
+
+function sectionHeading(title, meta) {
+  const heading = el("div", "section-heading");
+  heading.append(el("h2", "", title), el("span", "", meta));
+  return heading;
+}
+
+function buildFinding(finding) {
+  const card = el("article", "finding-card");
+  const meta = el("div", "finding-meta");
+  meta.append(el("span", `status-chip status-${finding.status}`, statusLabels[finding.status] || finding.status));
+  if (finding.severity) {
+    meta.append(el("span", "severity-chip", `${finding.severity} severity`));
+  }
+  meta.append(el("span", "severity-chip", categoryLabels[finding.candidate.category] || finding.candidate.category));
+  card.append(meta, el("h3", "", finding.candidate.claim));
+
+  if (finding.narrative) card.append(el("p", "finding-narrative", finding.narrative));
+  if ((finding.candidate.assertions || []).length > 1) {
+    const assertions = el("ol", "assertion-list");
+    finding.candidate.assertions.forEach((assertion, index) => {
+      const item = el("li");
+      item.append(el("b", "", `A${index}`), el("span", "", assertion));
+      assertions.append(item);
+    });
+    card.append(assertions);
+  }
+  if ((finding.evidence || []).length) card.append(buildEvidence(finding));
+
+  const failures = [
+    ...(finding.extraction_failures || []).map((url) => `Could not capture: ${url}`),
+    ...(finding.processing_failures || []),
+  ];
+  failures.forEach((failure) => card.append(el("div", "failure-note", failure)));
+  return card;
+}
+
+function buildEvidence(finding) {
+  const details = el("details", "evidence-details");
+  details.open = finding.status === "verified" || finding.status === "conflicting";
+  details.append(el("summary", "", `${finding.evidence.length} validated source${plural(finding.evidence.length)}`));
+  finding.evidence.forEach((evidence) => {
+    const item = el("div", "evidence-item");
+    item.append(el("blockquote", "", `“${evidence.quote}”`));
+    const source = el("div", "evidence-source");
+    const link = el("a", "", evidence.publisher || "Open source");
+    link.href = evidence.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    const tier = el("span", "tier-chip", evidence.source_tier.replaceAll("_", " "));
+    source.append(tier, link);
+    if (evidence.published_date) source.append(el("span", "", evidence.published_date));
+    const relationships = [];
+    if (evidence.supports_assertions?.length) {
+      relationships.push(`supports ${evidence.supports_assertions.map((index) => `A${index}`).join(", ")}`);
+    }
+    if (evidence.contradicts_assertions?.length) {
+      relationships.push(`contradicts ${evidence.contradicts_assertions.map((index) => `A${index}`).join(", ")}`);
+    }
+    if (relationships.length) source.append(el("span", "", relationships.join(" · ")));
+    item.append(source);
+    details.append(item);
+  });
+  return details;
+}
+
+function buildCoverage(item) {
+  const row = el("article", "coverage-row");
+  const top = el("div", "coverage-row-top");
+  top.append(
+    el("h3", "", categoryLabels[item.category] || item.category),
+    el("span", "coverage-state", coverageLabels[item.status] || item.status),
+  );
+  const bars = el("div", "coverage-bars");
+  const checks = el("span");
+  checks.append(el("i", "", "Checks"), el("b", "", item.checks_run));
+  const sources = el("span");
+  sources.append(el("i", "", "Sources"), el("b", "", item.sources_reviewed));
+  bars.append(checks, sources);
+  row.append(top, bars);
+  if (item.note) row.append(el("p", "coverage-note", item.note));
+  return row;
+}
+
+function buildFootprint(job, result) {
+  const card = el("section", "footprint-card");
+  card.append(el("h2", "", "Run footprint"));
+  const rows = [
+    ["Tavily", `${formatNumber(result.usage.tavily_credits)} measured credits`],
+    ["Kimi input", `${formatNumber(result.usage.llm_input_tokens)} tokens`],
+    ["Kimi output", `${formatNumber(result.usage.llm_output_tokens)} tokens`],
+    ["Wall time", formatDuration(result.usage.wall_seconds)],
+    ["Policy", job.request.policy_profile === "searchfund" ? "Search-fund" : "Standard"],
+  ];
+  rows.forEach(([label, value]) => {
+    const row = el("div", "footprint-row");
+    row.append(el("span", "", label), el("strong", "", value));
+    card.append(row);
+  });
+  (result.usage.usage_notes || []).forEach((note) => card.append(el("p", "usage-warning", note)));
+  card.append(
+    el(
+      "p",
+      "disclaimer",
+      "Initial public-evidence screen only. No qualifying finding is not a statement that no risk exists.",
+    ),
+  );
+  return card;
+}
+
+function countStatuses(findings) {
+  const counts = {
+    verified: 0,
+    reported: 0,
+    partial: 0,
+    conflicting: 0,
+    contradicted: 0,
+    unresolved: 0,
+    rejected: 0,
+  };
+  findings.forEach((finding) => {
+    counts[finding.status] = (counts[finding.status] || 0) + 1;
+  });
+  return counts;
+}
+
+function plural(value) {
+  return value === 1 ? "" : "s";
+}
+
+function sentenceList(items) {
+  if (items.length < 2) return items[0] || "";
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
+}
+
+function formatNumber(value) {
+  return new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 }).format(value || 0);
+}
+
+function formatDuration(seconds) {
+  const total = Math.max(0, Math.round(seconds || 0));
+  const minutes = Math.floor(total / 60);
+  const remainder = total % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+}
+
+function formatDate(value) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(value));
+}
+
+function formatEventTime(value) {
+  if (!value) return "—";
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date(value));
+}
+
+async function resumeJob() {
+  const jobId = localStorage.getItem("deallens.activeJob");
+  if (!jobId) return;
+  state.activeJobId = jobId;
+  try {
+    const job = await api(`/api/screens/${jobId}`);
+    state.activeJobStatus = job.status;
+    if (job.status === "completed") renderResult(job);
+    else if (job.status === "failed") renderFailure(job);
+    else {
+      renderRun(job);
+      schedulePoll();
+    }
+  } catch (_) {
+    localStorage.removeItem("deallens.activeJob");
+    state.activeJobId = null;
+    state.activeJobStatus = null;
+  }
+}
+
+document.querySelector("#screen-form").addEventListener("submit", submitScreen);
+document.querySelectorAll("[data-action=new-screen]").forEach((button) => {
+  button.addEventListener("click", newScreen);
+});
+document.querySelectorAll("[data-action=load-demo]").forEach((button) => {
+  button.addEventListener("click", loadDemo);
+});
+document.querySelectorAll("[data-action=archive]").forEach((button) => {
+  button.addEventListener("click", openArchive);
+});
+document.querySelectorAll("#company, #domain, #company-id, #jurisdiction").forEach((field) => {
+  field.addEventListener("input", syncPresetSelection);
+  field.addEventListener("change", syncPresetSelection);
+  field.addEventListener("input", syncEntityResolution);
+  field.addEventListener("change", syncEntityResolution);
+});
+document.querySelector("#entity-skip").addEventListener("click", () => {
+  state.skipResolutionKey = entityKey(formPayload());
+  document.querySelector("#entity-resolution").hidden = true;
+  document.querySelector("#screen-form").requestSubmit();
+});
+
+loadHealth();
+loadPresets();
+resumeJob();

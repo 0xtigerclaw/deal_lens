@@ -1,0 +1,204 @@
+{
+  "comment": "Labelled eval set for the validation+gate composition. Each case runs quote validation against the supplied content, then the gate. expected_discards counts sources whose quote must fail validation.",
+  "cases": [
+    {
+      "name": "primary_alone_verifies",
+      "candidate": {"category": "distress", "claim": "Winding-up petition filed", "verification_query": "q"},
+      "sources": [{"url": "https://www.thegazette.co.uk/notice/1", "publisher": "thegazette.co.uk", "quote": "Petition to wind up the above-named company", "content": "Notice. Petition to wind up the above-named company was presented on 2 June 2026."}],
+      "extraction_failures": [],
+      "expected_status": "verified",
+      "expected_discards": 0
+    },
+    {
+      "name": "two_independent_secondaries_verify",
+      "candidate": {"category": "leadership", "claim": "CEO resigned", "verification_query": "q"},
+      "sources": [
+        {"url": "https://ft.com/a", "publisher": "ft.com", "quote": "the chief executive resigned on Monday", "content": "In a statement, the chief executive resigned on Monday citing personal reasons."},
+        {"url": "https://reuters.com/b", "publisher": "reuters.com", "quote": "confirmed the resignation of its CEO", "content": "The company confirmed the resignation of its CEO in a filing."}
+      ],
+      "extraction_failures": [],
+      "expected_status": "verified",
+      "expected_discards": 0
+    },
+    {
+      "name": "syndication_same_domain_only_reports",
+      "candidate": {"category": "leadership", "claim": "CEO resigned", "verification_query": "q"},
+      "sources": [
+        {"url": "https://ft.com/a", "publisher": "ft.com", "quote": "the chief executive resigned", "content": "the chief executive resigned on Monday."},
+        {"url": "https://ft.com/b", "publisher": "ft.com", "quote": "resigned after board pressure", "content": "He resigned after board pressure, people familiar said."}
+      ],
+      "extraction_failures": [],
+      "expected_status": "reported",
+      "expected_discards": 0
+    },
+    {
+      "name": "single_secondary_reports",
+      "candidate": {"category": "distress", "claim": "Site closure planned", "verification_query": "q"},
+      "sources": [{"url": "https://bbc.co.uk/n", "publisher": "bbc.co.uk", "quote": "plans to close the site", "content": "The firm plans to close the site next year, the BBC understands."}],
+      "extraction_failures": [],
+      "expected_status": "reported",
+      "expected_discards": 0
+    },
+    {
+      "name": "extraction_failure_unresolved",
+      "candidate": {"category": "regulatory", "claim": "FCA enforcement action", "verification_query": "q"},
+      "sources": [],
+      "extraction_failures": ["https://fca.org.uk/blocked.pdf"],
+      "expected_status": "unresolved",
+      "expected_discards": 0
+    },
+    {
+      "name": "aggregator_only_rejected",
+      "candidate": {"category": "leadership", "claim": "Being acquired", "verification_query": "q"},
+      "sources": [{"url": "https://randomblog.example/x", "publisher": "randomblog.example", "quote": "rumoured to be acquired", "content": "The company is rumoured to be acquired soon, per unnamed sources."}],
+      "extraction_failures": [],
+      "expected_status": "rejected",
+      "expected_discards": 0
+    },
+    {
+      "name": "nothing_found_rejected",
+      "candidate": {"category": "cyber", "claim": "Data breach in 2024", "verification_query": "q"},
+      "sources": [],
+      "extraction_failures": [],
+      "expected_status": "rejected",
+      "expected_discards": 0
+    },
+    {
+      "name": "paraphrase_discarded_then_rejected",
+      "candidate": {"category": "distress", "claim": "Accounts overdue", "verification_query": "q"},
+      "sources": [{"url": "https://ft.com/c", "publisher": "ft.com", "quote": "the company is in serious financial trouble", "content": "Accounts for 2025 were filed two weeks after the statutory deadline."}],
+      "extraction_failures": [],
+      "expected_status": "rejected",
+      "expected_discards": 1
+    },
+    {
+      "name": "paraphrased_primary_discarded_valid_secondary_reports",
+      "candidate": {"category": "regulatory", "claim": "ICO fined the company", "verification_query": "q"},
+      "sources": [
+        {"url": "https://ico.org.uk/f", "publisher": "ico.org.uk", "quote": "was fined one million pounds for negligence", "content": "Monetary penalty notice issued under section 155. Penalty: £850,000."},
+        {"url": "https://bbc.co.uk/f", "publisher": "bbc.co.uk", "quote": "fined by the data watchdog", "content": "The firm was fined by the data watchdog over the 2025 incident."}
+      ],
+      "extraction_failures": [],
+      "expected_status": "reported",
+      "expected_discards": 1
+    },
+    {
+      "name": "primary_wins_despite_other_failures",
+      "candidate": {"category": "distress", "claim": "Charge registered", "verification_query": "q"},
+      "sources": [{"url": "https://find-and-update.company-information.service.gov.uk/c", "publisher": "find-and-update.company-information.service.gov.uk", "quote": "Registered charge in favour of Barclays Bank", "content": "Charges. Registered charge in favour of Barclays Bank PLC, created 5 May 2026."}],
+      "extraction_failures": ["https://ft.com/timeout"],
+      "expected_status": "verified",
+      "expected_discards": 0
+    },
+    {
+      "name": "curly_punctuation_still_validates",
+      "candidate": {"category": "leadership", "claim": "Founder stepped back", "verification_query": "q"},
+      "sources": [{"url": "https://www.thegazette.co.uk/n2", "publisher": "thegazette.co.uk", "quote": "the founder's role changed - effective 1 July", "content": "Notice: the founder’s role changed — effective 1 July 2026."}],
+      "extraction_failures": [],
+      "expected_status": "verified",
+      "expected_discards": 0
+    },
+    {
+      "name": "empty_quote_discarded",
+      "candidate": {"category": "cyber", "claim": "Ransomware incident", "verification_query": "q"},
+      "sources": [{"url": "https://reuters.com/r", "publisher": "reuters.com", "quote": "   ", "content": "The company suffered a ransomware incident in January."}],
+      "extraction_failures": [],
+      "expected_status": "rejected",
+      "expected_discards": 1
+    },
+    {
+      "name": "compound_claim_partial_support_never_verifies",
+      "candidate": {
+        "category": "leadership",
+        "claim": "CEO resigned and chair became interim CEO",
+        "assertions": ["CEO resigned", "Chair became interim CEO"],
+        "verification_query": "q"
+      },
+      "sources": [{
+        "url": "https://www.thegazette.co.uk/notice/compound-1",
+        "publisher": "thegazette.co.uk",
+        "quote": "The chief executive resigned on 30 January",
+        "content": "The chief executive resigned on 30 January. No successor was announced.",
+        "supports_assertions": [0]
+      }],
+      "extraction_failures": [],
+      "expected_status": "partial",
+      "expected_discards": 0
+    },
+    {
+      "name": "compound_claim_all_assertions_verify",
+      "candidate": {
+        "category": "leadership",
+        "claim": "CEO resigned and chair became interim CEO",
+        "assertions": ["CEO resigned", "Chair became interim CEO"],
+        "verification_query": "q"
+      },
+      "sources": [
+        {
+          "url": "https://www.thegazette.co.uk/notice/compound-2",
+          "publisher": "thegazette.co.uk",
+          "quote": "The chief executive resigned on 30 January",
+          "content": "The chief executive resigned on 30 January.",
+          "supports_assertions": [0]
+        },
+        {
+          "url": "https://www.fca.org.uk/news/compound-2",
+          "publisher": "fca.org.uk",
+          "quote": "The chair was appointed interim chief executive",
+          "content": "The chair was appointed interim chief executive with immediate effect.",
+          "supports_assertions": [1]
+        }
+      ],
+      "extraction_failures": [],
+      "expected_status": "verified",
+      "expected_discards": 0
+    },
+    {
+      "name": "primary_source_contradicts_candidate",
+      "candidate": {
+        "category": "regulatory",
+        "claim": "The FCA fined the company",
+        "verification_query": "q"
+      },
+      "sources": [{
+        "url": "https://www.fca.org.uk/news/no-fine",
+        "publisher": "fca.org.uk",
+        "quote": "no financial penalty was imposed",
+        "content": "The review concluded and no financial penalty was imposed.",
+        "supports_assertions": [],
+        "contradicts_assertions": [0]
+      }],
+      "extraction_failures": [],
+      "expected_status": "contradicted",
+      "expected_discards": 0
+    },
+    {
+      "name": "qualifying_sources_conflict",
+      "candidate": {
+        "category": "cyber",
+        "claim": "Customer data was exposed",
+        "verification_query": "q"
+      },
+      "sources": [
+        {
+          "url": "https://www.ico.org.uk/action/breach",
+          "publisher": "ico.org.uk",
+          "quote": "Customer records were accessed by an unauthorized party",
+          "content": "Customer records were accessed by an unauthorized party.",
+          "supports_assertions": [0]
+        },
+        {
+          "url": "https://www.ncsc.gov.uk/report/no-exposure",
+          "publisher": "ncsc.gov.uk",
+          "quote": "The investigation found no exposure of customer data",
+          "content": "The investigation found no exposure of customer data.",
+          "supports_assertions": [],
+          "contradicts_assertions": [0]
+        }
+      ],
+      "extraction_failures": [],
+      "expected_status": "conflicting",
+      "expected_discards": 0
+    }
+  ]
+}

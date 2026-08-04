@@ -1,0 +1,115 @@
+{
+  "target": "Acme Industrial Ltd",
+  "domain": "acme-industrial.example",
+  "company_id": "00000000",
+  "jurisdiction": "UK",
+  "comment": "Fictional company. Five canonical outcomes: verified, rejected (aggregator-only plus a paraphrase that fails live quote validation), reported, unresolved (extraction failure), and a category with no candidates at all (cyber -> NO FINDING).",
+  "bundles": [
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Group CFO Jane Smith departed in March 2026",
+        "date": "2026-03",
+        "source_urls": ["https://insidermedia.example/acme-cfo"],
+        "verification_query": "\"Acme Industrial\" CFO departure"
+      },
+      "sources_reviewed": 6,
+      "sources": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/00000000/officers",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "title": "ACME INDUSTRIAL LTD officers",
+          "quote": "SMITH, Jane — Terminated on 14 March 2026",
+          "content": "ACME INDUSTRIAL LTD. Company number 00000000. Officers. SMITH, Jane — Terminated on 14 March 2026. Role: Director. Appointed: 2 May 2019. BROWN, Thomas — Active. Role: Director."
+        },
+        {
+          "url": "https://www.insidermedia.com/news/acme-cfo-steps-down",
+          "publisher": "insidermedia.com",
+          "title": "Acme Industrial CFO steps down",
+          "published_date": "2026-03-16",
+          "quote": "chief financial officer Jane Smith has stepped down after seven years",
+          "content": "Yorkshire manufacturer Acme Industrial has confirmed that chief financial officer Jane Smith has stepped down after seven years with the business. The company said a search for a successor is underway."
+        }
+      ],
+      "extraction_failures": [],
+      "narrative": "The Companies House officer register records the termination of Jane Smith's appointment on 14 March 2026, and Insider Media reports she stepped down as chief financial officer after seven years. Both sources agree on the timing and the role."
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Acme Industrial is being acquired by a US competitor",
+        "date": null,
+        "source_urls": ["https://www.crunchbase.com/organization/acme-industrial"],
+        "verification_query": "\"Acme Industrial\" acquisition"
+      },
+      "sources_reviewed": 7,
+      "sources": [
+        {
+          "url": "https://businessgossip.example/acme-buyout-rumour",
+          "publisher": "businessgossip.example",
+          "title": "Acme buyout rumour",
+          "quote": "sources say Acme is definitely being acquired next quarter",
+          "content": "There is chatter in the sector that Acme could attract interest from overseas buyers at some point, though nothing has been announced and the company declined to comment."
+        }
+      ],
+      "extraction_failures": [],
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "distress",
+        "claim": "The Leeds facility will close with redundancies expected",
+        "date": "2026-07",
+        "source_urls": ["https://www.theconstructionindex.co.uk/news/acme-leeds"],
+        "verification_query": "\"Acme Industrial\" Leeds closure"
+      },
+      "sources_reviewed": 9,
+      "sources": [
+        {
+          "url": "https://www.theconstructionindex.co.uk/news/view/acme-to-close-leeds-site",
+          "publisher": "theconstructionindex.co.uk",
+          "title": "Acme to close Leeds site",
+          "published_date": "2026-07-22",
+          "quote": "The company informed employees that its Leeds site will close before the end of the year",
+          "content": "Acme Industrial is restructuring its northern operations. The company informed employees that its Leeds site will close before the end of the year, according to staff briefed on the plan. Acme did not respond to a request for comment. No insolvency process is involved."
+        }
+      ],
+      "extraction_failures": [],
+      "narrative": "The Construction Index reports that employees have been told the Leeds site will close before the end of the year. No company statement or statutory filing corroborating the closure was located."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "An HSE enforcement notice may have been issued against the company",
+        "date": "2026-05",
+        "source_urls": ["https://resources.hse.gov.uk/notices/acme"],
+        "verification_query": "\"Acme Industrial\" HSE enforcement notice"
+      },
+      "sources_reviewed": 8,
+      "sources": [],
+      "extraction_failures": ["https://resources.hse.gov.uk/notices/notice-4471902"],
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "distress",
+        "claim": "Acme filed accounts late in 2025",
+        "date": "2025-12",
+        "source_urls": [],
+        "verification_query": "\"Acme Industrial\" overdue accounts"
+      },
+      "sources_reviewed": 4,
+      "sources": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/00000000/filing-history",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "title": "ACME INDUSTRIAL LTD filing history",
+          "quote": "accounts were extremely overdue and the company ignored repeated warnings",
+          "content": "Filing history. Accounts for the period ending 31 March 2025 made up to date, filed 12 January 2026. Confirmation statement filed 3 February 2026. No overdue markers are shown on the current record."
+        }
+      ],
+      "extraction_failures": [],
+      "narrative": ""
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "total_cases": 36,
+  "all_passed": true,
+  "evidence_gate": {
+    "passed": 16,
+    "total": 16,
+    "false_verifies": 0,
+    "non_verified_cases": 11
+  },
+  "entity_resolution": {
+    "passed": 8,
+    "total": 8,
+    "correct_abstentions": 4,
+    "abstention_cases": 4
+  },
+  "source_governance": {
+    "passed": 12,
+    "total": 12
+  }
+}

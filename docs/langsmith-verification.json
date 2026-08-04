@@ -1,0 +1,60 @@
+{
+  "verified_at": "2026-08-04T10:41:00Z",
+  "project": "Deal_Lens",
+  "endpoint_region": "EU",
+  "screen": {
+    "root_trace_id": "019fcc59-bc35-71a0-9f3d-0604e152cb4e",
+    "status": "success",
+    "target": "MONZO BANK LIMITED",
+    "domain": "monzo.com",
+    "company_id_supplied": true,
+    "pipeline_version": "0.2.0",
+    "model_provider": "Nebius Token Factory",
+    "model_family": "Kimi K3",
+    "retrieval_provider": "Tavily",
+    "latency_seconds": 191.089,
+    "span_count": 204,
+    "span_error_count": 0,
+    "span_counts": {
+      "deallens.screen": 1,
+      "deallens.discover": 1,
+      "deallens.baseline_checks": 1,
+      "deallens.discover_from_baseline": 1,
+      "deallens.verify": 10,
+      "deallens.capture": 10,
+      "tavily.research": 1,
+      "tavily.search": 22,
+      "tavily.extract": 10,
+      "ChatNebius": 21
+    },
+    "outcome": {
+      "risk_level": "REVIEW REQUIRED",
+      "candidate_count": 10,
+      "finding_count": 10,
+      "verified_count": 3
+    },
+    "usage": {
+      "tavily_measured_credits": 28.0,
+      "tavily_credits_by_endpoint": {
+        "search": 22.0,
+        "extract": 6.0
+      },
+      "research_credits_measured": false,
+      "llm_input_tokens": 33033,
+      "llm_output_tokens": 5068
+    }
+  },
+  "entity_resolution": {
+    "root_trace_id": "019fcc57-00a1-74f1-871c-2f877182bcb4",
+    "status": "success",
+    "latency_seconds": 1.033,
+    "tags": [
+      "entity-resolution",
+      "human-confirmation-required"
+    ]
+  },
+  "privacy": {
+    "public_share_created": false,
+    "api_keys_included": false
+  }
+}

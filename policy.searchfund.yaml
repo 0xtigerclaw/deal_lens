@@ -1,0 +1,39 @@
+# Example override: search-fund / owner-operator acquisition lens.
+# Usage: deallens screen ... --policy policy.searchfund.yaml
+# Differences vs default: key-person and customer-concentration risk escalate
+# harder (the acquirer is buying an owner-operated business), and succession
+# signals are noted rather than penalized — an owner nearing retirement is
+# often the sourcing thesis, not a red flag.
+
+rules:
+  leadership:
+    base: high            # key-person dependence is the central risk
+    escalate_when:
+      - founder
+      - owner
+      - managing director
+      - multiple departures
+
+  regulatory:
+    base: medium
+    escalate_when:
+      - enforcement
+      - fine
+      - investigation
+
+  cyber:
+    base: high
+    escalate_when:
+      - customer data
+      - ransomware
+      - ico
+
+  distress:
+    base: high            # thin balance sheets; distress kills SME deals
+    escalate_when:
+      - insolvency
+      - administration
+      - overdue accounts
+      - charge registered
+      - key customer
+      - concentration

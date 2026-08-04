@@ -1,0 +1,329 @@
+{
+  "target": "Wise Limited",
+  "domain": "wise.com",
+  "jurisdiction": "UK",
+  "company_id": "13211214",
+  "generated_at": "2026-08-03T22:09:41.616172Z",
+  "risk_level": "REVIEW REQUIRED",
+  "findings": [
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Director Scott Anthony Hill resigned from Wise Limited on 8 May 2026.",
+        "date": "8 May 2026",
+        "source_urls": [
+          "https://find-and-update.company-information.service.gov.uk/company/13211214/officers"
+        ],
+        "verification_query": "\"Wise Limited\" \"Scott Anthony Hill\" resignation",
+        "assertions": [
+          "Scott Anthony Hill held the role of Director at Wise Limited.",
+          "He resigned on 8 May 2026."
+        ]
+      },
+      "status": "unresolved",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [
+        "Nebius could not classify the extracted passages (LengthFinishReasonError); human review is required."
+      ],
+      "searches_run": 3,
+      "narrative": "Sources were retrieved, but their relationship to this claim could not be classified reliably. Human review is required."
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Scott Hill was appointed as an Independent Non-Executive Director of Wise Limited on 2 March 2026.",
+        "date": "2 March 2026",
+        "source_urls": [
+          "https://owners.wise.com/news-releases/news-release-details/board-appointment"
+        ],
+        "verification_query": "\"Wise Limited\" \"Scott Hill\" board appointment",
+        "assertions": [
+          "Wise announced the appointment of Scott Hill to its Board as an Independent Non-Executive Director.",
+          "The appointment was announced on 2 March 2026."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Chief Financial Officer Matt Briers will retire in March 2024.",
+        "date": "March 2024",
+        "source_urls": [
+          "https://www.bankingdive.com/news/fintech-wise-cfo-resign-ceo-go-on-leave/650903"
+        ],
+        "verification_query": "\"Wise\" \"Matt Briers\" retirement March 2024",
+        "assertions": [
+          "Matt Briers is the Chief Financial Officer of Wise.",
+          "He will retire in March 2024."
+        ]
+      },
+      "status": "unresolved",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [
+        "https://democracy.plymouth.gov.uk/documents/g11560/Public%20reports%20pack%20Wednesday%2021-Jan-2026%2009.30%20Scrutiny%20Management%20Board.pdf?T=10"
+      ],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "A potential leadership reference was discovered, but the underlying source could not be captured for verification. Human review is required."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Wise is under investigation by the Brussels public prosecutor for approximately \u20ac500\u202fmillion of transactions, with the probe opened in 2023.",
+        "date": "2023",
+        "source_urls": [
+          "https://www.bankingdive.com/news/wise-aml-investigation-europe/821721"
+        ],
+        "verification_query": "\"Wise\" \"Brussels prosecutor\" investigation 2023",
+        "assertions": [
+          "Wise is being investigated by the Brussels public prosecutor for indications of non\u2011compliance with AML legislation.",
+          "The investigation concerns roughly \u20ac500\u202fmillion of transactions.",
+          "The probe was opened in 2023."
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "investigation"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.bbc.co.uk/news/articles/cy42x8ye02vo",
+          "title": "Wise under investigation over money laundering control concerns - BBC News",
+          "publisher": "bbc.co.uk",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "A spokesperson for the Brussels prosecutors' office told AFP the investigation was \"now at an advanced stage\". \"The findings primarily concern the use of Wise accounts for criminal purposes, with indications of non-compliance with anti-money laundering legislation, particularly due to a failure to identify customers and their activities,\" the spokesperson added.",
+          "supports_assertions": [
+            0
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-03T22:07:30.666201Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": "According to the BBC, a spokesperson for the Brussels prosecutors' office stated that the investigation is now at an advanced stage. The spokesperson said the findings primarily concern the use of Wise accounts for criminal purposes. The spokesperson added that there are indications of non-compliance with anti-money laundering legislation, particularly due to a failure to identify customers and their activities."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Wise\u2019s US subsidiary was fined $4.2\u202fmillion for Bank Secrecy Act violations in 2025.",
+        "date": "2025",
+        "source_urls": [
+          "https://www.thebureauinvestigates.com/stories/2026-06-01/money-transfer-giant-wise-investigated-for-half-a-billion-in-suspicious-transactions"
+        ],
+        "verification_query": "\"Wise\" \"US subsidiary\" fine $4.2 million 2025",
+        "assertions": [
+          "Wise\u2019s US subsidiary was fined $4.2\u202fmillion for violations of the Bank Secrecy Act.",
+          "The fine was imposed in 2025."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Wise was penalised $2.5\u202fmillion by the U.S. Consumer Financial Protection Bureau for remittance violations in 2025.",
+        "date": "2025",
+        "source_urls": [
+          "https://www.bankingdive.com/news/wise-closing-tampa-office-laying-off-over-300-staff/739973"
+        ],
+        "verification_query": "\"Wise\" \"Consumer Financial Protection Bureau\" $2.5 million 2025",
+        "assertions": [
+          "Wise was penalised $2.5\u202fmillion by the U.S. Consumer Financial Protection Bureau.",
+          "The penalty was for remittance violations.",
+          "It was imposed in 2025."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "cyber",
+        "claim": "In July 2024, a data breach at Evolve Bank & Trust potentially exposed personal data of some Wise customers.",
+        "date": "July 2024",
+        "source_urls": [
+          "https://techcrunch.com/2024/07/01/fintech-company-wise-says-some-customers-affected-by-evolve-bank-data-breach"
+        ],
+        "verification_query": "\"Wise\" \"Evolve Bank\" data breach July 2024",
+        "assertions": [
+          "Evolve Bank & Trust suffered a data breach in July 2024.",
+          "Wise disclosed that some of its customers\u2019 personal data may have been exposed due to the breach.",
+          "Wise communicated the issue to affected customers via email."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "distress",
+        "claim": "Wise filed a notice on 7 February 2025 to close its Tampa office, resulting in the layoff of approximately 307 employees.",
+        "date": "7 February 2025",
+        "source_urls": [
+          "https://www.bankingdive.com/news/wise-closing-tampa-office-laying-off-over-300-staff/739973",
+          "https://www.bizjournals.com/tampabay/news/2025/02/10/wise-layoffs-tampa-office.html"
+        ],
+        "verification_query": "\"Wise\" \"Tampa office\" closure February 2025",
+        "assertions": [
+          "Wise filed a notice on 7 February 2025 to close its Tampa office.",
+          "The closure will result in layoff of approximately 307 employees.",
+          "Layoffs are scheduled to begin in April 2025."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Wise Payments Limited was penalized \u00a315,000 on 27 September 2024 under The Russia (Sanctions)(EU Exit) Regulations 2019 for dealing with funds owned by a designated person and making funds available for the benefit of a designated person without a licence.",
+        "date": "27 September 2024",
+        "source_urls": [
+          "https://www.gov.uk/government/collections/enforcement-of-financial-sanctions"
+        ],
+        "verification_query": "\"Wise Payments Limited\" \"\u00a315,000\" \"27 September 2024\"",
+        "assertions": [
+          "Wise Payments Limited was penalized \u00a315,000.",
+          "The penalty was imposed on 27 September 2024.",
+          "The penalty was for dealing with funds owned by a designated person, and making funds available for the benefit of a designated person without a licence, under The Russia (Sanctions)(EU Exit) Regulations 2019."
+        ]
+      },
+      "status": "contradicted",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://www.gov.uk/government/collections/enforcement-of-financial-sanctions",
+          "title": "Financial sanctions enforcement: decisions and monetary penalties imposed - GOV.UK",
+          "publisher": "gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "### Wise Payments Limited\n\n|  |  |\n --- |\n| Date | 31 August 2023 |\n| Sector | FinTech |\n| Penalty | Disclosure |\n| Reason | Making funds available to a designated person without a licence |\n| Regulations | The Russia (Sanctions)(EU Exit) Regulations 2019 |",
+          "supports_assertions": [],
+          "contradicts_assertions": [
+            0,
+            1,
+            2
+          ],
+          "retrieved_at": "2026-08-03T22:09:03.481907Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": "Gov.uk records show that Wise Payments Limited was penalized on 31 August 2023 under The Russia (Sanctions)(EU Exit) Regulations 2019 for making funds available to a designated person without a licence. The penalty was recorded as \"Disclosure.\" The quoted evidence does not indicate a \u00a315,000 penalty or a 27 September 2024 date."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "In 2024, Wise co-founder and chief executive Kristo K\u00e4\u00e4rmann was fined \u00a3350,000 for deliberately failing to inform the City regulator of significant tax issues.",
+        "date": "2024",
+        "source_urls": [
+          "https://www.theguardian.com/business/2026/jun/01/wise-investigated-belgium-money-laundering-control-concerns"
+        ],
+        "verification_query": "\"Wise\" \"Kristo K\u00e4\u00e4rmann\" \"\u00a3350,000\" \"2024\"",
+        "assertions": [
+          "In 2024, Kristo K\u00e4\u00e4rmann was fined \u00a3350,000.",
+          "The fine was for deliberately failing to inform the City regulator of significant tax issues.",
+          "At the time, K\u00e4\u00e4rmann was the company\u2019s co-founder and chief executive."
+        ]
+      },
+      "status": "unresolved",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [
+        "Nebius could not classify the extracted passages (LengthFinishReasonError); human review is required."
+      ],
+      "searches_run": 2,
+      "narrative": "Sources were retrieved, but their relationship to this claim could not be classified reliably. Human review is required."
+    }
+  ],
+  "coverage": [
+    {
+      "category": "leadership",
+      "status": "review_required",
+      "sources_reviewed": 32,
+      "checks_run": 7,
+      "note": null
+    },
+    {
+      "category": "regulatory",
+      "status": "review_required",
+      "sources_reviewed": 38,
+      "checks_run": 6,
+      "note": null
+    },
+    {
+      "category": "cyber",
+      "status": "checked_no_finding",
+      "sources_reviewed": 15,
+      "checks_run": 2,
+      "note": null
+    },
+    {
+      "category": "distress",
+      "status": "checked_no_finding",
+      "sources_reviewed": 8,
+      "checks_run": 3,
+      "note": null
+    }
+  ],
+  "usage": {
+    "tavily_credits": 24.0,
+    "credits_by_endpoint": {
+      "search": 18.0,
+      "extract": 6.0
+    },
+    "llm_input_tokens": 21896,
+    "llm_output_tokens": 45752,
+    "wall_seconds": 289.56595329200354,
+    "usage_complete": false,
+    "usage_notes": [
+      "Tavily Research credits unavailable from account usage endpoint"
+    ]
+  }
+}

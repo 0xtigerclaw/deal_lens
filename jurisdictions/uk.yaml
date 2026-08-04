@@ -1,0 +1,43 @@
+# United Kingdom source pack.
+# Tiers drive the evidence gate: primary can verify alone; credible_secondary
+# needs two independent domains; excluded domains are never fetched.
+# Registries carry the signal for private SMEs (filings, charges, insolvency
+# notices); press carries it for larger targets. Edit freely — this is config,
+# not code.
+
+primary:
+  - find-and-update.company-information.service.gov.uk   # Companies House
+  - thegazette.co.uk                                     # statutory insolvency notices
+  - fca.org.uk
+  - ico.org.uk
+  - gov.uk
+  - cma.gov.uk
+  - ncsc.gov.uk
+  - judiciary.uk
+  - caselaw.nationalarchives.gov.uk
+
+credible_secondary:
+  - reuters.com
+  - ft.com
+  - bbc.co.uk
+  - theguardian.com
+  - thetimes.co.uk
+  - telegraph.co.uk
+  - cityam.com
+  - insidermedia.com          # UK regional business press — SME coverage
+  - theconstructionindex.co.uk # example trade press; add your sector's own
+
+exclude:
+  - crunchbase.com
+  - zoominfo.com
+  - signalhire.com
+  - rocketreach.co
+  - apollo.io
+  - glassdoor.com
+  - trustpilot.com
+  - pitchbook.com
+  - cbinsights.com
+  - owler.com
+
+# Query template run against the corporate registry for every candidate.
+registry_query: 'site:find-and-update.company-information.service.gov.uk "{company}"'

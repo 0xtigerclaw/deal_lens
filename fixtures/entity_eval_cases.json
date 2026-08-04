@@ -1,0 +1,73 @@
+{
+  "comment": "Deterministic legal-entity ranking eval. Inputs imitate Tavily registry results; no network or model is involved.",
+  "cases": [
+    {
+      "name": "brand_name_resolves_legal_bank_entity",
+      "query": "Monzo",
+      "results": [
+        {"title": "GROUP MONZO LTD overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/15034063", "score": 0.99},
+        {"title": "MONZO BANK LIMITED overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/09446231", "score": 0.98},
+        {"title": "MONZO CONSULTING LIMITED overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/12000001", "score": 0.72}
+      ],
+      "expected_ids": ["09446231", "12000001", "15034063"]
+    },
+    {
+      "name": "exact_legal_name_wins",
+      "query": "Wise Limited",
+      "results": [
+        {"title": "WISE LIMITED overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/13211214", "score": 0.88},
+        {"title": "WISE PAYMENTS LIMITED overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/07209813", "score": 0.93}
+      ],
+      "expected_ids": ["13211214", "07209813"]
+    },
+    {
+      "name": "legal_suffix_does_not_change_match",
+      "query": "Revolut Ltd",
+      "results": [
+        {"title": "REVOLUT LTD overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/08804411", "score": 0.91}
+      ],
+      "expected_ids": ["08804411"]
+    },
+    {
+      "name": "filing_and_overview_are_deduplicated",
+      "query": "THG PLC",
+      "results": [
+        {"title": "THG PLC filing history - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/06539496/filing-history", "score": 0.81},
+        {"title": "THG PLC overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/06539496", "score": 0.96}
+      ],
+      "expected_ids": ["06539496"]
+    },
+    {
+      "name": "unrelated_result_causes_abstention",
+      "query": "Monzo",
+      "results": [
+        {"title": "UNRELATED BUSINESS LIMITED overview - Find and update company information - GOV.UK", "url": "https://find-and-update.company-information.service.gov.uk/company/12000002", "score": 0.99}
+      ],
+      "expected_ids": []
+    },
+    {
+      "name": "lookalike_registry_host_is_rejected",
+      "query": "Monzo",
+      "results": [
+        {"title": "MONZO BANK LIMITED", "url": "https://company-information.service.gov.uk.evil.example/company/09446231", "score": 1.0}
+      ],
+      "expected_ids": []
+    },
+    {
+      "name": "registry_search_page_is_not_an_entity",
+      "query": "Monzo",
+      "results": [
+        {"title": "Search the register", "url": "https://find-and-update.company-information.service.gov.uk/search/companies?q=monzo", "score": 0.99}
+      ],
+      "expected_ids": []
+    },
+    {
+      "name": "empty_title_is_rejected",
+      "query": "Monzo",
+      "results": [
+        {"title": "", "url": "https://find-and-update.company-information.service.gov.uk/company/09446231", "score": 0.99}
+      ],
+      "expected_ids": []
+    }
+  ]
+}

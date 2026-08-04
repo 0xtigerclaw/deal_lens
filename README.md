@@ -20,6 +20,10 @@ applies the source, entity, and evidence rules.
 
 ![DealLens acquisition-intelligence homepage](docs/assets/deallens-home.png)
 
+## Product walkthrough
+
+[Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
+
 ## Why, when, and how
 
 | | Role in the analyst workflow |

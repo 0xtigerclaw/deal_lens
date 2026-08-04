@@ -240,6 +240,14 @@ while a behavioral or safety-metric gate fails.
 ## 9. Persistence and concurrency
 
 - `ThreadPoolExecutor(max_workers=2)` bounds local concurrent live screens.
+- The public Cloud Run profile sets
+  `DEALLENS_REQUIRE_PERSONAL_TAVILY_KEY=true`: entity resolution and new live
+  screens require a request header and never fall back to a project-funded
+  Tavily credential. The request key is omitted from job payloads and cleared
+  from worker memory as soon as the Tavily client claims it.
+- `DEALLENS_LIVE_SCREEN_LIMIT=12`, one Cloud Run instance, and concurrency two
+  bound server-funded Nebius exposure per container lifetime. Archived memos
+  and the deterministic fixture do not consume that allowance.
 - Jobs persist in process for progress/resume; completed outputs persist on
   disk beneath ignored `reports/web/{job_id}` directories.
 - The archive discovers the latest output per legal entity and also serves two

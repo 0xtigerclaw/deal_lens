@@ -79,7 +79,7 @@ Measured on 2026-08-04 from the committed fixtures:
 | Source-governance contract | 12/12 | 12/12 full contract matches |
 | **Total** | **36/36** | **all gates pass** |
 
-The associated unit/API suite passes **73/73** tests.
+The associated unit/API suite passes **75/75** tests.
 
 The committed machine-readable baseline, including every case result, is
 [evaluation-results.json](evaluation-results.json).

@@ -148,7 +148,7 @@ The original gate eval was expanded into three independent suites:
 
 Final measured result on 2026-08-04: **36/36**, false verifies **0/11**,
 correct entity abstentions **4/4**. The surrounding pytest suite passes
-**74/74** tests. Both commands are CI gates.
+**75/75** tests. Both commands are CI gates.
 
 The eval command now emits stable case-level reports and compares them with a
 committed reviewed baseline. It fails on behavior regressions, false-verify or
@@ -205,11 +205,22 @@ Development was distributed across three local Codex task streams:
 3. **GCP deployment:** container packaging, Cloud Run configuration, secret
    wiring, deployment verification, and the public live application.
 
-Codex local task histories remain on the development workstation rather than
-being published as raw transcripts. This sanitized log, the repository commit
-history, [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr),
-and the linked product walkthrough form the shareable build record. API keys,
-environment values, and machine-specific output are deliberately excluded.
+The focused [bring-your-own Tavily key Codex
+session](https://traces.com/s/jn78m1dvf2pfgxbkwfxfvvr2058bt2h9) is shared as
+an unlisted Traces link. It is a real 117-event implementation record covering
+the UI, request-scoped secret handling, tests, review, and publication. Before
+upload, the source task was scanned for provider, OAuth, GitHub, bearer-token,
+private-key, `.env`, and email patterns; it contains no real credential or
+email. The deliberate fake key used by its tests and local workspace paths are
+visible.
+
+The much broader core-product task remains local because its history includes
+credential-shaped output from environment debugging. Publishing that raw task
+would rely on third-party redaction for safety. This sanitized log, the audited
+Traces session, repository commit history,
+[pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr), and
+the product walkthrough form the shareable build record without exposing API
+keys or environment values.
 
 ## 10. Known next work
 

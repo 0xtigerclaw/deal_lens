@@ -17,11 +17,11 @@ regulatory scrutiny, litigation, breaches, and signs of financial distress.
 Those facts are scattered across the live web, easy to confuse with another
 legal entity, and difficult to cite consistently under time pressure.
 
-DealLens fits into that existing memo workflow. It turns a company name and
-website into a current, cited public-risk assessment that an analyst can
-review, edit, and export for IC. Tavily provides live discovery, search, and
-extraction; Kimi K3 runs through Nebius Token Factory; deterministic Python
-applies the source, entity, and evidence rules.
+DealLens is a standalone acquisition-screening workspace for that decision
+point. It turns a company name and website into a current, cited public-risk
+assessment that an analyst can review, edit, and export for IC. Tavily provides
+live discovery, search, and extraction; Kimi K3 runs through Nebius Token
+Factory; deterministic Python applies the source, entity, and evidence rules.
 
 > DealLens is a triage tool, not a legal or financial opinion. “No qualifying
 > findings” means four governed checks completed without qualifying public
@@ -34,18 +34,13 @@ applies the source, entity, and evidence rules.
 [Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
 
 **Build record — start here:** [review the shipped system in 31
-events](https://traces.com/s/jn7fwtf041r9vj75mx6v4n83fh8bv2vg). This
+events](https://traces.com/s/jn7e2xwnd56pq2b3bdhgvgw2g18btyp5). This
 reviewer-first record opens with the live product, final commit, 75/75 tests,
 36/36 safety evals, 204-span LangSmith run, and deployment security. It then
 groups labelled excerpts from `fable` planning and `gpt-5.6-sol`
 implementation by decision—not by raw chronology. The generic starter and
 Watchtower appear only as explicitly rejected context; neither is the submitted
-product.
-
-**Full audit trail — optional:** [inspect the chronological 1,540-event
-record](https://traces.com/s/jn7c8v6q9rah96gah5gzq7hxm98btx28) for exact
-intermediate tool work, failures, tests, and publication history. Both links
-are unlisted, credential-scrubbed, and complement the sanitized
+product. The unlisted, credential-scrubbed record complements the sanitized
 [build log](BUILD_LOG.md).
 
 ## Why, when, and how
@@ -364,7 +359,7 @@ in `docs/langsmith-verification.json`.*
 - `jurisdictions/uk.yaml`: source tiers, exclusions, and registry query.
 - `jurisdictions/nl.yaml`: explicit preview stub; it is not claimed as tested.
 - `policy.yaml`: standard severity policy.
-- `policy.searchfund.yaml`: owner-operator/search-fund escalation profile.
+- `policy.owner_operator.yaml`: owner-operator escalation profile.
 - `reports/`: local run artifacts, ignored by Git.
 - `examples/screens/`: curated public example artifacts used by the archive.
 

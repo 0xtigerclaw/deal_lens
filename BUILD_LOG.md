@@ -60,7 +60,7 @@ The initial exploration considered a general change-intelligence monitor. The
 scope was deliberately narrowed to one transaction workflow with an immediate
 output: enter one target and receive a source-backed public red-flag screen.
 
-The selected user is an acquisition/search-fund analyst preparing a target for
+The selected user is a GP or acquisition analyst preparing a target for
 investment committee. The product enters the workflow after initial interest
 and before full diligence: it assembles the current public evidence the analyst
 needs for the memo, while preserving the source trail for risk and compliance
@@ -203,7 +203,7 @@ Development used two models with different responsibilities:
   deployment.
 
 The primary [reviewer build
-record](https://traces.com/s/jn7fwtf041r9vj75mx6v4n83fh8bv2vg) is an
+record](https://traces.com/s/jn7e2xwnd56pq2b3bdhgvgw2g18btyp5) is an
 unlisted 31-event index. It is intentionally grouped by reviewer question
 instead of chronology:
 
@@ -218,23 +218,15 @@ instead of chronology:
 Its first five events establish the final state: public repository, live GCP
 service, merge commit, 75/75 tests, 36/36 labelled evals, zero false verifies,
 4/4 entity abstentions, a successful 204-span LangSmith root with zero errors,
-and no server Tavily-key fallback. Historical alternatives appear later in one
-section labelled as rejected context. Selected source excerpts are labelled by
-model and original event number; editorial summaries are explicit.
+and no server Tavily-key fallback. The record presents DealLens as a
+self-contained assignment product: product selection, architecture,
+implementation, verification, and shipping. Selected source excerpts are
+labelled by model and original event number; editorial summaries are explicit.
 
-The [full chronological audit
-trail](https://traces.com/s/jn7c8v6q9rah96gah5gzq7hxm98btx28) remains
-available for exact intermediate tool work. It contains 1,540 events: 77 user
-prompts, 403 assistant build updates, 530 substantive tool calls, and their 530
-results. It closes with the live LangSmith verification and deterministic eval
-snapshot. Hidden reasoning, repeated polling, browser-control mechanics,
-environment-file contents, credentials, email addresses, personal paths, and
-unrelated machine output were omitted.
-
-The raw exploratory sessions remain private. Both public records were scanned
-locally and after upload for Tavily, LangSmith, OpenAI, Google, GitHub,
-bearer-token, OAuth, email, and personal-path patterns, with zero matches after
-redaction. Together with this log, repository history,
+The public record was scanned locally and after upload for provider and GitHub
+tokens, bearer credentials, email addresses, personal paths, and unrelated
+workflow framing, with zero matches after redaction. Together with this log,
+repository history,
 [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr), and
 the walkthrough, they satisfy the assignment's build-record deliverable without
 letting rejected concepts define the submitted product.

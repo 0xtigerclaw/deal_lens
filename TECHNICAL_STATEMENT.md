@@ -7,12 +7,13 @@ investment committee preparation. The analyst already knows how to write a
 memo; the hard part is assembling the current, deal-specific facts that could
 change the decision and preserving a defensible source trail for review.
 
-DealLens integrates that evidence step into the existing workflow. It performs
-the first public-evidence screen of a UK private company, organizes findings
-across four acquisition-risk areas, and exports a reviewable memo before the
-team commissions full commercial, legal, financial, and cybersecurity
-diligence. It supports compliance review through governed, auditable evidence;
-it does not certify compliance or replace specialist judgment.
+DealLens is a standalone acquisition-screening application for that decision
+point. It performs the first public-evidence screen of a UK private company,
+organizes findings across four acquisition-risk areas, and exports a reviewable
+memo before the team commissions full commercial, legal, financial, and
+cybersecurity diligence. It supports compliance review through governed,
+auditable evidence; it does not certify compliance or replace specialist
+judgment.
 
 The expensive failure in this workflow is not missing polished prose. It is
 either escalating a weak allegation as fact or presenting retrieval failure as
@@ -22,6 +23,24 @@ evidence that a category is clean. The architecture therefore optimizes for
 The central engineering rule is:
 
 > Discovery may be probabilistic. Escalation must be deterministic.
+
+## Relationship to the starter agent
+
+DealLens keeps the starter agent's supported stack where it fits and replaces
+the generic components that do not enforce the product's evidence boundary. A
+starter environment runs DealLens with the same `uv run` entrypoint style, the
+same two provider keys, and the same Nebius integration.
+
+| Starter element | In DealLens | Why |
+|---|---|---|
+| uv + Typer + Rich + python-dotenv | Kept, as a project instead of one script | Same developer ergonomics; `uv run deallens screen ...` mirrors `uv run starter_agent.py ...` |
+| Nebius chat model via `langchain-nebius` | Kept, same integration | The supported provider path is unchanged |
+| Default model `moonshotai/Kimi-K2.6` | `moonshotai/Kimi-K3` | Same model family, current release |
+| `TAVILY_API_KEY` and `NEBIUS_API_KEY` with guided missing-key errors | Kept, same messages and signup URLs | Zero onboarding delta from the starter |
+| Tavily as the web layer, one `TavilySearch()` tool with defaults | Research, Search, and Extract through `tavily-python` | The workflow needs recall, governed verification, and verbatim capture, plus the usage accounting and `failed_results` reporting the tool wrapper does not surface |
+| `create_agent` free-running tool loop | Typed pipeline with a deterministic gate | The model no longer chooses retrieval order or grades its own findings; cost and failure become reproducible |
+| System prompt asking for "source URLs when available" | Verbatim quotes validated against extracted content, tied to atomic assertions | Citation by request became citation by construction |
+| Streaming console Q&A | Screen jobs, memo artifacts, archive, and review UI | The deliverable is an auditable memo, not a transient answer |
 
 ## Why Tavily is essential rather than decorative
 
@@ -179,7 +198,7 @@ review acceptance, duplicate/syndicated evidence, and time saved.
 | Evaluation loop | `deallens eval`, 36 labelled cases, case-level baseline deltas, reviewed promotion, CI artifact |
 | Context engineering | Kimi receives bounded snippets/query-focused chunks rather than an uncontrolled web corpus |
 | Observability | LangSmith root/child trace contract plus per-run Tavily/Nebius/latency ledger |
-| Customer adaptation | YAML jurisdiction tiers and two acquisition severity profiles |
+| Workflow configurability | YAML jurisdiction tiers and two acquisition severity profiles |
 | Small thing done well | One target, four categories, one memo; explicit exclusions and limitations |
 | Chosen provider path | Nebius Token Factory + Kimi K3, aligned with the starter stack; no Claude runtime path |
 

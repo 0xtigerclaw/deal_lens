@@ -78,7 +78,7 @@ class ScreenRequest(BaseModel):
     domain: str = Field(min_length=3, max_length=253)
     company_id: str | None = Field(default=None, min_length=2, max_length=40)
     jurisdiction: str = Field(default="UK", min_length=2, max_length=10)
-    policy_profile: Literal["default", "searchfund"] = "default"
+    policy_profile: Literal["default", "owner_operator"] = "default"
 
     @field_validator("company", mode="before")
     @classmethod
@@ -416,8 +416,8 @@ def _execute_live(job_id: str) -> None:
 
     try:
         policy_path = (
-            PACKAGE_ROOT / "policy.searchfund.yaml"
-            if job.request.policy_profile == "searchfund"
+            PACKAGE_ROOT / "policy.owner_operator.yaml"
+            if job.request.policy_profile == "owner_operator"
             else None
         )
         ledger = UsageLedger()

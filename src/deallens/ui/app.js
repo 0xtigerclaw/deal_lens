@@ -1059,7 +1059,7 @@ function buildFootprint(job, result) {
     ["Kimi input", `${formatNumber(result.usage.llm_input_tokens)} tokens`],
     ["Kimi output", `${formatNumber(result.usage.llm_output_tokens)} tokens`],
     ["Wall time", formatDuration(result.usage.wall_seconds)],
-    ["Policy", job.request.policy_profile === "searchfund" ? "Search-fund" : "Standard"],
+    ["Policy", job.request.policy_profile === "owner_operator" ? "Owner-operator" : "Standard"],
   ];
   rows.forEach(([label, value]) => {
     const row = el("div", "footprint-row");

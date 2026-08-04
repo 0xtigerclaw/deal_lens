@@ -143,7 +143,26 @@ MongoDB was deferred. Typed JSON/Markdown is the right persistence boundary for
 this single-analyst MVP; database work would add submission surface without
 improving the evidence contract.
 
-## 9. Known next work
+## 9. AI collaboration record
+
+Development was distributed across three local Codex task streams:
+
+1. **Core product and submission review:** problem selection, retrieval and
+   evidence architecture, Kimi/Nebius migration, entity confirmation, evals,
+   LangSmith verification, UI iteration, exports, and reviewer documentation.
+2. **Bring-your-own Tavily key:** browser-session key override, server request
+   plumbing, validation, and UI copy for reviewers who want to run a screen
+   against their own Tavily account.
+3. **GCP deployment:** container packaging, Cloud Run configuration, secret
+   wiring, deployment verification, and the public live application.
+
+Codex local task histories remain on the development workstation rather than
+being published as raw transcripts. This sanitized log, the repository commit
+history, [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr),
+and the linked product walkthrough form the shareable build record. API keys,
+environment values, and machine-specific output are deliberately excluded.
+
+## 10. Known next work
 
 1. Build an analyst-labelled live-target eval for open-web recall.
 2. Detect syndicated/near-duplicate articles across publisher domains.

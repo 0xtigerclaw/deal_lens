@@ -30,7 +30,8 @@ class FakeUsageResponse:
         return None
 
     def json(self):
-        return {"key": {"usage": self.usage}}
+        key = self.usage if isinstance(self.usage, dict) else {"usage": self.usage}
+        return {"key": key}
 
 
 class FakeUsageSession:
@@ -100,12 +101,35 @@ def test_research_books_account_usage_delta():
         [{"request_id": "research-123", "status": "completed", "content": {}}]
     )
     tavily._client.base_url = "https://api.tavily.test"
-    tavily._client.session = FakeUsageSession([100, 123])
+    tavily._client.session = FakeUsageSession(
+        [
+            {"usage": 100, "research_usage": 40},
+            {"usage": 123, "research_usage": 55},
+        ]
+    )
 
     tavily.research(input="screen company", poll_interval=0)
 
-    assert tavily.ledger.credits_by_endpoint["research"] == 23
+    assert tavily.ledger.credits_by_endpoint["research"] == 15
     assert tavily.ledger.usage_complete
+
+
+def test_research_usage_warning_describes_delayed_counter(monkeypatch):
+    tavily = wrapper(
+        [{"request_id": "research-123", "status": "completed", "content": {}}]
+    )
+    tavily._client.base_url = "https://api.tavily.test"
+    unchanged = {"usage": 100, "research_usage": 40}
+    tavily._client.session = FakeUsageSession([unchanged] * 6)
+    monkeypatch.setattr("deallens.tavily_client.time.sleep", lambda _seconds: None)
+
+    tavily.research(input="screen company", poll_interval=0)
+
+    assert not tavily.ledger.usage_complete
+    assert tavily.ledger.usage_notes == [
+        "Research usage was not yet reflected when this memo completed; "
+        "the displayed Tavily total may be incomplete."
+    ]
 
 
 def test_extract_uses_bounded_query_focused_chunks():

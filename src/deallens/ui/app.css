@@ -556,7 +556,7 @@ a {
   display: flex;
   flex-wrap: wrap;
   gap: 0;
-  margin-top: 50px;
+  margin-top: 38px;
   color: var(--muted);
   font-family: var(--mono);
   font-size: 9px;
@@ -577,9 +577,52 @@ a {
   border-right: 0;
 }
 
+.risk-coverage {
+  max-width: 500px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.risk-coverage p {
+  margin: 0 0 11px;
+  color: var(--signal-dark);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.risk-coverage ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.risk-coverage li {
+  position: relative;
+  padding-left: 13px;
+  color: #56564f;
+  font-size: 12px;
+}
+
+.risk-coverage li::before {
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  background: var(--signal);
+  border-radius: 50%;
+  content: "";
+}
+
 .scope-note {
-  display: inline-block;
-  margin: 18px 0 0;
+  max-width: 500px;
+  margin: 16px 0 0;
   padding: 7px 9px;
   color: #56564f;
   font-family: var(--mono);

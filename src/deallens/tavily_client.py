@@ -17,6 +17,8 @@ from .models import UsageLedger
 _MAX_RETRIES = 2
 _RESEARCH_POLL_SECONDS = 5.0
 _RESEARCH_TIMEOUT_SECONDS = 600.0
+_RESEARCH_USAGE_RETRIES = 5
+_RESEARCH_USAGE_POLL_SECONDS = 1.0
 
 
 class Tavily:
@@ -49,8 +51,8 @@ class Tavily:
             credits = usage.get("credits", 0) or 0
             self.ledger.add_credits(endpoint, float(credits))
 
-    def _usage_total(self) -> float | None:
-        """Read key-level Tavily credits for Research delta accounting."""
+    def _usage_snapshot(self) -> dict[str, float] | None:
+        """Read key-level Tavily counters for Research delta accounting."""
         session = getattr(self._client, "session", None)
         base_url = getattr(self._client, "base_url", None)
         if session is None or not base_url:
@@ -58,18 +60,53 @@ class Tavily:
         try:
             response = session.get(f"{base_url}/usage", timeout=30)
             response.raise_for_status()
-            usage = response.json().get("key", {}).get("usage")
-            return float(usage) if usage is not None else None
+            key_usage = response.json().get("key", {})
+            return {
+                key: float(value)
+                for key, value in key_usage.items()
+                if key in {"usage", "research_usage"} and value is not None
+            }
         except Exception:
             return None
 
-    def _book_research_delta(self, before: float | None) -> None:
-        after = self._usage_total()
-        if before is not None and after is not None and after > before:
-            self.ledger.add_credits("research", after - before)
+    @staticmethod
+    def _research_counter(snapshot: dict[str, float] | None) -> float | None:
+        if not snapshot:
+            return None
+        return snapshot.get("research_usage", snapshot.get("usage"))
+
+    def _book_research_delta(
+        self,
+        before: dict[str, float] | None,
+        booked_before: float,
+    ) -> None:
+        # Newer Research responses may eventually carry per-call usage. If the
+        # normal response accounting already booked it, do not add a second
+        # account-level delta.
+        if self.ledger.credits_by_endpoint.get("research", 0.0) > booked_before:
             return
+
+        before_value = self._research_counter(before)
+        after_value: float | None = None
+        for attempt in range(_RESEARCH_USAGE_RETRIES):
+            after_value = self._research_counter(self._usage_snapshot())
+            if (
+                before_value is not None
+                and after_value is not None
+                and after_value > before_value
+            ):
+                self.ledger.add_credits("research", after_value - before_value)
+                return
+            if before_value is None or after_value is None:
+                break
+            if attempt < _RESEARCH_USAGE_RETRIES - 1:
+                time.sleep(_RESEARCH_USAGE_POLL_SECONDS)
+
         self.ledger.usage_complete = False
-        note = "Tavily Research credits unavailable from account usage endpoint"
+        note = (
+            "Research usage was not yet reflected when this memo completed; "
+            "the displayed Tavily total may be incomplete."
+        )
         if note not in self.ledger.usage_notes:
             self.ledger.usage_notes.append(note)
 
@@ -94,10 +131,11 @@ class Tavily:
         if output_schema is not None:
             kwargs["output_schema"] = output_schema
 
-        usage_before = self._usage_total()
+        usage_before = self._usage_snapshot()
+        booked_before = self.ledger.credits_by_endpoint.get("research", 0.0)
         response = self._call("research", self._client.research, **kwargs)
         if response.get("status") == "completed":
-            self._book_research_delta(usage_before)
+            self._book_research_delta(usage_before, booked_before)
             return response
 
         request_id = response.get("request_id")
@@ -113,7 +151,7 @@ class Tavily:
             )
             status = response.get("status")
             if status == "completed":
-                self._book_research_delta(usage_before)
+                self._book_research_delta(usage_before, booked_before)
                 return response
             if status == "failed":
                 raise RuntimeError(

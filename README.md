@@ -32,6 +32,26 @@ DealLens does not make the investment decision or certify legal compliance. It
 gives the analyst a governed, auditable evidence package that supports IC,
 compliance, and specialist diligence review.
 
+> **UK-first validation.** The evaluation suite and completed live verification
+> runs cover UK companies. Results may be less complete in other jurisdictions;
+> the Netherlands source pack remains an unvalidated preview.
+
+## Risk coverage
+
+Every screen checks the same four acquisition-risk areas, even when Tavily
+Research proposes no candidate finding:
+
+| Area | Signals reviewed |
+|---|---|
+| **Leadership & ownership** | Director, founder, CEO, CFO, and ownership changes |
+| **Regulatory & litigation** | Investigations, enforcement actions, penalties, and material court proceedings |
+| **Cybersecurity** | Ransomware, security incidents, and customer-data breaches |
+| **Financial distress** | Insolvency, administration, overdue filings, layoffs, closures, and funding pressure |
+
+For each area, the memo records checks run, sources reviewed, and whether there
+is a verified finding, a reported signal, no qualifying finding, or a gap that
+requires human review.
+
 ## Why this is different
 
 Most research agents let the same model discover a claim and grade it. DealLens

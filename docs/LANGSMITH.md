@@ -134,10 +134,11 @@ The final end-to-end check completed on 2026-08-04 against `MONZO BANK LIMITED`
 | Measured usage | 28 Tavily Search/Extract credits, 33,033 Kimi input tokens, 5,068 output tokens |
 
 The root metadata and emitted `evidence.json` agree on candidate count, finding
-count, risk level, token counts, measured credits, and wall time. Research
-credit measurement was unavailable from Tavily’s key-usage endpoint, so the
-artifact correctly sets `usage_complete=false` instead of overstating total
-cost.
+count, risk level, token counts, measured credits, and wall time. When this run
+completed, its Research delta had not yet appeared in Tavily's `/usage`
+response, so the artifact conservatively set `usage_complete=false` instead of
+overstating total cost. DealLens now reads the endpoint's dedicated
+`research_usage` counter and briefly retries delayed updates.
 
 The pre-confirmation live registry lookup is trace
 `019fcc57-00a1-74f1-871c-2f877182bcb4`: `success`, 1.033s, tagged

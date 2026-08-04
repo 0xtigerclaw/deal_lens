@@ -962,7 +962,12 @@ function buildFootprint(job, result) {
     row.append(el("span", "", label), el("strong", "", value));
     card.append(row);
   });
-  (result.usage.usage_notes || []).forEach((note) => card.append(el("p", "usage-warning", note)));
+  (result.usage.usage_notes || []).forEach((note) => {
+    const displayNote = note === "Tavily Research credits unavailable from account usage endpoint"
+      ? "Research usage was not yet reflected when this memo completed; the displayed Tavily total may be incomplete."
+      : note;
+    card.append(el("p", "usage-warning", displayNote));
+  });
   card.append(
     el(
       "p",

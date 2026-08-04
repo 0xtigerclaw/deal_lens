@@ -17,6 +17,8 @@ def test_interface_shell_is_served():
     assert response.status_code == 200
     assert "DealLens — Acquisition Intelligence" in response.text
     assert "Run governed screen" in response.text
+    assert "Active screenings" in response.text
+    assert "Fixture memo" not in response.text
 
 
 def test_health_reports_provider_presence_without_exposing_secrets():

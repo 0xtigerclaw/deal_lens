@@ -39,9 +39,13 @@
             <span class="nav-index">01</span>
             <span>New screen</span>
           </button>
-          <button class="nav-item" type="button" data-action="load-demo">
+          <button class="nav-item" type="button" data-action="active-screens">
             <span class="nav-index">02</span>
-            <span>Fixture memo</span>
+            <span class="nav-label">
+              <span class="nav-label-full">Active screenings</span>
+              <span class="nav-label-short">Active</span>
+            </span>
+            <span class="nav-count" id="nav-active-count">0</span>
           </button>
           <button class="nav-item" type="button" data-action="archive">
             <span class="nav-index">03</span>
@@ -80,11 +84,10 @@
               class="active-run-trigger"
               id="active-run-trigger"
               type="button"
-              aria-controls="active-screens-docket"
-              hidden
+              aria-controls="active-view"
             >
               <span class="active-run-pulse" aria-hidden="true"></span>
-              <span id="active-run-label">0 active</span>
+              <span id="active-run-label">Active screenings</span>
             </button>
             <span class="model-badge" id="model-badge">Kimi K3 · Nebius</span>
             <button class="quiet-button" type="button" data-action="new-screen">
@@ -110,26 +113,6 @@
             </div>
 
             <div class="intake-panel reveal" style="--delay: 110ms">
-              <section
-                class="active-screens-docket"
-                id="active-screens-docket"
-                aria-labelledby="active-screens-title"
-                aria-live="polite"
-                hidden
-              >
-                <div class="active-screens-heading">
-                  <div>
-                    <p class="section-number">Background worker ledger</p>
-                    <h2 id="active-screens-title">Active screens</h2>
-                  </div>
-                  <span id="active-screens-count">0 running</span>
-                </div>
-                <div class="active-screens-list" id="active-screens-list"></div>
-                <p class="active-screens-note">
-                  These runs continue if you open another target or close this tab.
-                </p>
-              </section>
-
               <div class="panel-heading">
                 <div>
                   <p class="section-number">Screen / 001</p>
@@ -262,11 +245,6 @@
                   </p>
                 </section>
               </form>
-
-              <div class="fixture-row">
-                <span>No keys or credits?</span>
-                <button type="button" data-action="load-demo">Open fixture memo</button>
-              </div>
             </div>
 
             <div class="intake-footnote reveal" style="--delay: 220ms">
@@ -308,6 +286,41 @@
 
           <section class="result-view" id="result-view" hidden>
             <div id="result-root"></div>
+          </section>
+
+          <section class="active-view" id="active-view" hidden>
+            <header class="active-view-header">
+              <div>
+                <p class="eyebrow"><span></span> Live background workers</p>
+                <h1>Active screenings.</h1>
+              </div>
+              <p>
+                Every company currently consuming research or analysis capacity,
+                with its latest checkpoint and elapsed time.
+              </p>
+            </header>
+            <div class="active-register">
+              <div class="active-screens-heading">
+                <div>
+                  <p class="section-number">Background worker ledger</p>
+                  <h2 id="active-screens-title">Company screens</h2>
+                </div>
+                <span id="active-screens-count">0 running</span>
+              </div>
+              <div
+                class="active-screens-list"
+                id="active-screens-list"
+                aria-labelledby="active-screens-title"
+                aria-live="polite"
+              ></div>
+              <div class="active-screens-empty" id="active-screens-empty">
+                <strong>No screenings are running.</strong>
+                <span>Start a new company screen and it will appear here.</span>
+              </div>
+              <p class="active-screens-note">
+                Screens continue if you open another target or close this tab.
+              </p>
+            </div>
           </section>
 
           <section class="archive-view" id="archive-view" hidden>

@@ -16,6 +16,7 @@ const views = {
   intake: document.querySelector("#intake-view"),
   run: document.querySelector("#run-view"),
   result: document.querySelector("#result-view"),
+  active: document.querySelector("#active-view"),
   archive: document.querySelector("#archive-view"),
   failure: document.querySelector("#failure-view"),
 };
@@ -146,20 +147,24 @@ function setScreenUrl(jobId) {
 function renderActiveScreens() {
   const jobs = state.activeScreens;
   const trigger = document.querySelector("#active-run-trigger");
-  const docket = document.querySelector("#active-screens-docket");
   const list = document.querySelector("#active-screens-list");
+  const empty = document.querySelector("#active-screens-empty");
   const count = jobs.length;
 
-  trigger.hidden = count === 0;
-  docket.hidden = count === 0;
+  trigger.classList.toggle("has-active", count > 0);
   document.querySelector("#active-run-label").textContent =
-    `${count} active`;
+    count ? `Active screenings · ${count}` : "Active screenings";
+  document.querySelector("#nav-active-count").textContent = String(count);
   document.querySelector("#active-screens-count").textContent =
     `${count} ${count === 1 ? "run" : "runs"}`;
   trigger.setAttribute(
     "aria-label",
-    count ? `Show ${count} active ${count === 1 ? "screen" : "screens"}` : "No active screens",
+    count
+      ? `Open active screenings, ${count} ${count === 1 ? "company" : "companies"} running`
+      : "Open active screenings, no companies running",
   );
+  list.hidden = count === 0;
+  empty.hidden = count > 0;
 
   clear(list);
   jobs.forEach((job, index) => {
@@ -172,15 +177,16 @@ function renderActiveScreens() {
     const identity = el("span", "active-screen-identity");
     identity.append(
       el("strong", "", job.request.company),
-      el("span", "", job.message),
+      el("span", "", `${job.request.jurisdiction} · ${job.request.domain}`),
     );
+    const status = el("span", "active-screen-status", job.message);
     const progress = el("span", "active-screen-progress");
     progress.append(
       el("strong", "", `${job.percent}%`),
       el("span", "", `${activeStageLabel(job.stage)} · ${formatDuration(job.elapsed_seconds)}`),
     );
     const action = el("span", "active-screen-action", "Resume →");
-    button.append(marker, identity, progress, action);
+    button.append(marker, identity, status, progress, action);
     button.addEventListener("click", () => openActiveScreen(job.id));
     list.append(button);
   });
@@ -199,14 +205,17 @@ async function loadActiveScreens() {
 }
 
 function revealActiveScreens() {
-  if (!state.activeScreens.length) return;
-  setTitle("Active screens");
-  setNav("new-screen");
-  showView("intake");
-  document.querySelector("#active-screens-docket").scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-  });
+  window.clearTimeout(state.pollTimer);
+  state.pollTimer = null;
+  state.activeJobId = null;
+  state.activeJobStatus = null;
+  localStorage.removeItem("deallens.activeJob");
+  setScreenUrl(null);
+  resetStageRail();
+  setTitle("Active screenings");
+  setNav("active-screens");
+  showView("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 async function openActiveScreen(jobId) {
@@ -484,15 +493,6 @@ function looksLikeDomain(value) {
   }
 }
 
-async function loadDemo() {
-  try {
-    const job = await api("/api/demo", { method: "POST", body: "{}" });
-    beginJob(job);
-  } catch (error) {
-    toast(error.message);
-  }
-}
-
 async function openArchive() {
   setTitle("Screen archive");
   setNav("archive");
@@ -657,7 +657,7 @@ function renderResult(job) {
   if (state.pollTimer) window.clearTimeout(state.pollTimer);
   state.pollTimer = null;
   setTitle(job.request.company);
-  setNav(job.archived ? "archive" : job.demo ? "load-demo" : "new-screen");
+  setNav(job.archived ? "archive" : "new-screen");
   updateStageRail("decision", "completed");
   showView("result");
 
@@ -969,8 +969,8 @@ document.querySelector("#screen-form").addEventListener("submit", submitScreen);
 document.querySelectorAll("[data-action=new-screen]").forEach((button) => {
   button.addEventListener("click", newScreen);
 });
-document.querySelectorAll("[data-action=load-demo]").forEach((button) => {
-  button.addEventListener("click", loadDemo);
+document.querySelectorAll("[data-action=active-screens]").forEach((button) => {
+  button.addEventListener("click", revealActiveScreens);
 });
 document.querySelectorAll("[data-action=archive]").forEach((button) => {
   button.addEventListener("click", openArchive);

@@ -1,7 +1,7 @@
 [project]
 name = "deallens"
 version = "0.2.0"
-description = "10-minute M&A red-flag screen: Tavily discovery, source-governed verification, deterministic evidence gate."
+description = "Acquisition intelligence for evidence-backed investment committee diligence memos."
 requires-python = ">=3.11"
 dependencies = [
     "tavily-python>=0.7.12",
@@ -16,6 +16,7 @@ dependencies = [
     "openai>=1.0",
     "fastapi>=0.116",
     "uvicorn>=0.35",
+    "reportlab>=4.2",
 ]
 
 [project.scripts]

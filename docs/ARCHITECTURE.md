@@ -15,7 +15,7 @@ flowchart TB
     Tavily["Tavily<br/>Research · Search · Extract"]
     Nebius["Nebius Token Factory<br/>Kimi K3"]
     Gate["Deterministic evidence gate"]
-    Artifacts["Local memo.md + evidence.json"]
+    Artifacts["Local memo.md + evidence.json<br/>memo.pdf on demand"]
     LS["LangSmith EU project"]
 
     Analyst --> UI --> API
@@ -53,7 +53,7 @@ flowchart TD
     V["Deterministic validators<br/>verbatim · tier · publisher · entity"]
     G["Assertion evidence gate"]
     Y["YAML severity policy"]
-    O["ScreenResult<br/>memo + JSON + usage"]
+    O["ScreenResult<br/>PDF/Markdown memo + JSON + usage"]
 
     I --> R --> N
     I --> S0 --> N
@@ -166,7 +166,7 @@ flowchart LR
     Finding --> Risk
     Coverage --> Result["ScreenResult JSON"]
     Risk --> Result
-    Result --> Memo["Executive Markdown memo"]
+    Result --> Memo["IC memo<br/>styled PDF + Markdown"]
 ```
 
 Every displayed source relationship survives in `evidence.json`, including
@@ -204,7 +204,9 @@ Tests force `LANGSMITH_TRACING=false`; only explicit live operations enter the
 - Jobs persist in process for progress/resume; completed outputs persist on
   disk beneath ignored `reports/web/{job_id}` directories.
 - The archive discovers the latest output per legal entity and also serves two
-  committed public examples from `examples/screens`.
+  committed public examples from `examples/screens`. Both archived and newly
+  completed screens expose PDF and Markdown memo downloads; PDFs are generated
+  from the same typed `ScreenResult` used by the UI and JSON evidence package.
 - This is intentionally single-node MVP infrastructure. A production service
   would move job state to a durable queue/database without changing the typed
   pipeline or evidence gate.

@@ -188,6 +188,12 @@ def test_archive_reopens_retained_wise_and_revolut_screens(
     assert payload["status"] == "completed"
     assert payload["result"]["target"] == "Wise Limited"
     assert client.get(payload["memo_url"]).status_code == 200
+    pdf = client.get(payload["pdf_url"])
+    assert pdf.status_code == 200
+    assert pdf.headers["content-type"] == "application/pdf"
+    assert pdf.headers["content-disposition"].endswith("ic-diligence-memo.pdf\"")
+    assert pdf.content.startswith(b"%PDF-")
+    assert len(pdf.content) > 10_000
     assert client.get(payload["evidence_url"]).status_code == 200
 
 
@@ -200,12 +206,16 @@ def test_demo_endpoint_returns_a_complete_renderable_screen():
     assert payload["percent"] == 100
     assert payload["result"]["risk_level"] == "REVIEW REQUIRED"
     assert payload["memo_url"].endswith("/memo")
+    assert payload["pdf_url"].endswith("/pdf")
     assert payload["evidence_url"].endswith("/evidence")
 
     memo = client.get(payload["memo_url"])
+    pdf = client.get(payload["pdf_url"])
     evidence = client.get(payload["evidence_url"])
     assert memo.status_code == 200
     assert "Investment Committee Diligence Memo" in memo.text
+    assert pdf.status_code == 200
+    assert pdf.content.startswith(b"%PDF-")
     assert evidence.status_code == 200
     assert evidence.json()["target"] == "Acme Industrial Ltd"
 

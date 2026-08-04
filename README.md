@@ -84,7 +84,7 @@ The interface also includes:
 - category coverage and source-review counts;
 - atomic assertion support/contradiction relationships;
 - verbatim evidence with clickable source links; and
-- Markdown memo and JSON evidence downloads.
+- polished PDF and Markdown IC memo exports, plus the complete JSON evidence package.
 
 ### Live provider setup
 
@@ -188,6 +188,8 @@ for the span contract and the verified Monzo run (`204` spans, `0` errors).
 - `examples/screens/`: curated public example artifacts used by the archive.
 
 Each screen writes a Markdown memo and complete typed JSON evidence package.
+The web app also renders a styled, source-linked PDF memo on demand for every
+completed screen, including retained archive entries.
 The usage ledger records Tavily credits per endpoint, Nebius token counts, wall
 time, and an explicit `usage_complete` flag. If Research credit measurement is
 unavailable, the ledger says so rather than reporting a false total.
@@ -205,7 +207,7 @@ src/deallens/
   web.py            FastAPI job/archive/entity API
   ui/               dependency-free analyst interface
   evalrun.py        three-suite offline evaluation harness
-  memo.py           Markdown/JSON/console renderers
+  memo.py           PDF/Markdown/JSON/console renderers
 ```
 
 Submission documents:
@@ -227,7 +229,8 @@ Submission documents:
 - Syndicated copy on genuinely different configured publisher domains may
   count twice; near-duplicate clustering is future work.
 - `/research` is used for recall, not accepted as evidence by itself.
-- Storage is local JSON/Markdown for this single-analyst MVP. MongoDB was
+- Storage is local JSON/Markdown for this single-analyst MVP, with PDFs
+  generated on demand from the typed result. MongoDB was
   deliberately deferred; adding infrastructure would not strengthen the core
   retrieval/evidence assignment.
 - Tavily Crawl is not used. Search locates claim-relevant sources and Extract

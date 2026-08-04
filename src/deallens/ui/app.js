@@ -745,6 +745,7 @@ function buildResultHeader(job, result) {
   );
   const actions = el("div", "result-actions");
   actions.append(
+    downloadLink(job.pdf_url, "IC memo · PDF"),
     downloadLink(job.memo_url, "IC memo · MD"),
     downloadLink(job.evidence_url, "Evidence · JSON"),
   );
@@ -787,6 +788,7 @@ function assessmentSentence(result) {
   if (counts.reported) parts.push(`${counts.reported} reported concern${plural(counts.reported)}`);
   if (counts.partial) parts.push(`${counts.partial} partially supported claim${plural(counts.partial)}`);
   if (counts.conflicting) parts.push(`${counts.conflicting} conflicting claim${plural(counts.conflicting)}`);
+  if (counts.contradicted) parts.push(`${counts.contradicted} contradicted claim${plural(counts.contradicted)}`);
   if (counts.unresolved) parts.push(`${counts.unresolved} unresolved check${plural(counts.unresolved)}`);
   const pipelineIssues = result.coverage.filter((item) => item.note).length;
   if (pipelineIssues) parts.push(`${pipelineIssues} pipeline review item${plural(pipelineIssues)}`);
@@ -801,7 +803,7 @@ function buildMetrics(result) {
   const metrics = [
     [counts.verified, "Verified"],
     [counts.reported, "Reported"],
-    [counts.partial + counts.conflicting, "Needs review"],
+    [counts.partial + counts.conflicting + counts.contradicted, "Needs review"],
     [counts.unresolved, "Unresolved"],
     [counts.rejected, "Rejected"],
   ];

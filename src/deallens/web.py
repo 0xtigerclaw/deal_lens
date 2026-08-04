@@ -16,7 +16,7 @@ from typing import Literal
 from urllib.parse import urlparse
 
 from fastapi import FastAPI, Header, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
@@ -24,7 +24,7 @@ from pydantic import BaseModel, Field, field_validator
 from .config import PACKAGE_ROOT, load_jurisdiction, load_policy
 from .demo import run_demo
 from .entity import resolve_entity
-from .memo import write_outputs
+from .memo import pdf_filename, render_pdf, write_outputs
 from .models import ScreenResult, UsageLedger
 
 load_dotenv()
@@ -173,6 +173,7 @@ class JobRecord:
             "error": self.error,
             "result": self.result.model_dump(mode="json") if self.result else None,
             "memo_url": f"/api/screens/{self.id}/memo" if self.memo_path else None,
+            "pdf_url": f"/api/screens/{self.id}/pdf" if self.result else None,
             "evidence_url": (
                 f"/api/screens/{self.id}/evidence" if self.evidence_path else None
             ),
@@ -350,6 +351,7 @@ def _archive_public(record: ArchiveRecord) -> dict:
         "error": None,
         "result": result.model_dump(mode="json"),
         "memo_url": f"/api/archive/{record.id}/memo",
+        "pdf_url": f"/api/archive/{record.id}/pdf",
         "evidence_url": f"/api/archive/{record.id}/evidence",
     }
 
@@ -504,6 +506,19 @@ def download_archived_memo(archive_id: str) -> FileResponse:
     )
 
 
+@app.get("/api/archive/{archive_id}/pdf")
+def download_archived_pdf(archive_id: str) -> Response:
+    result = _get_archive_record(archive_id).result
+    return Response(
+        content=render_pdf(result),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{pdf_filename(result)}"',
+            "X-Content-Type-Options": "nosniff",
+        },
+    )
+
+
 @app.get("/api/archive/{archive_id}/evidence")
 def download_archived_evidence(archive_id: str) -> FileResponse:
     record = _get_archive_record(archive_id)
@@ -584,6 +599,21 @@ def download_memo(job_id: str) -> FileResponse:
         job.memo_path,
         media_type="text/markdown",
         filename=job.memo_path.name,
+    )
+
+
+@app.get("/api/screens/{job_id}/pdf")
+def download_pdf(job_id: str) -> Response:
+    job = _get_job(job_id)
+    if not job.result or job.status != "completed":
+        raise HTTPException(status_code=409, detail="PDF memo is not ready")
+    return Response(
+        content=render_pdf(job.result),
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{pdf_filename(job.result)}"',
+            "X-Content-Type-Options": "nosniff",
+        },
     )
 
 

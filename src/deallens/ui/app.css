@@ -444,6 +444,31 @@ a {
 .key-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #b2b0a9; }
 .api-key-trigger.has-personal-key .key-status-dot { background: #16865a; box-shadow: 0 0 0 3px rgba(22, 134, 90, .12); }
 
+.github-link {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.github-link svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.github-link:hover,
+.github-link:focus-visible {
+  color: var(--signal-dark);
+  outline: none;
+}
+
 .api-key-dialog {
   width: min(520px, calc(100vw - 32px));
   padding: 0;
@@ -469,6 +494,7 @@ a {
 @media (max-width: 700px) {
   .api-key-trigger { padding-inline: 9px; }
   #api-key-trigger-label { display: none; }
+  .github-link span { display: none; }
   .api-key-card { padding: 24px 20px; }
 }
 

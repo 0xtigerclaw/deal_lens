@@ -8,6 +8,8 @@ const state = {
   archive: [],
   entityResolutionKey: null,
   skipResolutionKey: null,
+  activeScreens: [],
+  activeScreensTimer: null,
 };
 
 const views = {
@@ -114,6 +116,97 @@ async function loadHealth() {
   } catch (error) {
     light.classList.add("is-error");
     label.textContent = "API unavailable";
+  }
+}
+
+function activeStageLabel(stage) {
+  const labels = {
+    queued: "Queued",
+    starting: "Starting",
+    research: "Research",
+    coverage: "Coverage",
+    verification: "Verify",
+    decision: "Decide",
+  };
+  return labels[stage] || "Running";
+}
+
+function renderActiveScreens() {
+  const jobs = state.activeScreens;
+  const trigger = document.querySelector("#active-run-trigger");
+  const docket = document.querySelector("#active-screens-docket");
+  const list = document.querySelector("#active-screens-list");
+  const count = jobs.length;
+
+  trigger.hidden = count === 0;
+  docket.hidden = count === 0;
+  document.querySelector("#active-run-label").textContent =
+    `${count} active`;
+  document.querySelector("#active-screens-count").textContent =
+    `${count} ${count === 1 ? "run" : "runs"}`;
+  trigger.setAttribute(
+    "aria-label",
+    count ? `Show ${count} active ${count === 1 ? "screen" : "screens"}` : "No active screens",
+  );
+
+  clear(list);
+  jobs.forEach((job, index) => {
+    const button = el("button", "active-screen-row");
+    button.type = "button";
+    button.dataset.jobId = job.id;
+    if (job.id === state.activeJobId) button.classList.add("is-current");
+
+    const marker = el("span", "active-screen-marker", String(index + 1).padStart(2, "0"));
+    const identity = el("span", "active-screen-identity");
+    identity.append(
+      el("strong", "", job.request.company),
+      el("span", "", job.message),
+    );
+    const progress = el("span", "active-screen-progress");
+    progress.append(
+      el("strong", "", `${job.percent}%`),
+      el("span", "", `${activeStageLabel(job.stage)} · ${formatDuration(job.elapsed_seconds)}`),
+    );
+    const action = el("span", "active-screen-action", "Resume →");
+    button.append(marker, identity, progress, action);
+    button.addEventListener("click", () => openActiveScreen(job.id));
+    list.append(button);
+  });
+}
+
+async function loadActiveScreens() {
+  window.clearTimeout(state.activeScreensTimer);
+  try {
+    state.activeScreens = await api("/api/screens");
+    renderActiveScreens();
+  } catch (_) {
+    // Keep the last known ledger visible through a temporary connection issue.
+  } finally {
+    state.activeScreensTimer = window.setTimeout(loadActiveScreens, 3500);
+  }
+}
+
+function revealActiveScreens() {
+  if (!state.activeScreens.length) return;
+  setTitle("Active screens");
+  setNav("new-screen");
+  showView("intake");
+  document.querySelector("#active-screens-docket").scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+}
+
+async function openActiveScreen(jobId) {
+  window.clearTimeout(state.pollTimer);
+  state.activeJobId = jobId;
+  localStorage.setItem("deallens.activeJob", jobId);
+  try {
+    const job = await api(`/api/screens/${jobId}`);
+    beginJob(job);
+  } catch (error) {
+    toast(`Could not reopen screen: ${error.message}`);
+    loadActiveScreens();
   }
 }
 
@@ -231,6 +324,7 @@ function newScreen() {
   setTitle("New screen");
   setNav("new-screen");
   showView("intake");
+  renderActiveScreens();
   document.querySelector("#company").focus();
 }
 
@@ -455,6 +549,12 @@ function beginJob(job) {
   state.activeJobId = job.id;
   state.activeJobStatus = job.status;
   localStorage.setItem("deallens.activeJob", job.id);
+  const existing = state.activeScreens.findIndex((item) => item.id === job.id);
+  if (["queued", "running"].includes(job.status)) {
+    if (existing >= 0) state.activeScreens[existing] = job;
+    else state.activeScreens.push(job);
+    renderActiveScreens();
+  }
   if (job.status === "completed") {
     renderResult(job);
     return;
@@ -502,11 +602,13 @@ async function pollJob() {
     state.activeJobStatus = job.status;
     if (job.status === "completed") {
       localStorage.removeItem("deallens.activeJob");
+      loadActiveScreens();
       renderResult(job);
       return;
     }
     if (job.status === "failed") {
       localStorage.removeItem("deallens.activeJob");
+      loadActiveScreens();
       renderFailure(job);
       return;
     }
@@ -867,7 +969,9 @@ document.querySelector("#entity-skip").addEventListener("click", () => {
   document.querySelector("#entity-resolution").hidden = true;
   document.querySelector("#screen-form").requestSubmit();
 });
+document.querySelector("#active-run-trigger").addEventListener("click", revealActiveScreens);
 
 loadHealth();
 loadPresets();
+loadActiveScreens();
 resumeJob();

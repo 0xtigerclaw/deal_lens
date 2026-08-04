@@ -27,7 +27,7 @@ Measured on 2026-08-04 from the committed fixtures:
 | Source-governance contract | 12/12 | 12/12 full contract matches |
 | **Total** | **36/36** | **all gates pass** |
 
-The associated unit/API suite passes **65/65** tests.
+The associated unit/API suite passes **67/67** tests.
 
 The committed machine-readable summary is
 [evaluation-results.json](evaluation-results.json).

@@ -201,6 +201,36 @@ def _public_job(job: JobRecord) -> dict:
         return job.public()
 
 
+def _active_jobs() -> list[JobRecord]:
+    """Return every server-held job that is still consuming worker capacity."""
+    with _jobs_lock:
+        jobs = [
+            job for job in _jobs.values() if job.status in ("queued", "running")
+        ]
+    return sorted(jobs, key=lambda job: job.created_at)
+
+
+def _new_live_job(request: ScreenRequest) -> tuple[JobRecord, bool]:
+    """Atomically create a live job or return its active identical run."""
+    request_data = request.model_dump()
+    with _jobs_lock:
+        existing = next(
+            (
+                job
+                for job in _jobs.values()
+                if job.status in ("queued", "running")
+                and job.request.model_dump() == request_data
+                and not job.demo
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing, False
+        job = JobRecord(uuid.uuid4().hex[:12], request)
+        _jobs[job.id] = job
+    return job, True
+
+
 def _archive_records() -> dict[str, ArchiveRecord]:
     """Load the newest completed report per legal entity from durable artifacts."""
     candidates = list(WEB_REPORT_ROOT.glob("*/*.json"))
@@ -380,6 +410,12 @@ def company_presets() -> list[dict[str, str]]:
     return [dict(preset) for preset in COMPANY_PRESETS]
 
 
+@app.get("/api/screens")
+def list_screens() -> list[dict]:
+    """List all queued/running jobs so browsers cannot lose background work."""
+    return [_public_job(job) for job in _active_jobs()]
+
+
 @app.post("/api/entities/resolve")
 def resolve_company_entity(request: ScreenRequest) -> dict:
     """Return registry candidates for explicit user confirmation."""
@@ -457,8 +493,9 @@ def create_screen(request: ScreenRequest) -> dict:
         load_jurisdiction(request.jurisdiction)
     except FileNotFoundError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-    job = _new_job(request)
-    _executor.submit(_execute_live, job.id)
+    job, created = _new_live_job(request)
+    if created:
+        _executor.submit(_execute_live, job.id)
     return _public_job(job)
 
 

@@ -76,7 +76,9 @@ match before a paid screen starts.
 
 The interface also includes:
 
-- background jobs with resumable progress;
+- a server-backed active-screen ledger, so every queued or running target stays
+  visible and resumable across targets and browser tabs;
+- duplicate-run protection while the same target is already active;
 - retained Wise and Revolut example screens on a fresh clone;
 - category coverage and source-review counts;
 - atomic assertion support/contradiction relationships;
@@ -150,7 +152,7 @@ measured result:
 | Source-governance contract | 12/12 | all tier/entity/document boundaries correct |
 | **Total** | **36/36** | **all gates pass** |
 
-The pytest suite is **65/65 passing**. Labels, methodology, limitations, and
+The pytest suite is **67/67 passing**. Labels, methodology, limitations, and
 the machine-readable command are documented in
 [docs/EVALUATION.md](docs/EVALUATION.md); the latest committed summary is
 [docs/evaluation-results.json](docs/evaluation-results.json).

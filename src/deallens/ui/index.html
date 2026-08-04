@@ -76,6 +76,16 @@
             <strong id="view-title">New screen</strong>
           </div>
           <div class="topbar-actions">
+            <button
+              class="active-run-trigger"
+              id="active-run-trigger"
+              type="button"
+              aria-controls="active-screens-docket"
+              hidden
+            >
+              <span class="active-run-pulse" aria-hidden="true"></span>
+              <span id="active-run-label">0 active</span>
+            </button>
             <span class="model-badge" id="model-badge">Kimi K3 · Nebius</span>
             <button class="quiet-button" type="button" data-action="new-screen">
               <span aria-hidden="true">＋</span> New target
@@ -100,6 +110,26 @@
             </div>
 
             <div class="intake-panel reveal" style="--delay: 110ms">
+              <section
+                class="active-screens-docket"
+                id="active-screens-docket"
+                aria-labelledby="active-screens-title"
+                aria-live="polite"
+                hidden
+              >
+                <div class="active-screens-heading">
+                  <div>
+                    <p class="section-number">Background worker ledger</p>
+                    <h2 id="active-screens-title">Active screens</h2>
+                  </div>
+                  <span id="active-screens-count">0 running</span>
+                </div>
+                <div class="active-screens-list" id="active-screens-list"></div>
+                <p class="active-screens-note">
+                  These runs continue if you open another target or close this tab.
+                </p>
+              </section>
+
               <div class="panel-heading">
                 <div>
                   <p class="section-number">Screen / 001</p>

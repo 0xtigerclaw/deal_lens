@@ -1,5 +1,7 @@
 """Local web interface contracts without external provider calls."""
 
+import time
+
 from fastapi.testclient import TestClient
 
 from deallens.entity import EntityCandidate, EntityResolution
@@ -97,6 +99,59 @@ def test_entity_endpoint_returns_candidates_without_starting_a_screen(
 
     assert response.status_code == 200
     assert response.json()["candidates"][0]["company_id"] == "09446231"
+
+
+def test_active_screen_ledger_lists_every_background_job(monkeypatch):
+    request = ScreenRequest(company="Arm Holdings", domain="arm.com")
+    running = web_module.JobRecord("arm-running", request)
+    running.status = "running"
+    running.started_monotonic = time.monotonic() - 12
+    running.update("verification", "Checking 3 of 9: regulatory", 51)
+    queued = web_module.JobRecord(
+        "shell-queued",
+        ScreenRequest(company="Shell", domain="shell.com"),
+    )
+    monkeypatch.setattr(
+        web_module,
+        "_jobs",
+        {running.id: running, queued.id: queued},
+    )
+
+    response = client.get("/api/screens")
+
+    assert response.status_code == 200
+    assert [job["id"] for job in response.json()] == ["arm-running", "shell-queued"]
+    assert response.json()[0]["request"]["company"] == "Arm Holdings"
+    assert response.json()[0]["percent"] == 51
+
+
+def test_duplicate_active_screen_submission_reuses_existing_job(
+    monkeypatch,
+):
+    monkeypatch.setenv("TAVILY_API_KEY", "test-key")
+    monkeypatch.setenv("NEBIUS_API_KEY", "test-key")
+    request = ScreenRequest(company="Arm Holdings", domain="arm.com")
+    running = web_module.JobRecord("arm-running", request)
+    running.status = "running"
+    running.started_monotonic = time.monotonic()
+    monkeypatch.setattr(web_module, "_jobs", {running.id: running})
+    submissions = []
+
+    class RecordingExecutor:
+        def submit(self, *args):
+            submissions.append(args)
+
+    monkeypatch.setattr(web_module, "_executor", RecordingExecutor())
+
+    response = client.post(
+        "/api/screens",
+        json={"company": "Arm Holdings", "domain": "arm.com"},
+    )
+
+    assert response.status_code == 202
+    assert response.json()["id"] == "arm-running"
+    assert len(web_module._jobs) == 1
+    assert submissions == []
 
 
 def test_archive_reopens_retained_wise_and_revolut_screens(

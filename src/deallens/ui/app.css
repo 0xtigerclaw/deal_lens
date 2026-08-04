@@ -1944,9 +1944,83 @@ a {
 
 .result-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.38fr) minmax(310px, 0.62fr);
+  grid-template-columns: minmax(0, 1.55fr) minmax(270px, 0.45fr);
   gap: clamp(38px, 6vw, 88px);
   padding: 58px clamp(32px, 6vw, 90px) 0;
+}
+
+.risk-section-list {
+  display: grid;
+  gap: 54px;
+  padding-top: 34px;
+}
+
+.risk-section {
+  scroll-margin-top: 82px;
+  border-top: 4px solid var(--ink);
+}
+
+.risk-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.risk-section-identity {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+
+.risk-section-number,
+.claim-index {
+  color: var(--signal-dark);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.risk-section-identity h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 500;
+  letter-spacing: -.035em;
+}
+
+.risk-section-ledger {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.risk-section-ledger > span {
+  display: grid;
+  gap: 3px;
+  padding: 13px 15px;
+  border-right: 1px solid var(--line);
+}
+
+.risk-section-ledger > span:first-child { padding-left: 0; }
+.risk-section-ledger > span:last-child { border-right: 0; }
+.risk-section-ledger strong { font: 500 18px/1 var(--serif); }
+.risk-section-ledger small {
+  color: var(--muted);
+  font: 400 8px/1.25 var(--mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.risk-section > .coverage-note {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  background: rgba(200, 75, 49, .06);
+  border-left: 2px solid var(--signal);
 }
 
 .section-heading {
@@ -1983,12 +2057,20 @@ a {
   border-bottom: 1px solid var(--line);
 }
 
+.finding-card:has(.status-rejected) { opacity: .68; }
+
 .finding-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 11px;
+}
+
+.claim-index {
+  margin-right: 2px;
+  padding-right: 10px;
+  border-right: 1px solid var(--line);
 }
 
 .status-chip,
@@ -2141,6 +2223,41 @@ a {
 .result-sidebar {
   min-width: 0;
 }
+
+.coverage-index {
+  position: sticky;
+  top: 24px;
+}
+
+.coverage-index-row {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto 8px;
+  align-items: center;
+  gap: 9px;
+  min-height: 56px;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition: padding 160ms ease, color 160ms ease;
+}
+
+.coverage-index-row:hover { padding-left: 5px; color: var(--signal-dark); }
+.coverage-index-number { color: var(--muted); font: 400 8px/1 var(--mono); }
+.coverage-index-row strong { font-size: 11px; font-weight: 500; }
+.coverage-index-row small {
+  color: var(--muted);
+  font: 400 8px/1 var(--mono);
+  text-transform: uppercase;
+}
+.coverage-index-state { width: 7px; height: 7px; border-radius: 50%; background: #aaa79d; }
+.coverage-index-state.coverage-verified_finding { background: var(--green); }
+.coverage-index-state.coverage-reported { background: var(--blue); }
+.coverage-index-state.coverage-review_required { background: var(--signal); }
+.coverage-index-state.coverage-checked_no_finding { background: #858279; }
+
+.coverage-state.coverage-verified_finding { color: var(--green); }
+.coverage-state.coverage-reported { color: var(--blue); }
+.coverage-state.coverage-review_required { color: var(--signal-dark); }
 
 .coverage-list {
   display: grid;
@@ -2340,6 +2457,7 @@ a {
   }
   .run-ledger ol { min-height: 260px; }
   .result-sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+  .coverage-index { position: static; }
   .footprint-card { margin-top: 0; }
 }
 
@@ -2453,6 +2571,13 @@ a {
   .metric { border-bottom: 1px solid var(--line); }
   .result-layout { padding: 42px 22px 0; }
   .result-sidebar { grid-template-columns: 1fr; }
+  .risk-section-list { gap: 42px; }
+  .risk-section-header { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .risk-section-ledger { grid-template-columns: repeat(2, 1fr); }
+  .risk-section-ledger > span:nth-child(2) { border-right: 0; }
+  .risk-section-ledger > span:nth-child(3),
+  .risk-section-ledger > span:nth-child(4) { border-top: 1px solid var(--line); }
+  .risk-section-ledger > span:nth-child(3) { padding-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

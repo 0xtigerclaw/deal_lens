@@ -8,7 +8,7 @@ Generated: 04 August 2026
 
 ## Executive assessment
 
-**REVIEW REQUIRED** — 1 reported concern(s), 4 partially supported claim(s), 1 unresolved check(s); 3 candidate(s) rejected as weak or unsupported.
+**REVIEW REQUIRED** — 1 reported concern(s), 4 partially supported claim(s), 1 unresolved check(s); 3 candidate claims did not meet the evidence standard.
 
 This memo is an initial review of public evidence, not a legal or financial diligence opinion. "No qualifying public findings" means the governed checks completed without a result that met the evidence standard — it is not a statement that no risk exists.
 
@@ -130,7 +130,9 @@ A potential regulatory reference was discovered, but the underlying source could
 Could not capture: https://www.telegraph.co.uk/technology/2019/03/01/revolut-faces-fca-probe-compliance-failing
 
 
-## Rejected as weak or unsupported
+## Claims not substantiated by qualifying evidence
+
+The available sources did not meet the configured evidence standard. This does not mean these claims are false.
 
 - Revolut appointed Béatrice Cossa‑Dumurgier as CEO of its Western Europe headquarters on 24 June 2025. — no qualifying source survived verification
 - Revolut disclosed a data breach in September 2022 that exposed personal data of 50,150 customers. — no qualifying source survived verification

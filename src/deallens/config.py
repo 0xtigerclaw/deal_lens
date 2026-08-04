@@ -7,6 +7,7 @@ matches the pack entry "fca.org.uk", but "notfca.org.uk" does not.
 
 from __future__ import annotations
 
+import os
 import re
 from pathlib import Path
 from urllib.parse import urlparse
@@ -16,7 +17,9 @@ from pydantic import BaseModel, Field
 
 from .models import Severity, SourceTier
 
-PACKAGE_ROOT = Path(__file__).resolve().parent.parent.parent
+PACKAGE_ROOT = Path(
+    os.getenv("DEALLENS_ROOT", str(Path(__file__).resolve().parent.parent.parent))
+)
 
 
 class JurisdictionPack(BaseModel):

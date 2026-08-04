@@ -8,7 +8,7 @@ Generated: 03 August 2026
 
 ## Executive assessment
 
-**REVIEW REQUIRED** — 1 partially supported claim(s), 3 unresolved check(s); 5 candidate(s) rejected as weak or unsupported.
+**REVIEW REQUIRED** — 1 partially supported claim(s), 3 unresolved check(s); 5 candidate claims did not meet the evidence standard.
 
 This memo is an initial review of public evidence, not a legal or financial diligence opinion. "No qualifying public findings" means the governed checks completed without a result that met the evidence standard — it is not a statement that no risk exists.
 
@@ -95,7 +95,9 @@ Sources were retrieved, but their relationship to this claim could not be classi
 Processing issue: Nebius could not classify the extracted passages (LengthFinishReasonError); human review is required.
 
 
-## Rejected as weak or unsupported
+## Claims not substantiated by qualifying evidence
+
+The available sources did not meet the configured evidence standard. This does not mean these claims are false.
 
 - Scott Hill was appointed as an Independent Non-Executive Director of Wise Limited on 2 March 2026. — no qualifying source survived verification
 - Wise’s US subsidiary was fined $4.2 million for Bank Secrecy Act violations in 2025. — no qualifying source survived verification

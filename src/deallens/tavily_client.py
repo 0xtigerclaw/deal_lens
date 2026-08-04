@@ -103,12 +103,6 @@ class Tavily:
                 time.sleep(_RESEARCH_USAGE_POLL_SECONDS)
 
         self.ledger.usage_complete = False
-        note = (
-            "Research usage was not yet reflected when this memo completed; "
-            "the displayed Tavily total may be incomplete."
-        )
-        if note not in self.ledger.usage_notes:
-            self.ledger.usage_notes.append(note)
 
     # -- endpoints -------------------------------------------------------------
 

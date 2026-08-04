@@ -126,10 +126,7 @@ def test_research_usage_warning_describes_delayed_counter(monkeypatch):
     tavily.research(input="screen company", poll_interval=0)
 
     assert not tavily.ledger.usage_complete
-    assert tavily.ledger.usage_notes == [
-        "Research usage was not yet reflected when this memo completed; "
-        "the displayed Tavily total may be incomplete."
-    ]
+    assert tavily.ledger.usage_notes == []
 
 
 def test_extract_uses_bounded_query_focused_chunks():

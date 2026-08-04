@@ -181,7 +181,7 @@ review acceptance, duplicate/syndicated evidence, and time saved.
 | Observability | LangSmith root/child trace contract plus per-run Tavily/Nebius/latency ledger |
 | Customer adaptation | YAML jurisdiction tiers and two acquisition severity profiles |
 | Small thing done well | One target, four categories, one memo; explicit exclusions and limitations |
-| Required LLM provider | Nebius Token Factory + Kimi K3; no Claude runtime path |
+| Chosen provider path | Nebius Token Factory + Kimi K3, aligned with the starter stack; no Claude runtime path |
 
 ## Honest limitations
 

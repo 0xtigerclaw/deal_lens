@@ -1,5 +1,54 @@
 # Build log
 
+## Build plan
+
+**Objective:** turn the generic Tavily search agent into one bounded product:
+an acquisition analyst enters a target and receives a current, source-backed
+public-risk memo for investment committee preparation.
+
+**Primary user:** a GP or acquisition analyst screening a UK private company
+after initial interest and before specialist commercial, legal, financial, and
+cybersecurity diligence.
+
+**Scope:** one company, four fixed risk categories, one governed evidence
+package, and one reviewable memo. Scheduling, deal recommendations,
+multi-jurisdiction coverage, distributed infrastructure, and private-data
+integrations remain outside the MVP.
+
+**Execution sequence:**
+
+1. Inspect the starter and assignment; replace the open-ended agent loop with
+   a reproducible pipeline and typed boundaries.
+2. Assign distinct Tavily responsibilities: Research for candidate recall,
+   Search for category coverage, verification, and entity resolution, and
+   Extract for claim-focused source capture.
+3. Put trust decisions outside the model: confirm the legal entity, normalize
+   publishers, validate quotes verbatim, evaluate atomic assertions, and apply
+   status and severity rules deterministically.
+4. Use Kimi K3 through Nebius only for bounded interpretation and memo prose;
+   surface provider or retrieval failures as review states.
+5. Integrate the flow into analyst work with entity confirmation, background
+   progress, resumable screens, an archive, and PDF/Markdown/JSON exports.
+6. Build the evaluation loop around the highest-cost errors: false
+   verification, wrong-entity selection, and source-governance violations.
+7. Trace one complete live run in LangSmith and reconcile its provider calls,
+   tokens, credits, latency, and result with the emitted evidence artifact.
+8. Package a clean public submission: reproducible commands, CI, architecture,
+   technical statement, build record, live deployment, and short walkthrough.
+
+**Exit criteria:**
+
+- a fresh clone can run the fixture, tests, and evals without provider keys;
+- a live screen covers all four categories and never treats missing evidence
+  or a failed stage as clearance;
+- every escalated quote is traceable to captured source content and the exact
+  legal entity boundary is enforced where available;
+- tests and labelled evals pass in CI with no false verification regression;
+- LangSmith shows a successful Tavily/Nebius trace with a reconciled usage
+  ledger; and
+- the repository contains the implementation, technical statement, and a
+  shareable record of the AI-assisted build, but not `starter_agent.py`.
+
 This is the concise record of the product and engineering decisions that led
 to the submitted DealLens repository. The implementation was developed with AI
 coding assistance and continuously verified through source inspection, unit
@@ -99,7 +148,7 @@ The original gate eval was expanded into three independent suites:
 
 Final measured result on 2026-08-04: **36/36**, false verifies **0/11**,
 correct entity abstentions **4/4**. The surrounding pytest suite passes
-**73/73** tests. Both commands are CI gates.
+**74/74** tests. Both commands are CI gates.
 
 The eval command now emits stable case-level reports and compares them with a
 committed reviewed baseline. It fails on behavior regressions, false-verify or
@@ -143,7 +192,26 @@ MongoDB was deferred. Typed JSON/Markdown is the right persistence boundary for
 this single-analyst MVP; database work would add submission surface without
 improving the evidence contract.
 
-## 9. Known next work
+## 9. AI collaboration record
+
+Development was distributed across three local Codex task streams:
+
+1. **Core product and submission review:** problem selection, retrieval and
+   evidence architecture, Kimi/Nebius migration, entity confirmation, evals,
+   LangSmith verification, UI iteration, exports, and reviewer documentation.
+2. **Bring-your-own Tavily key:** browser-session key override, server request
+   plumbing, validation, and UI copy for reviewers who want to run a screen
+   against their own Tavily account.
+3. **GCP deployment:** container packaging, Cloud Run configuration, secret
+   wiring, deployment verification, and the public live application.
+
+Codex local task histories remain on the development workstation rather than
+being published as raw transcripts. This sanitized log, the repository commit
+history, [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr),
+and the linked product walkthrough form the shareable build record. API keys,
+environment values, and machine-specific output are deliberately excluded.
+
+## 10. Known next work
 
 1. Build an analyst-labelled live-target eval for open-web recall.
 2. Detect syndicated/near-duplicate articles across publisher domains.

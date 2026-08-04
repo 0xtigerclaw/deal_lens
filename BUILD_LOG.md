@@ -219,8 +219,13 @@ unlisted Traces link. Its title and opening guide identify both build models:
 7. GCP hosting, live screening, and the reviewer walkthrough; and
 8. assignment mapping, public-demo security, and submission hardening.
 
-The trace contains 1,535 events: 77 authentic user prompts, 402 assistant build
-updates, 528 substantive tool calls, and their 528 results. It was generated
+It closes with a consolidated observability and evaluation appendix: a fresh
+read-only verification of the successful 204-span LangSmith root and separate
+entity-resolution root, followed by the exact pytest, labelled-suite,
+false-verify, abstention, baseline-comparison, and CI-gate results.
+
+The trace contains 1,540 events: 77 authentic user prompts, 403 assistant build
+updates, 530 substantive tool calls, and their 530 results. It was generated
 from 4,839 source events. Hidden reasoning, repeated polling and browser-control
 mechanics, environment-file contents, credentials, email addresses, personal
 paths, and unrelated machine output were omitted; short chapter markers are the

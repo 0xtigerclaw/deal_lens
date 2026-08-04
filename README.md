@@ -36,11 +36,12 @@ applies the source, entity, and evidence rules.
 **AI-assisted build trace:** [review the complete DealLens build on
 Traces](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc). The trace
 identifies both build models—`gpt-5.6-sol` and `fable`—in its title and opening
-guide. The unlisted, 1,535-event record follows the work from assignment review
+guide. The unlisted, 1,540-event record follows the work from assignment review
 and product choice through Tavily/Nebius integration, evidence governance, live
 failures, UI, evaluations, LangSmith, GCP deployment, and final security
-hardening. It is a credential-scrubbed export of the authentic sessions and
-complements the sanitized [build log](BUILD_LOG.md).
+hardening. Its final appendix consolidates the live LangSmith span contract and
+current deterministic eval gates. It is a credential-scrubbed export of the
+authentic sessions and complements the sanitized [build log](BUILD_LOG.md).
 
 ## Why, when, and how
 

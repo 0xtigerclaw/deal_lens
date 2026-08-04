@@ -24,6 +24,10 @@ from .models import Candidate, UsageLedger
 DEFAULT_MODEL = "moonshotai/Kimi-K3"
 STRUCTURED_OUTPUT_ATTEMPTS = 2
 MAX_COMPLETION_TOKENS = 8192
+# A slow interpretation becomes an unresolved finding; it must not hold a
+# background worker indefinitely or trigger opaque SDK-level retries.
+NEBIUS_TIMEOUT_SECONDS = 300.0
+NEBIUS_MAX_RETRIES = 0
 
 
 class QuotePick(BaseModel):
@@ -62,6 +66,8 @@ class LLM:
         root_client = OpenAI(
             base_url="https://api.tokenfactory.nebius.com/v1/",
             api_key=os.environ.get("NEBIUS_API_KEY"),
+            timeout=NEBIUS_TIMEOUT_SECONDS,
+            max_retries=NEBIUS_MAX_RETRIES,
         )
         self._model = ChatNebius(
             model=model_name,
@@ -73,6 +79,8 @@ class LLM:
             # cap includes reasoning as well as visible output.
             reasoning_effort="low",
             max_tokens=MAX_COMPLETION_TOKENS,
+            timeout=NEBIUS_TIMEOUT_SECONDS,
+            max_retries=NEBIUS_MAX_RETRIES,
         )
 
     def _track(self, message) -> None:

@@ -153,7 +153,7 @@ measured result:
 | Source-governance contract | 12/12 | all tier/entity/document boundaries correct |
 | **Total** | **36/36** | **all gates pass** |
 
-The pytest suite is **67/67 passing**. Labels, methodology, limitations, and
+The pytest suite is **68/68 passing**. Labels, methodology, limitations, and
 the machine-readable command are documented in
 [docs/EVALUATION.md](docs/EVALUATION.md); the latest committed summary is
 [docs/evaluation-results.json](docs/evaluation-results.json).

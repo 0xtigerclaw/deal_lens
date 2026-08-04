@@ -7,7 +7,8 @@ from types import SimpleNamespace
 import pytest
 from pydantic import BaseModel
 
-from deallens.llm import LLM
+from deallens import llm as llm_module
+from deallens.llm import LLM, NEBIUS_MAX_RETRIES, NEBIUS_TIMEOUT_SECONDS
 from deallens.models import UsageLedger
 
 
@@ -47,6 +48,29 @@ def raw(input_tokens=3, output_tokens=2):
     return SimpleNamespace(
         usage_metadata={"input_tokens": input_tokens, "output_tokens": output_tokens}
     )
+
+
+def test_nebius_calls_have_a_bounded_provider_wait(monkeypatch):
+    captured = {}
+
+    class FakeOpenAI:
+        def __init__(self, **kwargs):
+            captured["root"] = kwargs
+
+    class FakeChatNebius:
+        def __init__(self, **kwargs):
+            captured["chat"] = kwargs
+
+    monkeypatch.setenv("NEBIUS_API_KEY", "test-key")
+    monkeypatch.setattr(llm_module, "OpenAI", FakeOpenAI)
+    monkeypatch.setattr(llm_module, "ChatNebius", FakeChatNebius)
+
+    LLM(UsageLedger())
+
+    assert captured["root"]["timeout"] == NEBIUS_TIMEOUT_SECONDS
+    assert captured["root"]["max_retries"] == NEBIUS_MAX_RETRIES
+    assert captured["chat"]["timeout"] == NEBIUS_TIMEOUT_SECONDS
+    assert captured["chat"]["max_retries"] == NEBIUS_MAX_RETRIES
 
 
 def test_structured_retries_once_when_provider_returns_no_parsed_object():

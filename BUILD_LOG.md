@@ -99,7 +99,7 @@ The original gate eval was expanded into three independent suites:
 
 Final measured result on 2026-08-04: **36/36**, false verifies **0/11**,
 correct entity abstentions **4/4**. The surrounding pytest suite passes
-**73/73** tests. Both commands are CI gates.
+**74/74** tests. Both commands are CI gates.
 
 The eval command now emits stable case-level reports and compares them with a
 committed reviewed baseline. It fails on behavior regressions, false-verify or

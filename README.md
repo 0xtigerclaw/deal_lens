@@ -33,15 +33,20 @@ applies the source, entity, and evidence rules.
 
 [Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
 
-**AI-assisted build trace:** [review the complete DealLens build on
-Traces](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc). The trace
-identifies both build models—`gpt-5.6-sol` and `fable`—in its title and opening
-guide. The unlisted, 1,540-event record follows the work from assignment review
-and product choice through Tavily/Nebius integration, evidence governance, live
-failures, UI, evaluations, LangSmith, GCP deployment, and final security
-hardening. Its final appendix consolidates the live LangSmith span contract and
-current deterministic eval gates. It is a credential-scrubbed export of the
-authentic sessions and complements the sanitized [build log](BUILD_LOG.md).
+**Build record — start here:** [review the shipped system in 31
+events](https://traces.com/s/jn71d8mqr5yc5fpj7qsmne15q18bvqc3). This
+reviewer-first record opens with the live product, final commit, 75/75 tests,
+36/36 safety evals, 204-span LangSmith run, and deployment security. It then
+groups labelled excerpts from `fable` planning and `gpt-5.6-sol`
+implementation by decision—not by raw chronology. The generic starter and
+Watchtower appear only as explicitly rejected context; neither is the submitted
+product.
+
+**Full audit trail — optional:** [inspect the chronological 1,540-event
+record](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc) for exact
+intermediate tool work, failures, tests, and publication history. Both links
+are unlisted, credential-scrubbed, and complement the sanitized
+[build log](BUILD_LOG.md).
 
 ## Why, when, and how
 

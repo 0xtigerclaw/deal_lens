@@ -206,8 +206,9 @@ Development was distributed across three local Codex task streams:
    wiring, deployment verification, and the public live application.
 
 The [complete DealLens Codex build
-trace](https://traces.com/s/jn7035gpastrrp99vmf5q0pykn8bvjch) is shared as an
-unlisted Traces link. Its eight chapters cover:
+trace](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc) is shared as an
+unlisted Traces link. Its title and opening guide identify both build models:
+`gpt-5.6-sol` and `fable`. Its eight chapters cover:
 
 1. assignment review, starter analysis, and product choice;
 2. Nebius/Kimi K3 migration, Tavily Research polling, and the first live run;

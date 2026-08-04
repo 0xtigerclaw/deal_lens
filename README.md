@@ -18,7 +18,7 @@ applies the source, entity, and evidence rules.
 > findings” means four governed checks completed without qualifying public
 > evidence; it never means the company is cleared.
 
-![DealLens evidence dashboard](docs/assets/deallens-result.png)
+![DealLens acquisition-intelligence homepage](docs/assets/deallens-home.png)
 
 ## Why, when, and how
 
@@ -68,6 +68,39 @@ separates recall from trust:
 
 The model can suggest evidence. It cannot award itself `VERIFIED`.
 
+### Runtime architecture
+
+The model and retrieval providers sit outside the decision boundary. Only the
+deterministic gate can assign an evidence status or roll findings into the IC
+assessment.
+
+```mermaid
+flowchart TB
+    Analyst["Acquisition analyst"] --> UI["Web UI"]
+    UI --> API["FastAPI job + archive API"]
+    API --> Worker["Bounded screen worker"]
+    Config["Jurisdiction + severity YAML"] --> Worker
+
+    subgraph Providers["External providers"]
+        Tavily["Tavily<br/>Research · Search · Extract"]
+        Kimi["Kimi K3 via Nebius<br/>candidate + quote mapping"]
+    end
+
+    Worker --> Tavily
+    Worker --> Kimi
+    Tavily --> Gate["Deterministic evidence gate"]
+    Kimi --> Gate
+    Gate --> Result["Typed ScreenResult"]
+    Result --> Memo["PDF · Markdown · evidence.json"]
+    Result --> UI
+
+    Worker -. "root + child spans" .-> LangSmith["LangSmith EU"]
+    Tavily -. "retrieval spans" .-> LangSmith
+    Kimi -. "model spans" .-> LangSmith
+```
+
+### Retrieval and decision path
+
 ```mermaid
 flowchart LR
     A["Company + domain"] --> R["Tavily registry search"]
@@ -79,6 +112,23 @@ flowchart LR
     X --> K["Kimi K3 on Nebius<br/>quote/assertion mapping"]
     K --> G["Deterministic evidence gate"]
     G --> O["IC memo<br/>PDF + Markdown<br/>evidence.json"]
+```
+
+### Evidence state machine
+
+```mermaid
+flowchart TD
+    C["Candidate + atomic assertions"] --> E{"Qualifying evidence?"}
+    E -->|"none + processing failure"| U["UNRESOLVED"]
+    E -->|"none, checks completed"| R["REJECTED"]
+    E -->|"yes"| X{"Support and contradiction?"}
+    X -->|"both"| F["CONFLICTING"]
+    X -->|"contradiction only"| D["CONTRADICTED"]
+    X -->|"support"| A{"Every assertion covered?"}
+    A -->|"no"| P["PARTIAL"]
+    A -->|"yes"| T{"Primary source or<br/>2 independent publishers?"}
+    T -->|"yes"| V["VERIFIED"]
+    T -->|"secondary support only"| RP["REPORTED"]
 ```
 
 The full component, sequence, trust-boundary, and trace diagrams are in
@@ -124,6 +174,8 @@ The interface also includes:
 - verbatim evidence with clickable source links; and
 - direct PDF, Markdown, and JSON exports from both completed memos and the
   archive ledger.
+
+![Completed DealLens investment committee memo](docs/assets/deallens-result.png)
 
 ### Live provider setup
 
@@ -203,7 +255,7 @@ uv run deallens eval --json-out reports/evals/local-run.json
 uv run deallens eval --promote  # after label and result review
 ```
 
-The pytest suite is **73/73 passing**. Labels, the promote/review loop,
+The pytest suite is **74/74 passing**. Labels, the promote/review loop,
 limitations, and the machine-readable command are documented in
 [docs/EVALUATION.md](docs/EVALUATION.md); the committed case-level baseline is
 [docs/evaluation-results.json](docs/evaluation-results.json).
@@ -241,8 +293,10 @@ Each screen writes a Markdown memo and complete typed JSON evidence package.
 The web app also renders a styled, source-linked PDF memo on demand for every
 completed screen, including retained archive entries.
 The usage ledger records Tavily credits per endpoint, Nebius token counts, wall
-time, and an explicit `usage_complete` flag. If Research credit measurement is
-unavailable, the ledger says so rather than reporting a false total.
+time, and an explicit `usage_complete` flag. It reads Tavily's dedicated
+`research_usage` counter and briefly retries delayed updates; if the final
+delta is not yet reflected, it marks the total incomplete rather than
+overstating cost.
 
 ## Repository map
 

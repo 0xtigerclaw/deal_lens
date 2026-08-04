@@ -178,8 +178,7 @@ a {
 .section-number,
 .rail-kicker,
 .eyebrow,
-.model-badge,
-.footnote-number {
+.model-badge {
   font-family: var(--mono);
   font-size: 10px;
   font-weight: 500;
@@ -1299,27 +1298,6 @@ a {
   transform: none;
 }
 
-.intake-footnote {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 28px minmax(0, 580px);
-  align-items: start;
-  gap: 12px;
-  margin-top: 10px;
-  padding-top: 18px;
-  color: var(--muted);
-  border-top: 1px solid var(--line);
-}
-
-.intake-footnote p {
-  margin: 0;
-  font-size: 11px;
-}
-
-.footnote-number {
-  color: var(--signal-dark);
-}
-
 .reveal {
   animation: reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: var(--delay);
@@ -2299,7 +2277,6 @@ a {
   .field-grid { grid-template-columns: 1fr; }
   .compact-grid { gap: 22px; }
   .intake-panel { padding: 28px 22px; box-shadow: 10px 10px 0 rgba(23, 24, 19, 0.055); }
-  .intake-footnote { display: none; }
   .run-view { padding: 46px 22px; }
   .active-view,
   .archive-view { padding: 46px 22px; }

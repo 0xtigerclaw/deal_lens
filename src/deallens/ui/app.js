@@ -135,12 +135,26 @@ async function loadHealth() {
       : requiresPersonalTavilyKey() && !providers.tavily
         ? "Add Tavily key for live screening"
         : "Provider setup incomplete";
+    updateScreenAllowance();
     updateApiKeyTrigger();
     document.querySelector("#model-badge").textContent = `${shortModel(state.health.model)} · Nebius`;
   } catch (error) {
     light.classList.add("is-error");
     label.textContent = "API unavailable";
   }
+}
+
+function updateScreenAllowance() {
+  const allowance = document.querySelector("#screen-allowance");
+  const count = document.querySelector("#screen-allowance-count");
+  const label = document.querySelector("#screen-allowance-label");
+  const remaining = state.health?.access?.live_screens_remaining;
+  allowance.hidden = remaining === null || remaining === undefined;
+  if (allowance.hidden) return;
+  count.textContent = String(remaining);
+  label.textContent = remaining === 1 ? "live screen left" : "live screens left";
+  allowance.classList.toggle("is-exhausted", remaining === 0);
+  allowance.title = `${remaining} live ${remaining === 1 ? "screen" : "screens"} remaining on this deployment`;
 }
 
 function updateApiKeyTrigger() {
@@ -555,9 +569,11 @@ async function submitScreen(event) {
       method: "POST",
       body: JSON.stringify(payload),
     });
+    await loadHealth();
     beginJob(job);
   } catch (error) {
     errorNode.textContent = error.message;
+    await loadHealth();
   } finally {
     submit.disabled = false;
     submit.querySelector("span").textContent = "Prepare IC memo";
@@ -1254,6 +1270,7 @@ document.querySelector("#api-key-dialog").addEventListener("click", (event) => {
 
 updateApiKeyTrigger();
 loadHealth();
+window.setInterval(loadHealth, 30_000);
 loadPresets();
 loadActiveScreens();
 resumeJob();

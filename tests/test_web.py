@@ -21,6 +21,8 @@ def test_interface_shell_is_served():
     assert "Fixture memo" not in response.text
     assert "Use server key" not in response.text
     assert "Clear key" in response.text
+    assert 'id="screen-allowance"' in response.text
+    assert "live screens left" in response.text
 
     script = client.get("/assets/app.js")
     assert "sessionStorage" not in script.text

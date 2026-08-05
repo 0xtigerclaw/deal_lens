@@ -274,7 +274,7 @@ while a behavioral or safety-metric gate fails.
   and the deterministic fixture do not consume that allowance.
 - Jobs persist in process for progress/resume; completed outputs persist on
   disk beneath ignored `reports/web/{job_id}` directories.
-- The archive discovers the latest output per legal entity and also serves two
+- The archive discovers the latest output per legal entity and also serves five
   committed public examples from `examples/screens`. Both archived and newly
   completed screens expose PDF and Markdown memo downloads; PDFs are generated
   from the same typed `ScreenResult` used by the UI and JSON evidence package.

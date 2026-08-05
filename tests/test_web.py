@@ -238,7 +238,7 @@ def test_duplicate_active_screen_submission_reuses_existing_job(
     assert submissions == []
 
 
-def test_archive_reopens_retained_wise_and_revolut_screens(monkeypatch, tmp_path):
+def test_archive_reopens_all_curated_screens_and_exports(monkeypatch, tmp_path):
     # Prove the committed examples work on a fresh clone without local reports.
     monkeypatch.setattr(web_module, "WEB_REPORT_ROOT", tmp_path / "reports")
     monkeypatch.setattr(web_module, "LEGACY_ARCHIVE_JSONS", ())
@@ -246,29 +246,40 @@ def test_archive_reopens_retained_wise_and_revolut_screens(monkeypatch, tmp_path
     archive = response.json()
 
     assert response.status_code == 200
-    assert {record["target"] for record in archive} >= {"Wise Limited", "Revolut Ltd"}
+    expected_targets = {
+        "Wise Limited",
+        "Revolut Ltd",
+        "MONZO BANK LIMITED",
+        "SHELL U.K. LIMITED",
+        "STARLING BANK LIMITED",
+    }
+    summaries = {record["target"]: record for record in archive}
+    assert summaries.keys() >= expected_targets
 
-    wise_summary = next(
-        record for record in archive if record["target"] == "Wise Limited"
-    )
-    assert wise_summary["pdf_url"].endswith("/pdf")
-    assert wise_summary["memo_url"].endswith("/memo")
-    assert wise_summary["evidence_url"].endswith("/evidence")
-    detail = client.get(f"/api/archive/{wise_summary['id']}")
-    payload = detail.json()
+    for target in expected_targets:
+        summary = summaries[target]
+        assert summary["pdf_url"].endswith("/pdf")
+        assert summary["memo_url"].endswith("/memo")
+        assert summary["evidence_url"].endswith("/evidence")
+        detail = client.get(f"/api/archive/{summary['id']}")
+        payload = detail.json()
 
-    assert detail.status_code == 200
-    assert payload["archived"] is True
-    assert payload["status"] == "completed"
-    assert payload["result"]["target"] == "Wise Limited"
-    assert client.get(payload["memo_url"]).status_code == 200
-    pdf = client.get(payload["pdf_url"])
-    assert pdf.status_code == 200
-    assert pdf.headers["content-type"] == "application/pdf"
-    assert pdf.headers["content-disposition"].endswith('ic-diligence-memo.pdf"')
-    assert pdf.content.startswith(b"%PDF-")
-    assert len(pdf.content) > 10_000
-    assert client.get(payload["evidence_url"]).status_code == 200
+        assert detail.status_code == 200
+        assert payload["archived"] is True
+        assert payload["status"] == "completed"
+        assert payload["result"]["target"] == target
+        memo = client.get(payload["memo_url"])
+        evidence = client.get(payload["evidence_url"])
+        pdf = client.get(payload["pdf_url"])
+        assert memo.status_code == 200
+        assert memo.headers["content-type"].startswith("text/markdown")
+        assert evidence.status_code == 200
+        assert evidence.headers["content-type"].startswith("application/json")
+        assert pdf.status_code == 200
+        assert pdf.headers["content-type"] == "application/pdf"
+        assert pdf.headers["content-disposition"].endswith('ic-diligence-memo.pdf"')
+        assert pdf.content.startswith(b"%PDF-")
+        assert len(pdf.content) > 10_000
 
 
 def test_demo_endpoint_returns_a_complete_renderable_screen():

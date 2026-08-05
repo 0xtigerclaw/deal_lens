@@ -1,0 +1,401 @@
+{
+  "target": "STARLING BANK LIMITED",
+  "domain": "starlingbank.com",
+  "jurisdiction": "UK",
+  "company_id": "09092149",
+  "generated_at": "2026-08-04T17:09:02.564568Z",
+  "risk_level": "REVIEW REQUIRED",
+  "findings": [
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Anne Boden stepped down as chief executive officer on 30 June 2023 and remained on the board as a non\u2011executive director while John Mountain became interim CEO.",
+        "date": "30 June 2023",
+        "source_urls": [
+          "https://www.openbankingexpo.com/news/starling-banks-ceo-anne-boden-to-step-down",
+          "https://www.bbc.com/news/uk-wales-65697908",
+          "https://www.cnbc.com/amp/2023/05/25/boss-of-goldman-backed-digital-bank-starling-to-step-down-next-month.html"
+        ],
+        "verification_query": "\"Starling Bank\" CEO step down 2023",
+        "assertions": [
+          "Anne Boden stepped down as chief executive officer on 30 June 2023.",
+          "John Mountain became interim CEO after Boden's departure.",
+          "Boden remained on the board as a non\u2011executive director."
+        ]
+      },
+      "status": "contradicted",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://www.cityam.com/starling-founder-anne-boden-cuts-stake-in-4bn-fintech",
+          "title": "Starling founder Anne Boden cuts stake in \u00a34bn fintech",
+          "publisher": "cityam.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "Mountain succeeded Boden in May 2023, with reports later stating the latter\u2019s exit followed a clash with investors over fund manager Jupiter\u2019s decision to sell its stake in a below-valuation price the year prior.",
+          "supports_assertions": [],
+          "contradicts_assertions": [
+            0
+          ],
+          "retrieved_at": "2026-08-04T16:56:45.804666Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "According to City A.M., John Mountain succeeded Anne Boden as CEO in May 2023, not 30 June 2023 as claimed. City A.M. also reported that Boden's exit followed a clash with investors over fund manager Jupiter's decision to sell its stake at a below-valuation price the prior year. The quoted evidence does not address whether Boden remained on the board as a non-executive director or whether Mountain served in an interim capacity."
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Raman Bhatia was announced as permanent chief executive of Starling Bank in March 2024 and took up the role in summer 2024.",
+        "date": "March 2024",
+        "source_urls": [
+          "https://en.wikipedia.org/wiki/Starling_Bank"
+        ],
+        "verification_query": "\"Starling Bank\" Raman Bhatia CEO 2024",
+        "assertions": [
+          "Starling Bank announced Raman Bhatia as its permanent chief executive in March 2024.",
+          "Bhatia formally assumed the CEO position in the summer of 2024.",
+          "The appointment followed the interim CEO period of John Mountain."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Raghu Narula was appointed Chief Banking Officer of Starling Bank on 22 January 2025, subject to regulatory approval.",
+        "date": "22 January 2025",
+        "source_urls": [
+          "https://www.starlingbank.com/news/raghu-narula-to-join-as-chief-banking-officer"
+        ],
+        "verification_query": "\"Starling Bank\" Raghu Narula Chief Banking Officer",
+        "assertions": [
+          "Starling Bank announced the appointment of Raghu Narula as Chief Banking Officer on 22 January 2025.",
+          "The appointment is subject to regulatory approval.",
+          "Narula joins the Executive Committee under CEO Raman Bhatia."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Colin Bell became Chair of the Boards of Starling Group Holdings Limited and Starling Bank Limited effective 1 July 2026, pending regulatory approval.",
+        "date": "1 July 2026",
+        "source_urls": [
+          "https://www.starlingbank.com/news/starling-appoints-colin-bell-as-chair",
+          "https://fintechmagazine.com/news/starling-names-ex-hsbc-ceo-colin-bell-as-banks-chair",
+          "https://ffnews.com/news/starling-bank-appoints-former-hsbc-ceo-colin-bell-as-new-group-chair"
+        ],
+        "verification_query": "\"Starling Bank\" Colin Bell Chair 2026",
+        "assertions": [
+          "Colin Bell was appointed Chair of the Boards of Starling Group Holdings Limited and Starling Bank Limited.",
+          "His appointment takes effect on 1 July 2026.",
+          "The appointment is pending regulatory approval."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "The Financial Conduct Authority opened an investigation into Starling Bank\u2019s anti\u2011money\u2011laundering compliance on 24 November 2023.",
+        "date": "24 November 2023",
+        "source_urls": [
+          "https://www.vixio.com/blog/latest-payments-news-uks-starling-bank-reveals-active-fca-investigation-into-alleged-aml-failures-and-more"
+        ],
+        "verification_query": "\"Starling Bank\" FCA investigation 24 November 2023",
+        "assertions": [
+          "The FCA opened an investigation into Starling Bank\u2019s AML compliance on 24 November 2023.",
+          "The investigation concerns compliance with UK money\u2011laundering regulations.",
+          "The investigation was disclosed in Starling\u2019s 2024 annual report."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "The FCA issued a Final Notice and imposed a financial penalty of \u00a328,959,426 on Starling Bank on 27 September 2024.",
+        "date": "27 September 2024",
+        "source_urls": [
+          "http://www.fca.org.uk/publication/final-notices/starling-bank-limited-2024.pdf"
+        ],
+        "verification_query": "\"Starling Bank\" Final Notice \u00a328,959,426",
+        "assertions": [
+          "The FCA issued a Final Notice to Starling Bank dated 27 September 2024.",
+          "The notice imposed a financial penalty of \u00a328,959,426.",
+          "Starling Bank qualified for a 30\u202f% discount under the settlement procedures."
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "fine",
+        "penalty"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.fca.org.uk/news/press-releases/fca-fines-starling-bank-failings-financial-crime-systems-and-controls",
+          "title": "FCA fines Starling Bank \u00a329m for failings in their financial ...",
+          "publisher": "fca.org.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "The FCA has fined Starling Bank Limited \u00a328,959,426 for financial crime failings related to its financial sanctions screening.",
+          "supports_assertions": [
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T17:00:55.428981Z"
+        },
+        {
+          "url": "https://www.fca.org.uk/news/press-releases/fca-fines-starling-bank-failings-financial-crime-systems-and-controls",
+          "title": "FCA fines Starling Bank \u00a329m for failings in their financial ...",
+          "publisher": "fca.org.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Starling would have been fined \u00a340,959,426, but it agreed to resolve these matters and so qualified for a 30% discount under the FCA\u2019s processes.",
+          "supports_assertions": [
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T17:00:55.429222Z"
+        },
+        {
+          "url": "https://www.reuters.com/business/finance/starling-bank-fined-29-million-pounds-financial-crime-failings-2024-10-02",
+          "title": "Starling Bank fined 29 mln pounds for \"shockingly lax ...",
+          "publisher": "reuters.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "The lender, which has grown its customer base to 3.6 million in 2023 from 43,000 in 2017, would have been fined 41 million pounds but qualified for a 30% discount due to cooperation with the regulator.",
+          "supports_assertions": [
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T17:00:55.429496Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": "The FCA fined Starling Bank Limited \u00a328,959,426 for financial crime failings related to its financial sanctions screening, according to the FCA. Per the FCA, the penalty would have been \u00a340,959,426, but Starling qualified for a 30% discount after agreeing to resolve the matters; Reuters similarly reports the discount resulted from cooperation with the regulator. The quoted evidence does not confirm the 27 September 2024 date or that the action took the form of a Final Notice, so those elements of the claim remain unverified."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Starling Bank paid a \u00a329\u202fmillion FCA fine for historical financial\u2011crime control failures in September 2024.",
+        "date": "September 2024",
+        "source_urls": [
+          "https://www.cnbc.com/2024/10/02/goldman-sachs-backed-digital-bank-starling-hit-with-fca-fine.html",
+          "https://www.starlingbank.com/docs/annual-reports/Starling-Bank-Annual-Report-2025.pdf"
+        ],
+        "verification_query": "\"Starling Bank\" \u00a329 million FCA fine 2024",
+        "assertions": [
+          "Starling Bank was fined \u00a329\u202fmillion by the FCA in September 2024.",
+          "The fine related to failings in financial\u2011crime prevention and sanctions screening.",
+          "Starling accepted the findings and paid the fine in full."
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "fine"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.fca.org.uk/news/press-releases/fca-fines-starling-bank-failings-financial-crime-systems-and-controls",
+          "title": "FCA fines Starling Bank \u00a329m for failings in their financial ...",
+          "publisher": "fca.org.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "The FCA has fined Starling Bank Limited \u00a328,959,426 for financial crime failings related to its financial sanctions screening. It also repeatedly breached a requirement not to open accounts for high-risk customers.",
+          "supports_assertions": [
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T17:02:38.523869Z"
+        },
+        {
+          "url": "https://www.reuters.com/business/finance/starling-bank-fined-29-million-pounds-financial-crime-failings-2024-10-02",
+          "title": "Starling Bank fined 29 mln pounds for \"shockingly lax ...",
+          "publisher": "reuters.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "Britain's financial watchdog has fined Starling Bank 29 million pounds ($38.5 million) after finding the digital lender's anti-money laundering controls and sanctions screening systems left the financial system \"wide open to criminals\".",
+          "supports_assertions": [
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T17:02:38.524355Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": "The FCA fined Starling Bank Limited \u00a328,959,426 for financial crime failings related to its financial sanctions screening, and found the bank repeatedly breached a requirement not to open accounts for high-risk customers (fca.org.uk). Reuters reported the fine as \u00a329 million ($38.5 million), stating the watchdog found the digital lender's anti-money laundering controls and sanctions screening systems left the financial system \"wide open to criminals.\" Neither quoted source specifies a September 2024 payment date, so that element of the claim is not confirmed by the evidence provided."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Starling Bank breached CMA Article\u202f16 by excluding approximately 17\u202f% of its Personal Current Account customers from data supplied in December\u202f2023 and June\u202f2024.",
+        "date": "December 2023 and June 2024",
+        "source_urls": [
+          "https://www.gov.uk/government/publications/directions-issued-to-starling-bank-about-breaches-of-the-retail-banking-order"
+        ],
+        "verification_query": "\"Starling Bank\" CMA Article 16 breach",
+        "assertions": [
+          "Starling Bank breached CMA Article\u202f16 by omitting around 17\u202f% of PCA customers from the data submitted in December 2023.",
+          "A similar omission occurred in the data submitted in June 2024.",
+          "The breaches were identified in a GOV.UK publication dated 13 May 2025.",
+          "The claimed event occurred on December\u202f2023.",
+          "The claimed event occurred on June\u202f2024."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "cyber",
+        "claim": "In January\u202f2019 a vulnerability allowed anyone with a specific URL to view a passport image uploaded to Starling Bank\u2019s online support tool without authentication.",
+        "date": "January 2019",
+        "source_urls": [
+          "https://www.fintechfutures.com/cybersecurity/starling-bank-gets-passport-to-security-issue-hell"
+        ],
+        "verification_query": "\"Starling Bank\" passport vulnerability 2019",
+        "assertions": [
+          "A vulnerability was reported in January 2019 that exposed a passport image via a direct URL.",
+          "The URL required no password or authentication to view the image.",
+          "The issue was raised publicly on Twitter and LinkedIn.",
+          "The claimed event occurred on January\u202f2019."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "distress",
+        "claim": "Starling Bank announced a layoff of 130 employees on 8 July 2026, representing about 3\u202f% of its workforce.",
+        "date": "8 July 2026",
+        "source_urls": [
+          "https://layoffhedge.com/company/starling-bank"
+        ],
+        "verification_query": "\"Starling Bank\" layoffs 130 July 2026",
+        "assertions": [
+          "Starling Bank announced on 8 July 2026 that it would cut 130 jobs.",
+          "The cuts represent roughly 3\u202f% of its approximately 4,000\u2011person workforce.",
+          "The layoffs were attributed to duplication of roles and increased AI usage.",
+          "The claim includes the reported quantity 130 employees."
+        ]
+      },
+      "status": "partial",
+      "severity": "medium",
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://www.theguardian.com/business/2025/may/19/santander-uk-freezes-salaries-and-cuts-jobs-in-commercial-banking-arm",
+          "title": "Santander UK freezes salaries and cuts jobs in commercial banking arm | Banco Santander | The Guardian",
+          "publisher": "theguardian.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "Starling Bank to cut 130 jobs and boost investment in AI to reduce costs",
+          "supports_assertions": [
+            3
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T17:07:07.668114Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "The Guardian reported that Starling Bank plans to cut 130 jobs while increasing investment in AI to reduce costs. The available evidence does not confirm the announced date of 8 July 2026 or that the cuts represent about 3% of the bank's workforce."
+    }
+  ],
+  "coverage": [
+    {
+      "category": "leadership",
+      "status": "checked_no_finding",
+      "sources_reviewed": 39,
+      "checks_run": 9,
+      "note": null
+    },
+    {
+      "category": "regulatory",
+      "status": "review_required",
+      "sources_reviewed": 24,
+      "checks_run": 5,
+      "note": null
+    },
+    {
+      "category": "cyber",
+      "status": "checked_no_finding",
+      "sources_reviewed": 16,
+      "checks_run": 2,
+      "note": null
+    },
+    {
+      "category": "distress",
+      "status": "review_required",
+      "sources_reviewed": 20,
+      "checks_run": 3,
+      "note": null
+    }
+  ],
+  "usage": {
+    "tavily_credits": 25.0,
+    "credits_by_endpoint": {
+      "search": 19.0,
+      "extract": 6.0
+    },
+    "llm_input_tokens": 31365,
+    "llm_output_tokens": 5098,
+    "wall_seconds": 838.7916719999921,
+    "usage_complete": false,
+    "usage_notes": []
+  }
+}

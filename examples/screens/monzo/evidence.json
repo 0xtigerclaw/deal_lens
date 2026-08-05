@@ -1,0 +1,456 @@
+{
+  "target": "MONZO BANK LIMITED",
+  "domain": "monzo.com",
+  "jurisdiction": "UK",
+  "company_id": "09446231",
+  "generated_at": "2026-08-04T10:40:51.877995Z",
+  "risk_level": "REVIEW REQUIRED",
+  "findings": [
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Monzo appointed Conor Walsh as its US CEO, announced on 5 October 2023.",
+        "date": "5 October 2023",
+        "source_urls": [
+          "https://fintech.global/2023/10/05/monzo-strengthens-us-presence-with-conor-walsh-as-new-ceo"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" Conor Walsh US CEO appointment",
+        "assertions": [
+          "Monzo appointed Conor Walsh as US CEO.",
+          "The appointment was announced on 5 October 2023."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Monzo announced on 30 October 2025 that Diana Layfield will succeed TS Anil as CEO in February 2026.",
+        "date": "30 October 2025",
+        "source_urls": [
+          "https://ffnews.com/newsarticle/fintech/monzo-ceo-diana-layfield-to-succeed-ts-anil",
+          "https://www.linkedin.com/posts/sirojboboev_banking-fintech-payments-activity-7389994640848080896-frgA"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" Diana Layfield CEO February 2026",
+        "assertions": [
+          "Monzo announced Diana Layfield will succeed TS Anil as CEO.",
+          "The announcement was published on 30 October 2025.",
+          "The transition is scheduled for February 2026."
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "ceo"
+      ],
+      "evidence": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/09446231/officers",
+          "title": "MONZO BANK LIMITED people - Find and update company information - GOV.UK",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "## LAYFIELD, Diana Louise Patricia\n\nCorrespondence address\n:   Broadwalk House, 5 Appold Street, London, England, EC2A 2AG\n\nRole Active\n:   Director\n\nDate of birth\n:   July 1970\n\nAppointed on\n:   1 February 2026",
+          "supports_assertions": [
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:39:17.571587Z"
+        },
+        {
+          "url": "https://www.theguardian.com/money/2026/feb/07/monzo-natwest-hsbc-refunds-fraud-scam-fos-ombudsman",
+          "title": "Monzo wrongly denied refunds to thousands of fraud and scam victims",
+          "publisher": "theguardian.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "A few months later Monzo made the surprise announcement that its chief executive, TS Anil, who has led the company for almost six years, would step down in February. He will be replaced by Diana Layfield, a former Google executive.",
+          "supports_assertions": [
+            0,
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:39:17.571901Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "The Guardian reported that Monzo announced chief executive TS Anil would step down in February, to be replaced by Diana Layfield, a former Google executive. Companies House records show Diana Louise Patricia Layfield was appointed as a director of Monzo on 1 February 2026. Neither source confirms the specific announcement date of 30 October 2025 or explicitly states that Layfield will hold the CEO title effective February 2026."
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Monzo terminated the appointment of director Gary Hoffman on 20 July 2026.",
+        "date": "20 July 2026",
+        "source_urls": [
+          "https://find-and-update.company-information.service.gov.uk/company/09446231/filing-history"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" termination director Gary Hoffman 20 July 2026",
+        "assertions": [
+          "Gary Hoffman's appointment as director was terminated.",
+          "Termination date was 20 July 2026."
+        ]
+      },
+      "status": "conflicting",
+      "severity": "medium",
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/09446231/filing-history",
+          "title": "MONZO BANK LIMITED filing history - Companies House",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Termination of appointment of Gary Hoffman as a director on 20 July 2026",
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:39:32.005754Z"
+        },
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/09446231/officers",
+          "title": "MONZO BANK LIMITED people - Find and update company information - GOV.UK",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "## HOFFMAN, Gary\n\nCorrespondence address\n:   Broadwalk House, 5 Appold Street, London, England, EC2A 2AG\n\nRole Active\n:   Director",
+          "supports_assertions": [],
+          "contradicts_assertions": [
+            0
+          ],
+          "retrieved_at": "2026-08-04T10:39:32.005964Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "Companies House records for Monzo include a filing stating \"Termination of appointment of Gary Hoffman as a director on 20 July 2026.\" However, the same Companies House record lists Gary Hoffman with the role \"Director\" marked as \"Active,\" with a correspondence address at Broadwalk House, 5 Appold Street, London, EC2A 2AG. The two entries from the same primary source therefore conflict, and the evidence does not establish whether the termination took effect."
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Monzo appointed Diana Louise Patricia Layfield as a director on 1 February 2026.",
+        "date": "1 February 2026",
+        "source_urls": [
+          "https://find-and-update.company-information.service.gov.uk/company/09446231/filing-history"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" appointment director Diana Layfield 1 February 2026",
+        "assertions": [
+          "Monzo appointed Diana Louise Patricia Layfield as a director.",
+          "The appointment date was 1 February 2026."
+        ]
+      },
+      "status": "verified",
+      "severity": "medium",
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/09446231/filing-history",
+          "title": "MONZO BANK LIMITED filing history - Companies House",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Appointment of Diana Louise Patricia Layfield as a director on 1 February 2026",
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:39:45.922233Z"
+        },
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/09446231/officers",
+          "title": "MONZO BANK LIMITED people - Find and update company information - GOV.UK",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "## LAYFIELD, Diana Louise Patricia\n\nCorrespondence address\n:   Broadwalk House, 5 Appold Street, London, England, EC2A 2AG\n\nRole Active\n:   Director\n\nDate of birth\n:   July 1970\n\nAppointed on\n:   1 February 2026",
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:39:45.922410Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "Companies House records confirm that Diana Louise Patricia Layfield was appointed as a director of Monzo on 1 February 2026. The Companies House filing lists her role as active director, with a correspondence address at Broadwalk House, 5 Appold Street, London, EC2A 2AG, and a date of birth of July 1970."
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Monzo appointed Rupert Graham Keeley as a director on 1 June 2026.",
+        "date": "1 June 2026",
+        "source_urls": [
+          "https://find-and-update.company-information.service.gov.uk/company/09446231/filing-history"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" appointment director Rupert Graham Keeley 1 June 2026",
+        "assertions": [
+          "Monzo appointed Rupert Graham Keeley as a director.",
+          "The appointment date was 1 June 2026."
+        ]
+      },
+      "status": "verified",
+      "severity": "medium",
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/09446231/filing-history",
+          "title": "MONZO BANK LIMITED filing history - Companies House",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Appointment of Rupert Graham Keeley as a director on 1 June 2026",
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:39:54.563525Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "Companies House records confirm that Rupert Graham Keeley was appointed as a director of Monzo on 1 June 2026. The appointment is documented in the official filing published by find-and-update.company-information.service.gov.uk, the UK government's primary company information service. No additional details about the role or circumstances of the appointment are provided in the cited evidence."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "The FCA imposed a financial penalty of \u00a321,091,300 on Monzo on 7 July 2025.",
+        "date": "7 July 2025",
+        "source_urls": [
+          "https://kyc360.com/knowledge-hub/resources/fca-fines-monzo-21m",
+          "https://www.fca.org.uk/publication/final-notices/monzo-bank-limited.pdf"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" FCA fine \u00a321,091,300 7 July 2025",
+        "assertions": [
+          "The FCA imposed a financial penalty of \u00a321,091,300 on Monzo.",
+          "The penalty was imposed on 7 July 2025."
+        ]
+      },
+      "status": "verified",
+      "severity": "high",
+      "policy_triggers": [
+        "penalty"
+      ],
+      "evidence": [
+        {
+          "url": "http://www.fca.org.uk/publication/final-notices/monzo-bank-limited.pdf",
+          "title": "Final Notice 2025: Monzo Bank Limited",
+          "publisher": "fca.org.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Date: 7 July 2025 1. ACTION 1.1. For the reasons given in this Notice, the Authority hereby imposes on Monzo Bank Limited a financial penalty of \u00a321,091,300 pursuant to section 206 of the Act.",
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:40:06.459663Z"
+        },
+        {
+          "url": "https://www.fca.org.uk/publication/final-notices/monzo-bank-limited.pdf",
+          "title": "Final Notice 2025: Monzo Bank Limited",
+          "publisher": "fca.org.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Date: 7 July 2025 1. ACTION 1.1. For the reasons given in this Notice, the Authority hereby imposes on Monzo Bank Limited a financial penalty of \u00a321,091,300 pursuant to section 206 of the Act.",
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:40:06.460311Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": "On 7 July 2025, the Financial Conduct Authority (FCA) imposed a financial penalty of \u00a321,091,300 on Monzo Bank Limited. According to the FCA's published notice, the penalty was imposed pursuant to section 206 of the Act, for reasons set out in that notice. The penalty amount and date are confirmed by the FCA's primary source document."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "The FCA notified Monzo in May 2021 that it had started an investigation into its compliance with Money Laundering Regulations 2017.",
+        "date": "May 2021",
+        "source_urls": [
+          "https://www.bbc.com/news/business-58033700"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" FCA investigation May 2021 money laundering",
+        "assertions": [
+          "The FCA notified Monzo in May 2021 of an investigation.",
+          "The investigation concerns compliance with Money Laundering Regulations 2017."
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "investigation"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.theguardian.com/money/monzo-bank",
+          "title": "Monzo bank | The Guardian",
+          "publisher": "theguardian.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "Monzo under investigation by FCA over anti-money laundering rules",
+          "supports_assertions": [
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:40:16.797059Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "narrative": "The Guardian reported that Monzo was under investigation by the FCA over anti-money laundering rules, under the headline \"Monzo under investigation by FCA over anti-money laundering rules.\" The available evidence does not specify the date of any FCA notification, so the claim that the FCA notified Monzo in May 2021 is not confirmed by the quoted source. The evidence also does not reference the Money Laundering Regulations 2017 specifically."
+    },
+    {
+      "candidate": {
+        "category": "distress",
+        "claim": "Monzo announced up to 120 staff redundancies on 3 June 2020.",
+        "date": "3 June 2020",
+        "source_urls": [
+          "https://techcrunch.com/2020/06/03/monzo-lay-offs"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" layoffs 120 staff 3 June 2020",
+        "assertions": [
+          "Monzo announced up to 120 staff redundancies.",
+          "The announcement was made on 3 June 2020."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "distress",
+        "claim": "Monzo cut 50 jobs on 31 March 2026 as part of shutting down its US operations.",
+        "date": "31 March 2026",
+        "source_urls": [
+          "https://www.interviewpal.com/layoffs/monzo"
+        ],
+        "verification_query": "\"Monzo Bank Limited\" 50 jobs cut 31 March 2026 US operations",
+        "assertions": [
+          "Monzo cut 50 jobs.",
+          "The cuts occurred on 31 March 2026.",
+          "The layoffs were linked to shutting down US operations."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Monzo CEO TS Anil will step down after almost six years as CEO and be replaced by Diana Layfield from February next year, per a Reuters report dated 2025-10-30.",
+        "date": "2025-10-30",
+        "source_urls": [
+          "https://www.reuters.com/sustainability/boards-policy-regulation/uk-mobile-bank-monzo-replace-ceo-anil-february-2025-10-30"
+        ],
+        "verification_query": "\"Monzo Bank\" TS Anil step down CEO Diana Layfield February",
+        "assertions": [
+          "TS Anil would step down after almost six years as CEO of Monzo.",
+          "TS Anil would be replaced by Diana Layfield from February next year.",
+          "Monzo made the announcement on a Thursday, per the Reuters report.",
+          "The claimed event occurred on 2025-10-30."
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "ceo"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.reuters.com/sustainability/sustainable-finance-reporting/monzo-give-outgoing-ceo-ts-anil-expanded-role-after-investor-backlash-ft-reports-2026-01-17",
+          "title": "Monzo to give outgoing CEO TS Anil expanded role after investor ...",
+          "publisher": "reuters.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "The bank said in October that Anil would step down in February after almost six years as CEO, and be replaced by former Google executive Diana Layfield.",
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-04T10:40:49.336943Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "narrative": "Reuters reported that Monzo announced in October that CEO TS Anil would step down in February after almost six years in the role. Per Reuters, Anil will be replaced by former Google executive Diana Layfield. The evidence confirms the planned transition and successor but does not independently confirm the exact effective date or that the transition has occurred."
+    }
+  ],
+  "coverage": [
+    {
+      "category": "leadership",
+      "status": "verified_finding",
+      "sources_reviewed": 23,
+      "checks_run": 13,
+      "note": null
+    },
+    {
+      "category": "regulatory",
+      "status": "verified_finding",
+      "sources_reviewed": 16,
+      "checks_run": 3,
+      "note": null
+    },
+    {
+      "category": "cyber",
+      "status": "checked_no_finding",
+      "sources_reviewed": 8,
+      "checks_run": 1,
+      "note": null
+    },
+    {
+      "category": "distress",
+      "status": "checked_no_finding",
+      "sources_reviewed": 22,
+      "checks_run": 5,
+      "note": null
+    }
+  ],
+  "usage": {
+    "tavily_credits": 28.0,
+    "credits_by_endpoint": {
+      "search": 22.0,
+      "extract": 6.0
+    },
+    "llm_input_tokens": 33033,
+    "llm_output_tokens": 5068,
+    "wall_seconds": 191.0881899169908,
+    "usage_complete": false,
+    "usage_notes": [
+      "Tavily Research credits unavailable from account usage endpoint"
+    ]
+  }
+}

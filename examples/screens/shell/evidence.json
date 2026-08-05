@@ -1,0 +1,880 @@
+{
+  "target": "SHELL U.K. LIMITED",
+  "domain": "shell.com",
+  "jurisdiction": "UK",
+  "company_id": "00140141",
+  "generated_at": "2026-08-05T08:52:29.042586Z",
+  "risk_level": "REVIEW REQUIRED",
+  "findings": [
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Shell appointed Parminder Kohli as UK country chair on 3 May 2025.",
+        "date": "3 May 2025",
+        "source_urls": [
+          "https://www.linkedin.com/posts/ogv-energy_shell-appoints-kohli-as-uk-boss-activity-7192509685415993344-zvyB"
+        ],
+        "verification_query": "\"Shell\" \"Parminder Kohli\" UK country chair",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell appointed Parminder Kohli as UK country chair",
+          "The appointment occurred on 3 May 2025"
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "tavily_credits": 4.0,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Shell Energy UK Ltd appointed Kate Derrick as Director of Industrial and Commercial Enterprise Sales with immediate effect.",
+        "date": null,
+        "source_urls": [
+          "https://uk.shellenergy.com/press/articles/shell-energy-announces-key-strategic-appointment"
+        ],
+        "verification_query": "\"Shell Energy UK\" \"Kate Derrick\" Director",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell Energy UK Ltd appointed Kate Derrick as Director of Industrial and Commercial Enterprise Sales",
+          "The appointment took effect immediately"
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "tavily_credits": 5.0,
+      "narrative": ""
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Shell UK appointed Nermine Kamel as a director on 30 November 2025.",
+        "date": "30 November 2025",
+        "source_urls": [
+          "https://find-and-update.company-information.service.gov.uk/company/00140141/officers"
+        ],
+        "verification_query": "\"Shell UK\" \"Nermine Kamel\" director 30 November 2025",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell UK appointed Nermine Kamel as a director",
+          "The appointment date was 30 November 2025"
+        ]
+      },
+      "status": "verified",
+      "severity": "medium",
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/00140141/filing-history",
+          "title": "SHELL U.K. LIMITED filing history - Find and update company information - GOV.UK",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Appointment of Ms Nermine Elsayed Mohamed Ahmed Kamel as a director on 30 November 2025",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"Nermine Kamel\" director 30 November 2025",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/filing-history",
+              "relevance_score": 0.8969848
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell UK appointed Nermine Kamel as a director on 30 November 2025. Shell UK appointed Nermine Kamel as a director The appointment date was 30 November 2025",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/filing-history",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:46:09.201518Z"
+        },
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/00140141/officers",
+          "title": "SHELL U.K. LIMITED people - Find and update company information",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "## KAMEL, Nermine Elsayed Mohamed Ahmed\n\nCorrespondence address\n:   Shell Centre, London, SE1 7NA\n\nRole Active\n:   Director\n\nDate of birth\n:   September 1978\n\nAppointed on\n:   30 November 2025",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"Nermine Kamel\" director 30 November 2025",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/officers",
+              "relevance_score": 0.8793233
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell UK appointed Nermine Kamel as a director on 30 November 2025. Shell UK appointed Nermine Kamel as a director The appointment date was 30 November 2025",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/officers",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:46:09.201718Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "tavily_credits": 4.0,
+      "narrative": "Companies House records confirm that Nermine Elsayed Mohamed Ahmed Kamel was appointed as a director of Shell UK on 30 November 2025. The filing lists her role as active director, with a correspondence address of Shell Centre, London, SE1 7NA, and a date of birth of September 1978. Both pieces of evidence originate from the UK's official company register (find-and-update.company-information.service.gov.uk)."
+    },
+    {
+      "candidate": {
+        "category": "leadership",
+        "claim": "Shell UK appointed Sarah Bradley as a director on 4 September 2024.",
+        "date": "4 September 2024",
+        "source_urls": [
+          "https://find-and-update.company-information.service.gov.uk/company/00140141/officers"
+        ],
+        "verification_query": "\"Shell UK\" \"Sarah Bradley\" director 4 September 2024",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell UK appointed Sarah Bradley as a director",
+          "The appointment date was 4 September 2024"
+        ]
+      },
+      "status": "verified",
+      "severity": "medium",
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/00140141/filing-history",
+          "title": "SHELL U.K. LIMITED filing history - Companies House",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Appointment of Mrs Sarah Bradley as a director on 4 September 2024",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"Sarah Bradley\" director 4 September 2024",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/filing-history",
+              "relevance_score": 0.90330297
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell UK appointed Sarah Bradley as a director on 4 September 2024. Shell UK appointed Sarah Bradley as a director The appointment date was 4 September 2024",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/filing-history",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:50:18.140835Z"
+        },
+        {
+          "url": "https://find-and-update.company-information.service.gov.uk/company/00140141/officers",
+          "title": "SHELL U.K. LIMITED people - Find and update company information",
+          "publisher": "find-and-update.company-information.service.gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "## BRADLEY, Sarah\n\nCorrespondence address\n:   Shell Centre, London, SE1 7NA\n\nRole Active\n:   Director\n\nDate of birth\n:   September 1981\n\nAppointed on\n:   4 September 2024",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"Sarah Bradley\" director 4 September 2024",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/officers",
+              "relevance_score": 0.8785752
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell UK appointed Sarah Bradley as a director on 4 September 2024. Shell UK appointed Sarah Bradley as a director The appointment date was 4 September 2024",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://find-and-update.company-information.service.gov.uk/company/00140141/officers",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            1
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:50:18.141137Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 3,
+      "tavily_credits": 5.0,
+      "narrative": "Companies House records confirm that Sarah Bradley was appointed as a director of Shell UK on 4 September 2024. The Companies House filing lists her role as active director, with a correspondence address of Shell Centre, London, SE1 7NA, and a date of birth of September 1981."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "The North Sea Transition Authority fined Shell UK Limited \u00a350,000 for breaching five field production consents.",
+        "date": null,
+        "source_urls": [
+          "https://www.nstauthority.co.uk/news-publications/nsta-fines-shell-50-000-for-breaching-production-consents"
+        ],
+        "verification_query": "\"Shell UK\" \"North Sea Transition Authority\" fine \u00a350,000",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "The North Sea Transition Authority fined Shell UK Limited \u00a350,000",
+          "The fine was for breaching five field production consents"
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "fine"
+      ],
+      "evidence": [
+        {
+          "url": "https://assets.publishing.service.gov.uk/media/64c23dae0c8b960013d1b067/oil-and-gas-authority-annual-report-and-accounts-2022-23-large-print.pdf",
+          "title": "Oil and Gas Authority Annual Report and Accounts 2022\u201323",
+          "publisher": "gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Fines and penalties served with a Sanction Notice for breaching a licence condition: 2022-23 \u00a3\u2019000 2021-22 \u00a3\u2019000 EnQuest Heather Limited 150 -Equinor U.K. Limited 65 -Shell U.K. Limited 50 -Spirit Energy North Sea Limited 50",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"North Sea Transition Authority\" fine \u00a350,000",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://assets.publishing.service.gov.uk/media/64c23dae0c8b960013d1b067/oil-and-gas-authority-annual-report-and-accounts-2022-23-large-print.pdf",
+              "relevance_score": 0.63615024
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED The North Sea Transition Authority fined Shell UK Limited \u00a350,000 for breaching five field production consents. The North Sea Transition Authority fined Shell UK Limited \u00a350,000 The fine was for breaching five field production consents",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://assets.publishing.service.gov.uk/media/64c23dae0c8b960013d1b067/oil-and-gas-authority-annual-report-and-accounts-2022-23-large-print.pdf",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:50:38.273470Z"
+        },
+        {
+          "url": "https://assets.publishing.service.gov.uk/media/66977b79fc8e12ac3edafe13/oga-annual-report-and-accounts-2023-24-web.pdf",
+          "title": "Oil and Gas Authority Annual Report and Accounts 2023\u201324",
+          "publisher": "gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "Fines and penalties served with a Sanction Notice for breaching a licence condition: 2023-24 \u00a3\u2019000 2022-23 \u00a3\u2019000 Repsol Sinopec North Sea Limited 160 -EnQuest Heather Limited -150 Equinor U.K. Limited -65 Shell U.K. Limited -50",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"North Sea Transition Authority\" fine \u00a350,000",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://assets.publishing.service.gov.uk/media/66977b79fc8e12ac3edafe13/oga-annual-report-and-accounts-2023-24-web.pdf",
+              "relevance_score": 0.6296157
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED The North Sea Transition Authority fined Shell UK Limited \u00a350,000 for breaching five field production consents. The North Sea Transition Authority fined Shell UK Limited \u00a350,000 The fine was for breaching five field production consents",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://assets.publishing.service.gov.uk/media/66977b79fc8e12ac3edafe13/oga-annual-report-and-accounts-2023-24-web.pdf",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:50:38.274207Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "tavily_credits": 3.0,
+      "narrative": "According to gov.uk, the North Sea Transition Authority served Shell U.K. Limited a \u00a350,000 fine with a Sanction Notice for breaching a licence condition in the 2022-23 reporting period. The gov.uk tables do not specify that the breach involved five field production consents, so that element of the claim is not supported by the quoted evidence."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Ofgem fined Shell Energy UK \u00a31 on 10 January 2024 after an overcharging probe, and the company agreed to pay \u00a31.7 million as voluntary redress.",
+        "date": "10 January 2024",
+        "source_urls": [
+          "https://www.reuters.com/business/energy/uks-ofgem-fines-shell-energy-uk-1-pound-after-overcharging-probe-2024-01-10"
+        ],
+        "verification_query": "\"Ofgem\" \"Shell Energy UK\" \u00a31 fine 10 January 2024",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Ofgem fined Shell Energy UK \u00a31 on 10 January 2024",
+          "The fine followed an overcharging probe",
+          "Shell Energy UK agreed to pay \u00a31.7 million as voluntary redress"
+        ]
+      },
+      "status": "reported",
+      "severity": "high",
+      "policy_triggers": [
+        "fine",
+        "penalty"
+      ],
+      "evidence": [
+        {
+          "url": "https://www.ofgem.gov.uk/sites/default/files/2024-01/HES%20case%20penalty%20notice%20notice%20of%20decision%2010%20January%202024%20FINAL%20.pdf",
+          "title": "HES case penalty notice final for publication Nov 2023",
+          "publisher": "gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "The Authority hereby gives notice under section 27A(5) EA 89 of its decision to impose a penalty of \u00a31 on SEUK in respect of the contraventions set out above.",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Ofgem\" \"Shell Energy UK\" \u00a31 fine 10 January 2024",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://www.ofgem.gov.uk/sites/default/files/2024-01/HES%20case%20penalty%20notice%20notice%20of%20decision%2010%20January%202024%20FINAL%20.pdf",
+              "relevance_score": 0.83742094
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Ofgem fined Shell Energy UK \u00a31 on 10 January 2024 after an overcharging probe, and the company agreed to pay \u00a31.7 million as voluntary redress. Ofgem fined Shell Energy UK \u00a31 on 10 January 2024 The fine followed an overcharging probe Shell Energy UK agreed to pay \u00a31.7 million as voluntary redress",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://www.ofgem.gov.uk/sites/default/files/2024-01/HES%20case%20penalty%20notice%20notice%20of%20decision%2010%20January%202024%20FINAL%20.pdf",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:51:01.573449Z"
+        },
+        {
+          "url": "https://www.reuters.com/business/energy/uks-ofgem-fines-shell-energy-uk-1-pound-after-overcharging-probe-2024-01-10",
+          "title": "UK's Ofgem fines Shell Energy UK 1 pound after ...",
+          "publisher": "reuters.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "Britain's energy regulator Ofgem on Wednesday imposed a 1 pound fine on Shell Energy UK, formerly known as Hudson Energy Supply UK, following a probe into the company overcharging its customers.\n\nThe minimal fine comes after the company agreed to pay 1.7 million pounds ($2.16 million) as voluntary redress.",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Ofgem\" \"Shell Energy UK\" \u00a31 fine 10 January 2024",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://www.reuters.com/business/energy/uks-ofgem-fines-shell-energy-uk-1-pound-after-overcharging-probe-2024-01-10",
+              "relevance_score": 0.8029425
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Ofgem fined Shell Energy UK \u00a31 on 10 January 2024 after an overcharging probe, and the company agreed to pay \u00a31.7 million as voluntary redress. Ofgem fined Shell Energy UK \u00a31 on 10 January 2024 The fine followed an overcharging probe Shell Energy UK agreed to pay \u00a31.7 million as voluntary redress",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://www.reuters.com/business/energy/uks-ofgem-fines-shell-energy-uk-1-pound-after-overcharging-probe-2024-01-10",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            1,
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:51:01.573980Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "tavily_credits": 2.0,
+      "narrative": "Ofgem imposed a \u00a31 penalty on Shell Energy UK (formerly Hudson Energy Supply UK) following an investigation into overcharging of customers, according to a decision notice published on gov.uk. Reuters reported that the fine was announced on Wednesday, 10 January 2024, and that the company agreed to pay \u00a31.7 million ($2.16 million) as voluntary redress. The gov.uk notice confirms the penalty was imposed under section 27A(5) of the Electricity Act 1989."
+    },
+    {
+      "candidate": {
+        "category": "regulatory",
+        "claim": "Shell UK was fined \u00a3560,000 on 28 November 2025 for a major hydrocarbon release on the Brent Charlie platform.",
+        "date": "28 November 2025",
+        "source_urls": [
+          "https://press.hse.gov.uk/2025/11/28/shell-uk-fined-560000-following-major-hydrocarbon-release",
+          "https://uk.finance.yahoo.com/news/shell-fined-major-hydrocarbon-release-152932120.html"
+        ],
+        "verification_query": "\"Shell UK\" \"Brent Charlie\" \u00a3560,000 fine 28 November 2025",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell UK was fined \u00a3560,000",
+          "The fine was issued on 28 November 2025",
+          "It was for a major hydrocarbon release on the Brent Charlie platform"
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [
+        "fine"
+      ],
+      "evidence": [
+        {
+          "url": "https://press.hse.gov.uk/2025/11/28/shell-uk-fined-560000-following-major-hydrocarbon-release",
+          "title": "Shell UK fined \u00a3560000 following major hydrocarbon release",
+          "publisher": "gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "A large offshore oil and gas company has been sentenced and fined \u00a3560,000 after failing to properly maintain pipework for seven years.\n\nPipework on Shell UK\u2019s Brent Charlie platform in the North Sea deteriorated to such an extent that contained hydrocarbon fluids escaped",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"Brent Charlie\" \u00a3560,000 fine 28 November 2025",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://press.hse.gov.uk/2025/11/28/shell-uk-fined-560000-following-major-hydrocarbon-release",
+              "relevance_score": 0.903098
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell UK was fined \u00a3560,000 on 28 November 2025 for a major hydrocarbon release on the Brent Charlie platform. Shell UK was fined \u00a3560,000 The fine was issued on 28 November 2025 It was for a major hydrocarbon release on the Brent Charlie platform",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://press.hse.gov.uk/2025/11/28/shell-uk-fined-560000-following-major-hydrocarbon-release",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:51:54.460270Z"
+        },
+        {
+          "url": "https://www.bbc.co.uk/news/articles/c0l9z060l02o",
+          "title": "Shell UK fined for 'potentially catastrophic' fire risk - BBC News",
+          "publisher": "bbc.co.uk",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "Oil giant Shell UK has been fined \u00a3560,000 after failing to maintain pipework for seven years that risked a \"potentially catastrophic\" fire at its Brent Charlie platform.\n\nA court heard that the pipework deteriorated to such an extent that contained hydrocarbon fluids escaped",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"Brent Charlie\" \u00a3560,000 fine 28 November 2025",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://www.bbc.co.uk/news/articles/c0l9z060l02o",
+              "relevance_score": 0.850382
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell UK was fined \u00a3560,000 on 28 November 2025 for a major hydrocarbon release on the Brent Charlie platform. Shell UK was fined \u00a3560,000 The fine was issued on 28 November 2025 It was for a major hydrocarbon release on the Brent Charlie platform",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://www.bbc.co.uk/news/articles/c0l9z060l02o",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:51:54.460863Z"
+        },
+        {
+          "url": "https://press.hse.gov.uk/category/press-release/page/7",
+          "title": "Press release \u2013 Page 7 \u2013 HSE Media Centre",
+          "publisher": "gov.uk",
+          "published_date": null,
+          "source_tier": "primary",
+          "quote": "A large offshore oil and gas company has been sentenced and fined \u00a3560,000 after failing to properly maintain pipework for seven years. Pipework on Shell UK\u2019s Brent Charlie platform in the North Sea deteriorated to such an extent that contained hydrocarbon fluids escaped",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell UK\" \"Brent Charlie\" \u00a3560,000 fine 28 November 2025",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://press.hse.gov.uk/category/press-release/page/7",
+              "relevance_score": 0.82895297
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell UK was fined \u00a3560,000 on 28 November 2025 for a major hydrocarbon release on the Brent Charlie platform. Shell UK was fined \u00a3560,000 The fine was issued on 28 November 2025 It was for a major hydrocarbon release on the Brent Charlie platform",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://press.hse.gov.uk/category/press-release/page/7",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:51:54.461303Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "tavily_credits": 3.0,
+      "narrative": "According to gov.uk, Shell UK was sentenced and fined \u00a3560,000 after failing to properly maintain pipework for seven years on its Brent Charlie platform in the North Sea, where the pipework deteriorated to the extent that contained hydrocarbon fluids escaped. BBC News corroborates the \u00a3560,000 fine and the seven-year maintenance failure, reporting that a court heard the deterioration risked a \"potentially catastrophic\" fire. Neither source confirms the claimed sentencing date of 28 November 2025, so that element of the claim remains unverified."
+    },
+    {
+      "candidate": {
+        "category": "cyber",
+        "claim": "Shell confirmed a cyber security incident involving the MOVEit Transfer tool on 22 July 2023.",
+        "date": "22 July 2023",
+        "source_urls": [
+          "https://www.cybersecurityintelligence.com/blog/shell-confirms-supply-chain-attack-7101.html"
+        ],
+        "verification_query": "\"Shell\" \"MOVEit\" \"22 July 2023\"",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell confirmed a cyber security incident involving the MOVEit Transfer tool",
+          "The incident was reported on 22 July 2023"
+        ]
+      },
+      "status": "partial",
+      "severity": "high",
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://www.reuters.com/world/us/us-government-agencies-hit-global-cyber-attack-cnn-2023-06-15",
+          "title": "US energy department, other agencies hit in global hacking spree",
+          "publisher": "reuters.com",
+          "published_date": null,
+          "source_tier": "credible_secondary",
+          "quote": "A Shell spokesperson said there was no evidence of impact to Shell\u2019s core IT systems from the MOVEit Transfer-related breach. \"There are around 50 users of the tool, and we are urgently investigating what data may have been impacted,\" she added.",
+          "provenance": [
+            {
+              "method": "verification_search",
+              "endpoint": "search",
+              "query": "\"Shell\" \"MOVEit\" \"22 July 2023\"",
+              "topic": null,
+              "search_depth": "advanced",
+              "source_url": "https://www.reuters.com/world/us/us-government-agencies-hit-global-cyber-attack-cnn-2023-06-15",
+              "relevance_score": 0.39754128
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell confirmed a cyber security incident involving the MOVEit Transfer tool on 22 July 2023. Shell confirmed a cyber security incident involving the MOVEit Transfer tool The incident was reported on 22 July 2023",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://www.reuters.com/world/us/us-government-agencies-hit-global-cyber-attack-cnn-2023-06-15",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:52:07.488806Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "tavily_credits": 2.0,
+      "narrative": "According to Reuters, a Shell spokesperson confirmed a breach related to the MOVEit Transfer tool, stating there was no evidence of impact to Shell's core IT systems. The spokesperson said approximately 50 users of the tool were affected and that the company was urgently investigating what data may have been impacted. The quoted evidence does not confirm the specific date of 22 July 2023."
+    },
+    {
+      "candidate": {
+        "category": "cyber",
+        "claim": "Shell disclosed that it was impacted by an Accellion file-transfer breach on 16 March 2021.",
+        "date": "16 March 2021",
+        "source_urls": [
+          "https://news.bloomberglaw.com/privacy-and-data-security/shell-says-it-was-impacted-by-accellion-cybersecurity-breach"
+        ],
+        "verification_query": "\"Shell\" \"Accellion\" breach 16 March 2021",
+        "provenance": [
+          {
+            "method": "research",
+            "endpoint": "research",
+            "query": "Acquisition red-flag screen for SHELL U.K. LIMITED",
+            "topic": null,
+            "search_depth": null,
+            "source_url": null,
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell disclosed it was impacted by an Accellion file-transfer breach",
+          "The breach occurred on 16 March 2021"
+        ]
+      },
+      "status": "unresolved",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [],
+      "extraction_failures": [
+        "https://www.reuters.com/legal/legalindustry/jpml-rejects-bid-centralize-cases-over-accellion-breach-2021-06-09"
+      ],
+      "processing_failures": [],
+      "searches_run": 2,
+      "tavily_credits": 3.0,
+      "narrative": "A potential cyber reference was discovered, but the underlying source could not be captured for verification. Human review is required."
+    },
+    {
+      "candidate": {
+        "category": "cyber",
+        "claim": "Shell states that its name and identity are being used fraudulently in unsolicited business propositions and job offers, including communications from non-Shell email addresses and requests for money.",
+        "date": null,
+        "source_urls": [
+          "https://www.shell.com/fraud-and-scam-alert.html"
+        ],
+        "verification_query": "Shell fraud scam alert impersonation job offers reports Action Fraud",
+        "provenance": [
+          {
+            "method": "first_party_map",
+            "endpoint": "map",
+            "query": "",
+            "topic": null,
+            "search_depth": null,
+            "source_url": "https://www.shell.com/fraud-and-scam-alert.html",
+            "relevance_score": null
+          },
+          {
+            "method": "first_party_map",
+            "endpoint": "map",
+            "query": "Find investor relations, regulatory notices, security or data incident disclosures, leadership announcements, filings, restructuring, layoffs, closures, and financial distress pages. Exclude product, support, careers, marketing, privacy policy, and generic legal pages.",
+            "topic": null,
+            "search_depth": null,
+            "source_url": "https://shell.com",
+            "relevance_score": null
+          }
+        ],
+        "assertions": [
+          "Shell's name and identity is being used fraudulently in unsolicited business propositions and job offers.",
+          "Shell warns of suspicious signs including communications from non-Shell email addresses and requests for money.",
+          "Shell states Shell Group companies cannot accept any responsibility for losses from these frauds."
+        ]
+      },
+      "status": "rejected",
+      "severity": null,
+      "policy_triggers": [],
+      "evidence": [
+        {
+          "url": "https://www.shell.com/fraud-and-scam-alert.html",
+          "title": "",
+          "publisher": "shell.com",
+          "published_date": null,
+          "source_tier": "first_party",
+          "quote": "Shell\u2019s name and identity is being used fraudulently in these instances. In as much as we sympathise with anyone who has lost money in this way, Shell Group companies cannot accept any responsibility.",
+          "provenance": [
+            {
+              "method": "first_party_map",
+              "endpoint": "map",
+              "query": "Shell fraud scam alert impersonation job offers reports Action Fraud",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://www.shell.com/fraud-and-scam-alert.html",
+              "relevance_score": null
+            },
+            {
+              "method": "extract",
+              "endpoint": "extract",
+              "query": "SHELL U.K. LIMITED Shell states that its name and identity are being used fraudulently in unsolicited business propositions and job offers, including communications from non-Shell email addresses and requests for money. Shell's name and identity is being used fraudulently in unsolicited business propositions and job offers. Shell warns of suspicious signs including communications from non-Shell em",
+              "topic": null,
+              "search_depth": null,
+              "source_url": "https://www.shell.com/fraud-and-scam-alert.html",
+              "relevance_score": null
+            }
+          ],
+          "supports_assertions": [
+            0,
+            2
+          ],
+          "contradicts_assertions": [],
+          "retrieved_at": "2026-08-05T08:52:29.041919Z"
+        }
+      ],
+      "extraction_failures": [],
+      "processing_failures": [],
+      "searches_run": 2,
+      "tavily_credits": 2.0,
+      "narrative": ""
+    }
+  ],
+  "coverage": [
+    {
+      "category": "leadership",
+      "status": "verified_finding",
+      "sources_reviewed": 34,
+      "checks_run": 9,
+      "note": null
+    },
+    {
+      "category": "regulatory",
+      "status": "review_required",
+      "sources_reviewed": 32,
+      "checks_run": 4,
+      "note": null
+    },
+    {
+      "category": "cyber",
+      "status": "review_required",
+      "sources_reviewed": 33,
+      "checks_run": 4,
+      "note": null
+    },
+    {
+      "category": "distress",
+      "status": "checked_no_finding",
+      "sources_reviewed": 3,
+      "checks_run": 2,
+      "note": null
+    }
+  ],
+  "usage": {
+    "tavily_credits": 43.0,
+    "credits_by_endpoint": {
+      "map": 2.0,
+      "extract": 8.0,
+      "search": 33.0
+    },
+    "llm_input_tokens": 35668,
+    "llm_output_tokens": 6115,
+    "wall_seconds": 756.318864542,
+    "usage_complete": false,
+    "usage_notes": []
+  },
+  "retrieval_metrics": {
+    "research_candidates": 9,
+    "baseline_incremental_candidates": 0,
+    "map_incremental_candidates": 1,
+    "map_urls_reviewed": 11,
+    "map_status": "completed",
+    "validated_evidence": 13,
+    "surfaced_claims": 7,
+    "credits_per_surfaced_claim": 6.143
+  }
+}

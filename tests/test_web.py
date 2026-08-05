@@ -21,6 +21,9 @@ def test_interface_shell_is_served():
     assert "Fixture memo" not in response.text
     assert "Use server key" not in response.text
     assert "Clear key" in response.text
+    assert 'id="screen-allowance"' in response.text
+    assert "screening attempts available" in response.text
+    assert 'window.location.protocol === "file:"' in response.text
 
     script = client.get("/assets/app.js")
     assert "sessionStorage" not in script.text
@@ -60,6 +63,9 @@ def test_security_headers_prevent_secret_caching_and_script_injection():
     assert api_response.headers["referrer-policy"] == "no-referrer"
     assert api_response.headers["x-content-type-options"] == "nosniff"
     assert "script-src 'self'" in page_response.headers["content-security-policy"]
+    assert "sha256-6XfkJ1w3VxpsaJ/WZYuwcBFUw7npdJVdUlLpFLJl8RM=" in (
+        page_response.headers["content-security-policy"]
+    )
     assert "'unsafe-inline'" not in page_response.headers["content-security-policy"]
     assert page_response.headers["x-frame-options"] == "DENY"
 

@@ -8,6 +8,11 @@
       content="The acquisition-intelligence layer analysts use to assemble current, governed evidence for investment committee memos."
     />
     <title>DealLens — Acquisition Intelligence for GPs</title>
+    <script>
+      if (window.location.protocol === "file:") {
+        window.location.replace("http://127.0.0.1:8000/");
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -249,6 +254,17 @@
                     <path d="M5 12h13M13 6l6 6-6 6" />
                   </svg>
                 </button>
+
+                <p
+                  class="screen-allowance"
+                  id="screen-allowance"
+                  role="status"
+                  aria-live="polite"
+                  hidden
+                >
+                  <strong id="screen-allowance-count">—</strong>
+                  <span id="screen-allowance-label">screening attempts available</span>
+                </p>
 
                 <section class="preset-docket" aria-labelledby="preset-title">
                   <div class="preset-docket-heading">

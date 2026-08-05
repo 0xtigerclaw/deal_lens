@@ -81,7 +81,7 @@ For each area, the memo records checks run, sources reviewed, and whether there
 is a verified finding, a reported signal, no qualifying finding, or a gap that
 requires human review.
 
-## Why this is different
+## How we leverage Tavily
 
 Most research agents let the same model discover a claim and grade it. DealLens
 separates recall from trust:

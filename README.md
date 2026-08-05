@@ -11,8 +11,10 @@ on Cloud Run.
 new live screens require the reviewer’s Tavily API key. The key is held only in
 the browser tab and request-scoped worker memory.
 
-When a target moves toward investment committee, analysts have to assemble the
-specific facts that could change the decision: leadership departures,
+**Scope:**
+
+When a target moves toward investment committee, analysts and deal teams have
+to assemble the specific facts that could change the decision: leadership departures,
 regulatory scrutiny, litigation, breaches, and signs of financial distress.
 Those facts are scattered across the live web, easy to confuse with another
 legal entity, and difficult to cite consistently under time pressure.
@@ -20,18 +22,16 @@ legal entity, and difficult to cite consistently under time pressure.
 DealLens is a standalone acquisition-screening workspace for that decision
 point. It turns a company name and website into a current, cited public-risk
 assessment that an analyst can review, edit, and export for IC. Tavily provides
-live discovery, search, and extraction; Kimi K3 runs through Nebius Token
-Factory; deterministic Python applies the source, entity, and evidence rules.
-
-> DealLens is a triage tool, not a legal or financial opinion. “No qualifying
-> findings” means four governed checks completed without qualifying public
-> evidence; it never means the company is cleared.
+live discovery, adaptive search, bounded site mapping, and extraction; Kimi K3
+runs through Nebius Token Factory; deterministic Python applies the source,
+entity, and evidence rules.
 
 ![DealLens acquisition-intelligence homepage](docs/assets/deallens-home.png)
 
 ## Product walkthrough
 
-[Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
+**Product demo:** [Watch the 58-second DealLens walkthrough on
+YouTube](https://youtu.be/lMgXx2dGhcg).
 
 **Build record — start here:** [review the shipped system in 31
 events](https://traces.com/s/jn7e7qtmxcms61t0x82tdm73b98bv5mh). This
@@ -180,6 +180,9 @@ flowchart TD
 
 The full component, sequence, trust-boundary, and trace diagrams are in
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+
+**Build log:** [Review the sanitized implementation record](BUILD_LOG.md).
 
 ## Try it
 

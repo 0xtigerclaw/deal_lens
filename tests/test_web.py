@@ -21,6 +21,9 @@ def test_interface_shell_is_served():
     assert "Fixture memo" not in response.text
     assert "Use server key" not in response.text
     assert "Clear key" in response.text
+    assert "Why · facts are scattered" not in response.text
+    assert "When · a target moves to IC" not in response.text
+    assert "How · research, verify, export" not in response.text
     assert 'id="screen-allowance"' in response.text
     assert "screening attempts available" in response.text
     assert 'window.location.protocol === "file:"' in response.text

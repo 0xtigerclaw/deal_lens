@@ -99,6 +99,11 @@ def test_other_tier_evidence_alone_is_rejected():
     assert f.status == "rejected"
 
 
+def test_first_party_disclosure_alone_cannot_verify_itself():
+    f = classify(candidate(), [evidence("first_party", "acme.com")], [])
+    assert f.status == "rejected"
+
+
 def test_no_evidence_no_failures_is_rejected():
     f = classify(candidate(), [], [])
     assert f.status == "rejected"

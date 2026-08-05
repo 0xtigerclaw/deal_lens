@@ -14,7 +14,7 @@ flowchart TB
     API["FastAPI job + archive API"]
     Worker["Bounded background worker"]
     Config["Jurisdiction + severity YAML"]
-    Tavily["Tavily<br/>Research · Search · Extract"]
+    Tavily["Tavily<br/>Research · Search · Map · Extract"]
     Nebius["Nebius Token Factory<br/>Kimi K3"]
     Gate["Deterministic evidence gate"]
     Artifacts["Local memo.md + evidence.json<br/>memo.pdf on demand"]
@@ -47,7 +47,9 @@ rendered as a failure state.
 flowchart TD
     I["Confirmed target<br/>name · domain · company ID · jurisdiction"]
     R["Tavily /research<br/>recall-first candidate hypotheses"]
-    S0["Tavily /search × 4<br/>fixed category baselines"]
+    S0["Tavily /search × 5<br/>topic · recency · country-aware"]
+    MAP["Tavily /map<br/>first-party disclosure URLs"]
+    MX["Tavily /extract<br/>mapped disclosure chunks"]
     N["Kimi K3<br/>normalize candidates + interpret snippets"]
     M["Deterministic candidate merge<br/>category + token Jaccard"]
     SV["Tavily /search<br/>trusted source tiers"]
@@ -62,6 +64,7 @@ flowchart TD
 
     I --> R --> N
     I --> S0 --> N
+    I --> MAP --> MX --> N
     N --> M
     M --> SV
     M --> SR
@@ -71,7 +74,7 @@ flowchart TD
     Y --> G --> O
 
     classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
-    class R,S0,SV,SR,X tavily
+    class R,S0,MAP,MX,SV,SR,X tavily
 ```
 
 ### Component contracts
@@ -79,7 +82,8 @@ flowchart TD
 | Boundary | Accepts | Produces | May not do |
 |---|---|---|---|
 | Research | target identity, category prompt | candidate hypotheses | award evidence status |
-| Baseline Search | fixed category query, configured domains | snippets and URLs | claim category is clean because results are empty/failed |
+| Baseline Search | category topic/recency policy, jurisdiction country boost, configured domains | snippets and URLs | use country boosting for non-general topics or treat empty results as clean |
+| First-party Map | target domain, bounded disclosure instructions | relevant same-domain URLs | treat a company statement as independent verification |
 | Verification Search | candidate query, source governance | candidate source set | bypass exclusions or entity mismatch |
 | Extract | up to three selected URLs, claim query | focused page content + failed URLs | hide failed extraction |
 | Kimi quote selection | extracted content, atomic assertions | copied passage and relationship indexes | rewrite a passage or decide verification |
@@ -145,17 +149,19 @@ from Reported to Verified.
 ```mermaid
 flowchart LR
     Failure["Failure"] --> Search["Tavily Search fails"]
+    Failure --> Map["Tavily Map fails"]
     Failure --> Extract["Tavily Extract fails / blocked"]
     Failure --> Model["Kimi structured output fails"]
     Failure --> Narrative["Narrative generation fails"]
 
     Search --> Job["Job fails safely or category is review-required"]
+    Map --> Continue["External governed screening continues<br/>Map status = failed"]
     Extract --> Unresolved["Candidate = UNRESOLVED<br/>failed URL retained"]
     Model --> Review["Category/claim = REVIEW REQUIRED"]
     Narrative --> Evidence["Validated evidence retained<br/>fallback prose used"]
 
     classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
-    class Search,Extract tavily
+    class Search,Map,Extract tavily
 ```
 
 Missing observations are never converted to negative findings. The only clean
@@ -168,6 +174,8 @@ governed check and no surfaced qualifying finding or processing failure.
 flowchart LR
     TR["Tavily Research response"] --> Candidate
     TS["Tavily Search result"] --> Candidate
+    TM["Tavily Map URLs"] --> FirstParty["First-party candidate"]
+    FirstParty --> Candidate
     Candidate --> Assertion["Atomic assertions"]
     TS --> URL["Governed URL"]
     URL --> Content["Tavily Extract content"]
@@ -175,19 +183,26 @@ flowchart LR
     Quote --> Relationship["supports[] / contradicts[]"]
     Assertion --> Relationship
     Relationship --> Finding
+    Candidate --> Provenance["Typed Tavily provenance"]
+    Content --> Provenance
     Finding --> Coverage
     Finding --> Risk
     Coverage --> Result["ScreenResult JSON"]
     Risk --> Result
+    Provenance --> Result
     Result --> Memo["IC memo<br/>styled PDF + Markdown"]
 
     classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
-    class TR,TS,Content tavily
+    class TR,TS,TM,Content tavily
 ```
 
 Every displayed source relationship survives in `evidence.json`, including
-retrieval time, URL, configured publisher identity, source tier, quote,
-assertion indexes, extraction failures, and processing failures.
+Tavily method/endpoint/query/relevance, retrieval time, URL, configured
+publisher identity, source tier, quote, assertion indexes, claim-scoped
+credits, extraction failures, and processing failures. First-party evidence is
+typed separately and cannot independently satisfy the verification gate.
+General-search provenance also records the country boost selected by the
+jurisdiction pack.
 
 ## 7. LangSmith trace tree
 
@@ -197,8 +212,12 @@ flowchart TB
     Root --> Discover["deallens.discover"]
     Discover --> Research["tavily.research"]
     Discover --> Normalize["ChatNebius · optional normalization"]
+    Root --> FirstParty["deallens.first_party_discovery"]
+    FirstParty --> Map["tavily.map"]
+    FirstParty --> MapExtract["tavily.extract"]
+    FirstParty --> MapLLM["ChatNebius disclosure candidates"]
     Root --> Baseline["deallens.baseline_checks"]
-    Baseline --> Search4["tavily.search × 4"]
+    Baseline --> Search4["tavily.search × 5"]
     Root --> Interpret["deallens.discover_from_baseline"]
     Interpret --> LLM1["ChatNebius per non-empty category"]
     Root --> Verify["deallens.verify × candidate"]
@@ -211,7 +230,7 @@ flowchart TB
     Entity["deallens.resolve_entity<br/>separate pre-confirmation trace"] --> EntitySearch["tavily.search"]
 
     classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
-    class Research,Search4,SearchN,ExtractN,EntitySearch tavily
+    class Research,Map,MapExtract,Search4,SearchN,ExtractN,EntitySearch tavily
 ```
 
 Tests force `LANGSMITH_TRACING=false`; only explicit live operations enter the

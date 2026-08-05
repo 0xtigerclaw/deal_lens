@@ -165,16 +165,59 @@ class Tavily:
         include_domains: list[str] | None = None,
         exclude_domains: list[str] | None = None,
         topic: str = "general",
+        country: str | None = None,
         max_results: int = 8,
+        search_depth: str = "basic",
+        chunks_per_source: int = 3,
+        time_range: str | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        exact_match: bool = False,
     ) -> dict:
+        kwargs: dict[str, Any] = {
+            "query": query[:400],
+            "include_domains": include_domains or [],
+            "exclude_domains": exclude_domains or [],
+            "topic": topic,
+            "max_results": max_results,
+            "search_depth": search_depth,
+            "chunks_per_source": max(1, min(chunks_per_source, 3)),
+            "exact_match": exact_match,
+            "include_usage": True,
+        }
+        if time_range:
+            kwargs["time_range"] = time_range
+        if country and topic == "general":
+            kwargs["country"] = country
+        if start_date:
+            kwargs["start_date"] = start_date
+        if end_date:
+            kwargs["end_date"] = end_date
         return self._call(
             "search",
             self._client.search,
-            query=query[:400],  # documented query length limit
-            include_domains=include_domains or [],
-            exclude_domains=exclude_domains or [],
-            topic=topic,
-            max_results=max_results,
+            **kwargs,
+        )
+
+    @traceable(name="tavily.map", run_type="retriever")
+    def map(
+        self,
+        *,
+        url: str,
+        instructions: str,
+        max_depth: int = 2,
+        max_breadth: int = 20,
+        limit: int = 12,
+    ) -> dict:
+        return self._call(
+            "map",
+            self._client.map,
+            url=url,
+            instructions=instructions,
+            max_depth=max(1, min(max_depth, 5)),
+            max_breadth=max(1, min(max_breadth, 500)),
+            limit=max(1, min(limit, 50)),
+            allow_external=False,
             include_usage=True,
         )
 

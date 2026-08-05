@@ -65,6 +65,7 @@ Dynamic outcome metadata:
 - `review_required_categories`
 - `tavily_credits`
 - `tavily_credits_by_endpoint`
+- `retrieval_contribution`
 - `llm_input_tokens`
 - `llm_output_tokens`
 - `wall_seconds`
@@ -76,8 +77,12 @@ deallens.screen
 ├── deallens.discover
 │   ├── tavily.research
 │   └── ChatNebius (only if response normalization is needed)
+├── deallens.first_party_discovery
+│   ├── tavily.map
+│   ├── tavily.extract
+│   └── ChatNebius
 ├── deallens.baseline_checks
-│   └── tavily.search × 4
+│   └── tavily.search × 5
 ├── deallens.discover_from_baseline
 │   └── ChatNebius × non-empty category
 ├── deallens.verify × candidate
@@ -91,6 +96,10 @@ Short narrative generations also appear as Nebius model children. Legal-entity
 lookup is deliberately a separate `deallens.resolve_entity` trace with the
 tags `entity-resolution` and `human-confirmation-required`; it occurs before a
 user authorizes a full screen.
+
+The committed `langsmith-verification.json` is the historical v0.2 live run.
+It remains evidence of that run rather than being rewritten to imply the v0.3
+Map spans were observed; the next live verification should supersede it.
 
 ## Test isolation
 

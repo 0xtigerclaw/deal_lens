@@ -8,7 +8,7 @@ Generated: 04 August 2026
 
 ## Executive assessment
 
-**REVIEW REQUIRED** — 1 reported concern(s), 4 partially supported claim(s), 1 unresolved check(s); 3 candidate claims did not meet the evidence standard.
+**REVIEW REQUIRED** — 1 reported concern, 4 partially supported claims, 1 contradicted claim, and 1 unresolved check; 3 candidate claims did not meet the evidence standard.
 
 This memo is an initial review of public evidence, not a legal or financial diligence opinion. "No qualifying public findings" means the governed checks completed without a result that met the evidence standard — it is not a statement that no risk exists.
 
@@ -28,6 +28,8 @@ Reuters reported that Revolut received permission to delay filing its 2022 annua
 
 Source: [reuters.com](https://www.reuters.com/technology/revolut-delays-annual-report-filing-second-consecutive-year-2023-09-19) — supports A0, A1, A2
 
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
 
 ## Partially supported — review required
 
@@ -41,11 +43,11 @@ Assertions required for this claim:
 
 Reuters reported that Mikko Salovaara joined Revolut in 2021 and resigned as Chief Financial Officer after two years in the role, citing personal reasons according to a company spokesperson. The quoted evidence does not confirm the specific claim that Revolut announced Salovaara as Group CFO on 12 May 2021, so the claim is only partially supported.
 
-> "Fintech firm Revolut said on that Thursday Chief Financial Officer Mikko Salovaara is leaving the company, after two years in the role.
-
-The 31-year-old executive, who joined the London-based start-up in 2021, had resigned "for personal reasons", a spokesperson for the company said."
+> "Fintech firm Revolut said on that Thursday Chief Financial Officer Mikko Salovaara is leaving the company, after two years in the role. The 31-year-old executive, who joined the London-based start-up in 2021, had resigned "for personal reasons", a spokesperson for the company said."
 
 Source: [reuters.com](https://www.reuters.com/technology/revolut-cfo-departs-after-two-years-role-2023-05-11) — supports A0
+
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
 
 
 ### Revolut appointed Fiona Fry and Peter Estlin as non‑executive directors on 10 December 2024. — Medium
@@ -62,6 +64,8 @@ City A.M. reported that Revolut added Fiona Fry and Peter Estlin as non-executiv
 
 Source: [cityam.com](https://www.cityam.com/people-and-organizations/revolut/page/18) — supports A0, A1
 
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
 
 ### The Bank of Lithuania fined Revolut €3.5 million for anti‑money‑laundering failures in April 2025. — High
 
@@ -73,12 +77,13 @@ Assertions required for this claim:
 
 According to Reuters, the Bank of Lithuania fined Revolut €3.5 million ($3.83 million) for failures in money-laundering prevention, with the fine announced on April 7–8, 2025. Reuters described Revolut as Britain's most valuable start-up in its reporting of the penalty. The available evidence confirms the fine amount, the regulator, and the stated reason, but provides no further detail on the specific deficiencies identified.
 
-> "Technology category·April 8, 2025 Lithuania fines Revolut 3.5 million euros for money-laundering prevention failures
-Lithuania's central bank has fined Britain's most valuable start-up Revolut 3.5 million euros ($3.83 million) for failures in money-laundering prevention, the bank said on Monday."
+> "Technology category·April 8, 2025 Lithuania fines Revolut 3.5 million euros for money-laundering prevention failures Lithuania's central bank has fined Britain's most valuable start-up Revolut 3.5 million euros ($3.83 million) for failures in money-laundering prevention, the bank said on Monday."
 
 Source: [reuters.com](https://www.reuters.com/company/revolut-bank-uab) — supports A0, A2
 
 Policy triggered: fine
+
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
 
 
 ### Italy’s competition authority fined Revolut €11.5 million for unfair commercial practices on 2 April 2026. — High
@@ -97,6 +102,8 @@ Source: [cityam.com](https://www.cityam.com/revolut-slapped-with-eight-figure-fi
 
 Policy triggered: fine
 
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
 
 ## Claims contradicted by qualifying evidence
 
@@ -114,6 +121,8 @@ Reuters identifies Victor Stinga as Revolut's chief financial officer, quoting h
 
 Source: [reuters.com](https://www.reuters.com/business/finance/revolut-profit-soars-15-billion-storonsky-increases-stake-more-than-25-2025-04-24) — contradicts A0
 
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
 
 ## Unresolved checks
 
@@ -129,14 +138,46 @@ A potential regulatory reference was discovered, but the underlying source could
 
 Could not capture: https://www.telegraph.co.uk/technology/2019/03/01/revolut-faces-fca-probe-compliance-failing
 
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
 
 ## Claims not substantiated by qualifying evidence
 
 The available sources did not meet the configured evidence standard. This does not mean these claims are false.
 
-- Revolut appointed Béatrice Cossa‑Dumurgier as CEO of its Western Europe headquarters on 24 June 2025. — no qualifying source survived verification
-- Revolut disclosed a data breach in September 2022 that exposed personal data of 50,150 customers. — no qualifying source survived verification
-- A cyber‑crime forum listed a purported database of 75 million Revolut user records on 29 July 2026. — no qualifying source survived verification
+
+### Revolut appointed Béatrice Cossa‑Dumurgier as CEO of its Western Europe headquarters on 24 June 2025.
+
+Assertions required for this claim:
+
+- A0: Béatrice Cossa‑Dumurgier was appointed as CEO of Revolut's Western Europe headquarters.
+- A1: The appointment was announced on 24 June 2025.
+- A2: The announcement appeared on Revolut's news site.
+
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
+
+### Revolut disclosed a data breach in September 2022 that exposed personal data of 50,150 customers.
+
+Assertions required for this claim:
+
+- A0: A security incident at Revolut occurred in September 2022.
+- A1: The breach exposed personal data of 50,150 customers.
+- A2: The incident was reported by multiple news outlets.
+
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
+
+### A cyber‑crime forum listed a purported database of 75 million Revolut user records on 29 July 2026.
+
+Assertions required for this claim:
+
+- A0: A forum post on 29 July 2026 advertised 75 million Revolut records for sale.
+- A1: The claim involved personal and partial card data.
+- A2: The listing was reported by cyber‑security news sources.
+
+Claim retrieval: not recorded; 0 Tavily verification/extraction credits
+
 
 ## Diligence coverage
 
@@ -152,4 +193,5 @@ The available sources did not meet the configured evidence standard. This does n
 - Tavily credits: 25 (extract 6, search 19)
 - LLM tokens: 30,363 in / 4,189 out
 - Wall time: 151s
+- Retrieval contribution: not recorded for this historical artifact
 - Usage notes: Tavily Research credits unavailable from account usage endpoint

@@ -35,6 +35,7 @@ def companies_house_result(
 
 def test_registry_domain_is_read_from_jurisdiction_configuration():
     assert registry_domain(load_jurisdiction("UK")) == COMPANIES_HOUSE_DOMAIN
+    assert load_jurisdiction("UK").tavily_country == "united kingdom"
 
 
 def test_registry_results_are_constrained_deduplicated_and_ranked():
@@ -88,12 +89,14 @@ def test_entity_resolution_uses_only_configured_registry_and_books_usage():
 
     assert resolution.candidates[0].company_id == "09446231"
     assert resolution.tavily_credits == 1
+    assert tavily.calls[0]["country"] == "united kingdom"
     assert tavily.calls == [
         {
             "query": (
                 f'site:{COMPANIES_HOUSE_DOMAIN} "Monzo" company monzo.com'
             ),
-            "include_domains": [COMPANIES_HOUSE_DOMAIN],
-            "max_results": 8,
+                "include_domains": [COMPANIES_HOUSE_DOMAIN],
+                "max_results": 8,
+                "country": "united kingdom",
         }
     ]

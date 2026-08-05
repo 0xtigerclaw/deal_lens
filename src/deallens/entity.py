@@ -163,6 +163,7 @@ def resolve_entity(
         query=f'site:{registry} "{company}" company {domain}'[:400],
         include_domains=[registry],
         max_results=8,
+        country=pack.tavily_country,
     )
     candidates = rank_registry_results(
         company,

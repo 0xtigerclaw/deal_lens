@@ -2118,6 +2118,38 @@ a {
   line-height: 1.65;
 }
 
+.claim-provenance {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 16px;
+  margin-top: 10px;
+  color: var(--muted);
+  font: 400 8px/1.4 var(--mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.claim-provenance span:first-child { color: var(--signal-dark); }
+
+.retrieval-trail { margin-top: 10px; }
+.retrieval-trail summary {
+  color: var(--muted);
+  font: 400 8px/1.4 var(--mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.retrieval-trail-row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 12px;
+  padding: 8px 0;
+  color: var(--muted);
+  font: 400 9px/1.45 var(--mono);
+  border-bottom: 1px solid rgba(23, 24, 19, .09);
+}
+.retrieval-trail-row strong { color: var(--signal-dark); font-weight: 500; text-transform: uppercase; }
+
 .assertion-list {
   display: grid;
   gap: 6px;
@@ -2205,11 +2237,24 @@ a {
   border-bottom: 1px solid currentColor;
 }
 
+.evidence-provenance {
+  width: 100%;
+  color: var(--signal-dark);
+  text-transform: uppercase;
+}
+
+.evidence-query {
+  width: 100%;
+  overflow-wrap: anywhere;
+}
+
 .tier-chip {
   min-height: 18px;
   padding: 1px 5px;
   color: var(--green);
 }
+
+.tier-chip.tier-first_party { color: var(--signal-dark); }
 
 .failure-note {
   margin-top: 14px;
@@ -2325,6 +2370,24 @@ a {
   font-size: 26px;
   font-weight: 500;
 }
+
+.retrieval-ablation {
+  display: grid;
+  gap: 7px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(241, 237, 226, .22);
+}
+
+.retrieval-ablation span,
+.retrieval-ablation small {
+  color: rgba(241, 237, 226, .55);
+  font: 400 8px/1.4 var(--mono);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.retrieval-ablation p { margin: 0; font: 400 16px/1.35 var(--serif); }
 
 .footprint-row {
   display: flex;

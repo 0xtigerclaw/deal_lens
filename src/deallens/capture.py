@@ -11,11 +11,12 @@ never silently dropped.
 from __future__ import annotations
 
 from langsmith import traceable
+from urllib.parse import urlparse
 
 from .config import JurisdictionPack
 from .gate import quote_in_content
 from .llm import LLM, QuoteSelection
-from .models import Candidate, Evidence
+from .models import Candidate, Evidence, RetrievalProvenance
 from .tavily_client import Tavily
 
 CONTENT_CHARS_PER_SOURCE = 8000
@@ -50,6 +51,7 @@ def capture(
     candidate: Candidate,
     urls: list[str],
     search_results: list[dict],
+    target_domain: str | None = None,
 ) -> tuple[list[Evidence], list[str], list[str]]:
     """Return validated evidence, failed URLs, and processing failures."""
     if not urls:
@@ -101,6 +103,7 @@ def capture(
 
     titles = {r.get("url"): r.get("title", "") for r in search_results}
     dates = {r.get("url"): r.get("published_date") for r in search_results}
+    search_by_url = {r.get("url"): r for r in search_results}
 
     evidence: list[Evidence] = []
     for pick in selection.picks:
@@ -118,14 +121,45 @@ def capture(
         contradicts = [index for index in contradicts if index not in overlap]
         if not supports and not contradicts:
             continue
+        search_row = search_by_url.get(pick.url, {})
+        host = (urlparse(pick.url).hostname or "").removeprefix("www.")
+        tier = (
+            "first_party"
+            if target_domain and host == target_domain.removeprefix("www.")
+            else pack.tier_for(pick.url)
+        )
+        retrieval_method = (
+            "first_party_map"
+            if tier == "first_party"
+            else search_row.get("_deallens_method", "baseline_search")
+        )
+        provenance = [
+            RetrievalProvenance(
+                method=retrieval_method,
+                endpoint="map" if tier == "first_party" else "search",
+                query=str(search_row.get("_deallens_query") or candidate.verification_query),
+                topic=search_row.get("_deallens_topic"),
+                country=search_row.get("_deallens_country"),
+                search_depth=search_row.get("_deallens_search_depth"),
+                source_url=pick.url,
+                relevance_score=search_row.get("score"),
+            ),
+            RetrievalProvenance(
+                method="extract",
+                endpoint="extract",
+                query=extraction_query[:400],
+                source_url=pick.url,
+            ),
+        ]
         evidence.append(
             Evidence(
                 url=pick.url,
                 title=titles.get(pick.url, ""),
                 publisher=pack.publisher_for(pick.url),
                 published_date=dates.get(pick.url),
-                source_tier=pack.tier_for(pick.url),
+                source_tier=tier,
                 quote=pick.quote,
+                provenance=provenance,
                 supports_assertions=supports,
                 contradicts_assertions=contradicts,
             )

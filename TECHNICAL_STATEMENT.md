@@ -37,7 +37,7 @@ same two provider keys, and the same Nebius integration.
 | Nebius chat model via `langchain-nebius` | Kept, same integration | The supported provider path is unchanged |
 | Default model `moonshotai/Kimi-K2.6` | `moonshotai/Kimi-K3` | Same model family, current release |
 | `TAVILY_API_KEY` and `NEBIUS_API_KEY` with guided missing-key errors | Kept, same messages and signup URLs | Zero onboarding delta from the starter |
-| Tavily as the web layer, one `TavilySearch()` tool with defaults | Research, Search, and Extract through `tavily-python` | The workflow needs recall, governed verification, and verbatim capture, plus the usage accounting and `failed_results` reporting the tool wrapper does not surface |
+| Tavily as the web layer, one `TavilySearch()` tool with defaults | Research, adaptive Search, Map, and Extract through `tavily-python` | The workflow needs recall, governed verification, first-party disclosure discovery, verbatim capture, usage accounting, and explicit failure reporting |
 | `create_agent` free-running tool loop | Typed pipeline with a deterministic gate | The model no longer chooses retrieval order or grades its own findings; cost and failure become reproducible |
 | System prompt asking for "source URLs when available" | Verbatim quotes validated against extracted content, tied to atomic assertions | Citation by request became citation by construction |
 | Streaming console Q&A | Screen jobs, memo artifacts, archive, and review UI | The deliverable is an auditable memo, not a transient answer |
@@ -49,14 +49,20 @@ DealLens assigns a different retrieval responsibility to each Tavily primitive:
 1. **Research for recall.** `/research` searches broadly for dateable events
    across four risk categories and returns structured candidate hypotheses.
    Its output never becomes evidence directly.
-2. **Search for coverage and verification.** Four fixed baseline searches run
-   even if Research returns nothing. Each candidate then receives a focused
-   search constrained to primary and credible-secondary domains. Registry
-   queries include the legal entity identifier when available.
-3. **Extract for evidence capture.** Only a small, deterministically selected
+2. **Adaptive Search for coverage and verification.** Four baseline searches
+   run even if Research returns nothing. Leadership and cyber use recent news,
+   distress uses finance search, and regulatory checks remain all-time. Each
+   candidate then receives advanced search constrained to governed domains.
+   General searches receive the jurisdiction pack's Tavily country boost;
+   topic-specific news and finance searches do not.
+3. **Map for first-party disclosure recall.** The target site is mapped with
+   bounded instructions for investor, security, leadership, filing, and
+   restructuring pages. These pages can propose or support a claim, but the
+   `first_party` tier cannot independently verify itself.
+4. **Extract for evidence capture.** Only a small, deterministically selected
    set of trusted URLs is extracted. The candidate claim and assertions are
    passed as the extraction query, keeping downstream model context focused.
-4. **Search for entity resolution.** Before a new user spends on a screen,
+5. **Search for entity resolution.** Before a new user spends on a screen,
    Tavily searches only the jurisdiction’s configured official registry.
    DealLens parses company numbers and ranks names locally; a human confirms.
 
@@ -64,14 +70,13 @@ This composition is more useful than a generic research report because it
 adds coverage guarantees, source governance, legal-entity boundaries,
 verbatim evidence, explicit failure states, and reproducible output.
 
-### Why not Crawl or Map?
+### Why Map, but not Crawl?
 
-This is an event-screening pipeline, not a website-inventory pipeline. Search
-locates claim-relevant public documents across regulators, courts, registries,
-and press; Extract captures only those pages. Crawl would add own-site breadth
-without strengthening the external adverse-event evidence contract, and would
-make per-page failure/cost attribution less focused. It is a deliberate
-non-use, not an omitted integration.
+Map adds a bounded, useful channel for disclosures that search may not rank:
+investor notices, incident statements, leadership changes, and restructuring
+pages. It returns only candidate URLs; Extract still performs focused capture.
+Crawl remains out of scope because downloading a broad own-site corpus would
+increase cost and context without strengthening the external-evidence rule.
 
 ## Provider and model boundary
 
@@ -137,15 +142,18 @@ Metadata makes a trace useful for debugging and cost review: provider/model,
 pipeline version, target, jurisdiction, whether a company ID was supplied,
 candidate/finding counts, final risk state, category-review count, Tavily
 credits per endpoint, Nebius input/output tokens, and wall time.
+The typed result additionally preserves claim/quote retrieval provenance and a
+per-run retrieval ablation showing the incremental candidate contribution from
+Research, baseline Search, and Map.
 
 Entity resolution is separately traced because it happens before human
 confirmation. Tests set tracing off in `tests/conftest.py`, preventing fake
 provider calls from polluting the live project.
 
-The output artifact repeats the usage ledger. Search and Extract use Tavily’s
-returned usage. Research attempts key-level before/after accounting; if that
-endpoint is unavailable, `usage_complete=false` and an explanatory note are
-emitted. An incomplete measured total is better than invented cost precision.
+The output artifact repeats the usage ledger. Search, Map, and Extract use
+Tavily’s returned usage. Research attempts key-level before/after accounting;
+if that counter is unavailable or delayed, `usage_complete=false`. An
+incomplete measured total is better than invented cost precision.
 
 ## Evaluation strategy
 
@@ -160,7 +168,7 @@ product:
   index-page rejection, and registry entity mismatch.
 
 Measured result: 36/36 cases pass, with 0/11 false verifies and 4/4 correct
-entity abstentions. The 75-test pytest suite covers the surrounding typed
+entity abstentions. The 83-test pytest suite covers the surrounding typed
 contracts, usage, orchestration, UI API, memo, and risk roll-up.
 
 The harness emits a stable result for every labelled case and compares it to
@@ -192,13 +200,13 @@ review acceptance, duplicate/syndicated evidence, and time saved.
 | Assignment objective | DealLens evidence |
 |---|---|
 | Meaningful value for a real workflow | Replaces manual first-pass adverse-event searching with a cited, reviewable acquisition screen |
-| Tavily used deeply | Research for recall, Search for baseline/verification/entity resolution, Extract for evidence capture |
-| Retrieval quality | Four-category coverage, trusted-domain filters, exact registry entity checks, focused extraction |
+| Tavily used deeply | Research for recall, adaptive Search for coverage/verification/entity resolution, Map for first-party disclosures, Extract for evidence capture |
+| Retrieval quality | Four-category topic/recency/country policy, advanced verification, first-party non-self-verification, trusted-domain filters, exact registry entity checks, focused extraction |
 | Source handling and citations | Publisher normalization, verbatim quote validator, atomic assertion relationships, clickable URLs |
 | Evaluation loop | `deallens eval`, 36 labelled cases, case-level baseline deltas, reviewed promotion, CI artifact |
 | Context engineering | Kimi receives bounded snippets/query-focused chunks rather than an uncontrolled web corpus |
 | Observability | LangSmith root/child trace contract plus per-run Tavily/Nebius/latency ledger |
-| Workflow configurability | YAML jurisdiction tiers and two acquisition severity profiles |
+| Workflow configurability | YAML Tavily country boosts, jurisdiction tiers, and two acquisition severity profiles |
 | Small thing done well | One target, four categories, one memo; explicit exclusions and limitations |
 | Chosen provider path | Nebius Token Factory + Kimi K3, aligned with the starter stack; no Claude runtime path |
 

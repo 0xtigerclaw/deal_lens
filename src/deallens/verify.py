@@ -49,8 +49,17 @@ def verify(
         include_domains=pack.primary + pack.credible_secondary,
         exclude_domains=pack.exclude,
         max_results=8,
+        search_depth="advanced",
+        chunks_per_source=3,
+        country=pack.tavily_country,
     )
-    results.extend(targeted.get("results", []))
+    for result in targeted.get("results", []):
+        result = dict(result)
+        result["_deallens_method"] = "verification_search"
+        result["_deallens_query"] = candidate.verification_query
+        result["_deallens_search_depth"] = "advanced"
+        result["_deallens_country"] = pack.tavily_country
+        results.append(result)
     checks_run += 1
 
     registry = registry_domain(pack)
@@ -60,8 +69,18 @@ def verify(
             query=f'"{company}"{identity} {candidate.claim}'[:380],
             include_domains=[registry],
             max_results=5,
+            search_depth="advanced",
+            chunks_per_source=3,
+            exact_match=bool(company_id),
+            country=pack.tavily_country,
         )
-        results.extend(registry_results.get("results", []))
+        for result in registry_results.get("results", []):
+            result = dict(result)
+            result["_deallens_method"] = "registry_search"
+            result["_deallens_query"] = f'"{company}"{identity} {candidate.claim}'[:380]
+            result["_deallens_search_depth"] = "advanced"
+            result["_deallens_country"] = pack.tavily_country
+            results.append(result)
         checks_run += 1
 
     seen: set[str] = set()
@@ -86,6 +105,7 @@ def pick_extraction_urls(
     candidate: Candidate,
     results: list[dict],
     company_id: str | None = None,
+    target_domain: str | None = None,
 ) -> list[str]:
     """Choose <=3 URLs to extract: primary tier first, then credible secondary
     (by search score), then discovery's own sources as a last resort."""
@@ -113,17 +133,24 @@ def pick_extraction_urls(
         key=score, reverse=True,
     )
 
-    urls = [r["url"] for r in primary[:2]] + [r["url"] for r in secondary[:2]]
+    # Reserve room for the candidate's own discovery source so Map can add a
+    # first-party disclosure without displacing independent verification.
+    urls = [r["url"] for r in primary[:1]] + [r["url"] for r in secondary[:1]]
 
     for url in candidate.source_urls:
+        is_first_party = bool(target_domain) and _host(url) == target_domain
         if (
             url not in urls
-            and pack.tier_for(url) != "other"
+            and (pack.tier_for(url) != "other" or is_first_party)
             and not pack.is_excluded(url)
             and _is_document_url(url)
             and _entity_matches(url, registry_domain(pack), company_id)
         ):
             urls.append(url)
+
+    for result in [*primary[1:], *secondary[1:]]:
+        if result["url"] not in urls:
+            urls.append(result["url"])
 
     return urls[:MAX_EXTRACT_URLS]
 

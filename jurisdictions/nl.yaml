@@ -2,6 +2,8 @@
 # Untested: KVK document access is partly paywalled; verify extraction before
 # relying on it (see README "Adding a jurisdiction").
 
+tavily_country: netherlands
+
 primary:
   - kvk.nl                    # Kamer van Koophandel — company register
   - afm.nl                    # financial markets regulator

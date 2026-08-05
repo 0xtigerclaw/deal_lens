@@ -242,7 +242,26 @@ Together with this log, repository history,
 the walkthrough, they satisfy the assignment's build-record deliverable without
 letting rejected concepts define the submitted product.
 
-## 10. Known next work
+## 10. Adaptive Tavily retrieval upgrade
+
+The P0 retrieval design expanded Tavily from a uniform three-endpoint sequence
+into four explicit, measurable responsibilities:
+
+- Research remains recall-first structured hypothesis generation;
+- baseline Search now selects news, finance, or general topic and recency by
+  risk category, adds a jurisdiction-configured country boost to general
+  searches, and uses advanced candidate verification;
+- Map discovers bounded, same-domain first-party disclosures before focused
+  Extract; and
+- every claim and quote carries typed Tavily provenance, relevance, and
+  claim-scoped verification/extraction credits.
+
+The deterministic evidence gate did not change. A new `first_party` tier can
+surface disclosures but cannot independently verify them. Each live result now
+records an online retrieval ablation showing Research candidate count and the
+incremental candidates added by baseline Search and Map.
+
+## 11. Known next work
 
 1. Build an analyst-labelled live-target eval for open-web recall.
 2. Detect syndicated/near-duplicate articles across publisher domains.

@@ -14,14 +14,16 @@ from langsmith import get_current_run_tree, traceable
 from .capture import capture
 from .config import JurisdictionPack, Policy
 from .discover import (
+    BASELINE_CHECK_COUNTS,
     baseline_checks,
     discover,
+    discover_first_party,
     discover_from_baseline,
-    merge_candidates,
+    retrieval_ablation,
 )
 from .gate import apply_severity, classify, coverage, risk_level
 from .llm import LLM
-from .models import Finding, ScreenResult, UsageLedger
+from .models import Finding, RetrievalMetrics, ScreenResult, UsageLedger
 from .tavily_client import Tavily
 from .verify import pick_extraction_urls, verify
 
@@ -48,7 +50,7 @@ UNRESOLVED_NARRATIVE = (
     run_type="chain",
     tags=["production-screen", "governed-evidence", "nebius-kimi-k3"],
     metadata={
-        "pipeline_version": "0.2.0",
+        "pipeline_version": "0.3.0",
         "model_provider": "Nebius Token Factory",
         "model_family": "Kimi K3",
         "retrieval_provider": "Tavily",
@@ -92,11 +94,15 @@ def run_screen(
     research_candidates = discover(
         tavily, llm, company, domain, jurisdiction_pack.name, company_id
     )
+    _notify(progress, "research", "Mapping first-party disclosures", 18)
+    map_candidates, mapped_urls, map_failure = discover_first_party(
+        tavily, llm, company, domain
+    )
     _notify(
         progress,
         "research",
         f"Found {len(research_candidates)} signals to verify",
-        22,
+        23,
     )
     _notify(progress, "coverage", "Checking four risk areas", 26)
     baseline = baseline_checks(tavily, jurisdiction_pack, company, company_id)
@@ -104,7 +110,9 @@ def run_screen(
     baseline_candidates, baseline_failures = discover_from_baseline(
         llm, company, baseline
     )
-    candidates = merge_candidates(research_candidates, baseline_candidates)
+    candidates, ablation = retrieval_ablation(
+        research_candidates, baseline_candidates, map_candidates
+    )
     _notify(
         progress,
         "verification",
@@ -117,7 +125,9 @@ def run_screen(
         category: {result.get("url") for result in results if result.get("url")}
         for category, results in baseline.items()
     }
-    checks_run = {category: 1 for category in baseline}
+    checks_run = {
+        category: BASELINE_CHECK_COUNTS[category] for category in baseline
+    }
     for index, candidate in enumerate(candidates):
         candidate_progress = 40 + int((index / max(len(candidates), 1)) * 48)
         _notify(
@@ -126,6 +136,7 @@ def run_screen(
             f"Checking {index + 1} of {len(candidates)} · {candidate.category.title()}",
             candidate_progress,
         )
+        candidate_credits_before = ledger.tavily_credits
         results, _reviewed, candidate_checks = verify(
             tavily,
             jurisdiction_pack,
@@ -141,19 +152,36 @@ def run_screen(
             checks_run.get(candidate.category, 0) + candidate_checks
         )
         urls = pick_extraction_urls(
-            jurisdiction_pack, candidate, results, company_id=company_id
+            jurisdiction_pack,
+            candidate,
+            results,
+            company_id=company_id,
+            target_domain=domain,
         )
+        reviewed_urls.setdefault(candidate.category, set()).update(urls)
         evidence, failures, processing_failures = capture(
-            tavily, llm, jurisdiction_pack, company, candidate, urls, results
+            tavily,
+            llm,
+            jurisdiction_pack,
+            company,
+            candidate,
+            urls,
+            results,
+            target_domain=domain,
         )
         finding = classify(
             candidate,
             evidence,
             failures,
-            searches_run=1 + candidate_checks,
+            searches_run=(
+                BASELINE_CHECK_COUNTS[candidate.category] + candidate_checks
+            ),
             processing_failures=processing_failures,
         )
         finding = apply_severity(finding, policy)
+        finding.tavily_credits = round(
+            ledger.tavily_credits - candidate_credits_before, 3
+        )
         finding.narrative = _narrative(llm, finding)
         findings.append(finding)
 
@@ -164,6 +192,27 @@ def run_screen(
         {category: len(urls) for category, urls in reviewed_urls.items()},
         checks_run,
         baseline_failures,
+    )
+    surfaced_claims = sum(finding.status != "rejected" for finding in findings)
+    retrieval_metrics = RetrievalMetrics(
+        research_candidates=ablation["research_candidates"],
+        baseline_incremental_candidates=ablation[
+            "baseline_incremental_candidates"
+        ],
+        map_incremental_candidates=ablation["map_incremental_candidates"],
+        map_urls_reviewed=len(mapped_urls),
+        map_status=(
+            "failed"
+            if map_failure
+            else "completed" if mapped_urls else "no_relevant_pages"
+        ),
+        validated_evidence=sum(len(finding.evidence) for finding in findings),
+        surfaced_claims=surfaced_claims,
+        credits_per_surfaced_claim=(
+            round(ledger.tavily_credits / surfaced_claims, 3)
+            if surfaced_claims
+            else None
+        ),
     )
     result = ScreenResult(
         target=company,
@@ -176,6 +225,7 @@ def run_screen(
         findings=findings,
         coverage=coverage_rows,
         usage=ledger,
+        retrieval_metrics=retrieval_metrics,
     )
     if run_tree is not None:
         run_tree.add_metadata(
@@ -191,6 +241,7 @@ def run_screen(
                 ),
                 "tavily_credits": ledger.tavily_credits,
                 "tavily_credits_by_endpoint": ledger.credits_by_endpoint,
+                "retrieval_contribution": retrieval_metrics.model_dump(),
                 "llm_input_tokens": ledger.llm_input_tokens,
                 "llm_output_tokens": ledger.llm_output_tokens,
                 "wall_seconds": round(ledger.wall_seconds, 3),

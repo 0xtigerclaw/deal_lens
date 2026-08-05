@@ -18,7 +18,16 @@ CATEGORY_LABELS: dict[str, str] = {
     "distress": "Financial distress",
 }
 
-SourceTier = Literal["primary", "credible_secondary", "other"]
+SourceTier = Literal["primary", "credible_secondary", "first_party", "other"]
+RetrievalMethod = Literal[
+    "research",
+    "baseline_search",
+    "first_party_map",
+    "verification_search",
+    "registry_search",
+    "extract",
+    "fixture",
+]
 FindingStatus = Literal[
     "verified",
     "reported",
@@ -82,6 +91,19 @@ def _material_claim_anchors(claim: str) -> list[tuple[str, str]]:
     return anchors
 
 
+class RetrievalProvenance(BaseModel):
+    """Auditable Tavily operation that contributed to a candidate or quote."""
+
+    method: RetrievalMethod
+    endpoint: Literal["research", "search", "map", "extract"]
+    query: str = ""
+    topic: str | None = None
+    country: str | None = None
+    search_depth: str | None = None
+    source_url: str | None = None
+    relevance_score: float | None = None
+
+
 class Candidate(BaseModel):
     """A red-flag hypothesis produced by discovery. Never trusted, only tested."""
 
@@ -90,6 +112,7 @@ class Candidate(BaseModel):
     date: str | None = None
     source_urls: list[str] = Field(default_factory=list)
     verification_query: str
+    provenance: list[RetrievalProvenance] = Field(default_factory=list)
     assertions: list[str] = Field(
         default_factory=list,
         description="Atomic factual assertions that together make up the claim.",
@@ -122,6 +145,7 @@ class Evidence(BaseModel):
     published_date: str | None = None
     source_tier: SourceTier
     quote: str
+    provenance: list[RetrievalProvenance] = Field(default_factory=list)
     supports_assertions: list[int] = Field(default_factory=lambda: [0])
     contradicts_assertions: list[int] = Field(default_factory=list)
     retrieved_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -136,6 +160,7 @@ class Finding(BaseModel):
     extraction_failures: list[str] = Field(default_factory=list)
     processing_failures: list[str] = Field(default_factory=list)
     searches_run: int = 0
+    tavily_credits: float = 0.0
     narrative: str = ""
 
 
@@ -169,6 +194,19 @@ class UsageLedger(BaseModel):
         )
 
 
+class RetrievalMetrics(BaseModel):
+    research_candidates: int = 0
+    baseline_incremental_candidates: int = 0
+    map_incremental_candidates: int = 0
+    map_urls_reviewed: int = 0
+    map_status: Literal[
+        "completed", "no_relevant_pages", "failed", "not_recorded"
+    ] = "not_recorded"
+    validated_evidence: int = 0
+    surfaced_claims: int = 0
+    credits_per_surfaced_claim: float | None = None
+
+
 RiskLevel = Literal[
     "REVIEW REQUIRED", "PROCEED WITH NOTES", "NO QUALIFYING FINDINGS"
 ]
@@ -184,3 +222,4 @@ class ScreenResult(BaseModel):
     findings: list[Finding] = Field(default_factory=list)
     coverage: list[CategoryCoverage] = Field(default_factory=list)
     usage: UsageLedger = Field(default_factory=UsageLedger)
+    retrieval_metrics: RetrievalMetrics = Field(default_factory=RetrievalMetrics)

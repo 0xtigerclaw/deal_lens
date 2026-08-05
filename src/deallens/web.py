@@ -66,7 +66,7 @@ LEGACY_ARCHIVE_JSONS = (
 app = FastAPI(
     title="DealLens",
     description="Evidence-backed acquisition intelligence for IC memos",
-    version="0.2.0",
+    version="0.3.0",
     docs_url="/api/docs",
     redoc_url=None,
 )

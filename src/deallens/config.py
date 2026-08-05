@@ -24,6 +24,7 @@ PACKAGE_ROOT = Path(
 
 class JurisdictionPack(BaseModel):
     name: str
+    tavily_country: str | None = None
     primary: list[str] = Field(default_factory=list)
     credible_secondary: list[str] = Field(default_factory=list)
     exclude: list[str] = Field(default_factory=list)

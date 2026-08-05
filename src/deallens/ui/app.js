@@ -974,6 +974,30 @@ function buildFinding(finding, claimIndex = null) {
   }
   card.append(meta, el("h3", "", finding.candidate.claim));
 
+  const provenance = el("div", "claim-provenance");
+  const methods = [...new Set(
+    (finding.candidate.provenance || []).map((item) => item.method.replaceAll("_", " ")),
+  )];
+  provenance.append(
+    el("span", "", `Tavily · ${methods.length ? methods.join(" + ") : "provenance unavailable"}`),
+    el("span", "", `${formatNumber(finding.tavily_credits || 0)} verification/extract credits`),
+  );
+  card.append(provenance);
+  if ((finding.candidate.provenance || []).length) {
+    const trail = el("details", "retrieval-trail");
+    trail.append(el("summary", "", "View Tavily retrieval trail"));
+    finding.candidate.provenance.forEach((entry) => {
+      const row = el("div", "retrieval-trail-row");
+      const country = entry.country ? ` · ${entry.country}` : "";
+      row.append(
+        el("strong", "", `${entry.method.replaceAll("_", " ")} · /${entry.endpoint}${country}`),
+        el("span", "", entry.query || entry.source_url || "No query recorded"),
+      );
+      trail.append(row);
+    });
+    card.append(trail);
+  }
+
   if (finding.status === "rejected") {
     card.append(
       el(
@@ -1016,7 +1040,11 @@ function buildEvidence(finding) {
     link.href = evidence.url;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    const tier = el("span", "tier-chip", evidence.source_tier.replaceAll("_", " "));
+    const tier = el(
+      "span",
+      `tier-chip tier-${evidence.source_tier}`,
+      evidence.source_tier.replaceAll("_", " "),
+    );
     source.append(tier, link);
     if (evidence.published_date) source.append(el("span", "", evidence.published_date));
     const relationships = [];
@@ -1027,6 +1055,24 @@ function buildEvidence(finding) {
       relationships.push(`contradicts ${evidence.contradicts_assertions.map((index) => `A${index}`).join(", ")}`);
     }
     if (relationships.length) source.append(el("span", "", relationships.join(" · ")));
+    const retrieval = (evidence.provenance || []).find(
+      (entry) => entry.endpoint === "search" || entry.endpoint === "map",
+    );
+    if (retrieval) {
+      const score = retrieval.relevance_score == null
+        ? ""
+        : ` · relevance ${Number(retrieval.relevance_score).toFixed(3)}`;
+      source.append(
+        el(
+          "span",
+          "evidence-provenance",
+          `Tavily ${retrieval.method.replaceAll("_", " ")}${retrieval.country ? ` · ${retrieval.country}` : ""}${score}`,
+        ),
+      );
+      if (retrieval.query) {
+        source.append(el("span", "evidence-query", `Query · ${retrieval.query}`));
+      }
+    }
     item.append(source);
     details.append(item);
   });
@@ -1074,6 +1120,21 @@ function buildFootprint(job, result) {
       card.append(el("p", "usage-warning", note));
     }
   });
+  const metrics = result.retrieval_metrics || {};
+  const ablation = el("div", "retrieval-ablation");
+  if (metrics.map_status === "not_recorded") {
+    ablation.append(
+      el("span", "", "Retrieval contribution"),
+      el("p", "", "Not recorded for this historical screen"),
+    );
+  } else {
+    ablation.append(
+      el("span", "", "Retrieval contribution"),
+      el("p", "", `Research ${metrics.research_candidates || 0} · Baseline +${metrics.baseline_incremental_candidates || 0} · Map +${metrics.map_incremental_candidates || 0}`),
+      el("small", "", `${metrics.map_urls_reviewed || 0} first-party URLs · ${metrics.validated_evidence || 0} validated passages`),
+    );
+  }
+  card.append(ablation);
   return card;
 }
 

@@ -200,15 +200,16 @@ LANGSMITH_ENDPOINT="https://eu.api.smith.langchain.com"
 Tests force tracing off before importing application modules, so fixtures do
 not pollute the production project. See [docs/LANGSMITH.md](docs/LANGSMITH.md)
 for the span contract and the verified Monzo v0.2 run (`204` spans, `0`
-errors). The next live verification will record the v0.3 Map and country-aware
-Search spans rather than rewriting the historical run.
+errors). The trace history below also shows the latest successful Shell screen;
+a nested-span verification will record its v0.3 Map and country-aware Search
+behavior without rewriting the historical Monzo run.
 
 ![LangSmith trace history for the live DealLens application](docs/assets/langsmith-trace-history.png)
 
 *LangSmith EU captures successful and failed entity-resolution and screening
-runs with per-run status, latency, token, and cost data. The verified Monzo root
-shown here completed in 191.09 seconds; its nested 204-span contract is recorded
-in `docs/langsmith-verification.json`.*
+runs with per-run status, latency, token, and cost data. The latest successful
+Shell screen appears at the top; the verified Monzo nested-span contract remains
+recorded in `docs/langsmith-verification.json`.*
 
 **Build log:** [Review the sanitized implementation record](BUILD_LOG.md).
 
@@ -426,19 +427,35 @@ Submission documents:
 - [docs/LANGSMITH.md](docs/LANGSMITH.md) — trace hierarchy and validation.
 - [BUILD_LOG.md](BUILD_LOG.md) — product and implementation decisions.
 
-## Deliberate MVP boundaries
+## Current limitations and future enhancements
 
-- UK Companies House is the only tested automatic entity resolver. The NL pack
-  demonstrates configuration shape but does not claim registry resolution.
+The MVP prioritizes evidence quality and a reviewable single-analyst workflow.
+The highest-value extensions are:
+
+1. **Syndicated wire-content deduplication.** Publisher independence is
+   currently determined at the domain level. If two news domains carry the
+   same Reuters or AP copy, they can count as two secondary sources even though
+   the underlying reporting is identical. A production extension would
+   normalize extracted article text, cluster near-duplicates with MinHash/LSH
+   or TF-IDF similarity, and count each content cluster as one independent
+   publisher unit in the evidence gate.
+2. **Jurisdiction and registry expansion.** UK Companies House is the only
+   tested automatic entity resolver; the NL pack demonstrates the configuration
+   shape but does not claim registry resolution. Registry adapters for US SEC
+   EDGAR, the Delaware Division of Corporations, and EU member-state registries
+   would extend entity resolution and source governance to international deals
+   without hardcoding jurisdiction behavior into prompts.
+3. **Durable multi-tenant persistence.** Active jobs currently live in worker
+   memory, while memo archives and reports use container-local storage. Moving
+   job coordination to Postgres/Redis and report artifacts to Cloud Storage
+   would support multiple users, restarts, and horizontally scaled Cloud Run
+   instances.
+
+Other deliberate boundaries remain:
+
 - News articles do not contain a universal entity identifier; similarly named
   groups still require analyst judgment.
-- Syndicated copy on genuinely different configured publisher domains may
-  count twice; near-duplicate clustering is future work.
 - `/research` is used for recall, not accepted as evidence by itself.
-- Storage is local JSON/Markdown for this single-analyst MVP, with PDFs
-  generated on demand from the typed result. MongoDB was
-  deliberately deferred; adding infrastructure would not strengthen the core
-  retrieval/evidence assignment.
 - Tavily Crawl is not used. Map locates bounded first-party disclosure URLs,
   Search locates external claim-relevant sources, and Extract captures only a
   small deterministic set. Broad crawling would add content without

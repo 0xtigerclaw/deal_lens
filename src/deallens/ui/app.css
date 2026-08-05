@@ -580,34 +580,9 @@ a {
   line-height: 1.35;
 }
 
-.trust-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0;
-  margin-top: 38px;
-  color: var(--muted);
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.trust-row span {
-  padding: 0 16px;
-  border-right: 1px solid var(--line);
-}
-
-.trust-row span:first-child {
-  padding-left: 0;
-}
-
-.trust-row span:last-child {
-  border-right: 0;
-}
-
 .risk-coverage {
   max-width: 500px;
-  margin-top: 20px;
+  margin-top: 34px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
 }
@@ -2586,8 +2561,6 @@ a {
   #active-run-label::after { font-size: 8px; content: "Active"; }
   .intake-view { min-height: auto; padding: 48px 22px; }
   .intake-hero h1 { font-size: clamp(49px, 15vw, 74px); }
-  .trust-row { display: grid; gap: 10px; }
-  .trust-row span { padding: 0; border-right: 0; }
   .preset-grid { grid-template-columns: 1fr; }
   .preset-option { min-height: 66px; }
   .active-screen-row {

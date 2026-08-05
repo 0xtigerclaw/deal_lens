@@ -80,16 +80,6 @@
             <strong id="view-title">New memo</strong>
           </div>
           <div class="topbar-actions">
-            <span
-              class="screen-allowance"
-              id="screen-allowance"
-              role="status"
-              aria-live="polite"
-              hidden
-            >
-              <strong id="screen-allowance-count">—</strong>
-              <span id="screen-allowance-label">live screens left</span>
-            </span>
             <button
               class="active-run-trigger"
               id="active-run-trigger"
@@ -264,6 +254,19 @@
                     <path d="M5 12h13M13 6l6 6-6 6" />
                   </svg>
                 </button>
+
+                <p
+                  class="screen-allowance"
+                  id="screen-allowance"
+                  role="status"
+                  aria-live="polite"
+                  hidden
+                >
+                  <span>Public demo capacity</span>
+                  <span aria-hidden="true">·</span>
+                  <strong id="screen-allowance-count">—</strong>
+                  <span id="screen-allowance-label">screens available</span>
+                </p>
 
                 <section class="preset-docket" aria-labelledby="preset-title">
                   <div class="preset-docket-heading">

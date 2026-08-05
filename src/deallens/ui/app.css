@@ -365,17 +365,15 @@ a {
 }
 
 .screen-allowance {
-  display: inline-flex;
-  min-height: 34px;
+  display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 6px;
-  padding: 0 11px;
+  margin: 9px 0 0;
   color: var(--muted);
   font-family: var(--mono);
   font-size: 8px;
   letter-spacing: 0.07em;
-  border-left: 2px solid var(--green);
-  background: rgba(53, 101, 76, 0.055);
   text-transform: uppercase;
 }
 
@@ -387,8 +385,7 @@ a {
 }
 
 .screen-allowance.is-exhausted {
-  border-left-color: var(--signal);
-  background: rgba(200, 75, 49, 0.06);
+  color: var(--signal-dark);
 }
 
 .screen-allowance.is-exhausted strong {
@@ -2582,8 +2579,6 @@ a {
   .topbar { min-height: 54px; padding-inline: 20px; }
   .breadcrumb > span:first-child,
   .model-badge { display: none; }
-  .screen-allowance { padding-inline: 8px; }
-  #screen-allowance-label { display: none; }
   .quiet-button { font-size: 12px; }
   .topbar-actions { gap: 8px; }
   .active-run-trigger { padding-inline: 7px; }

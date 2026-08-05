@@ -5,6 +5,8 @@
 # notices); press carries it for larger targets. Edit freely — this is config,
 # not code.
 
+tavily_country: united kingdom
+
 primary:
   - find-and-update.company-information.service.gov.uk   # Companies House
   - thegazette.co.uk                                     # statutory insolvency notices

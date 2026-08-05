@@ -1,0 +1,38 @@
+# Optional owner-operator acquisition lens.
+# Usage: deallens screen ... --policy policy.owner_operator.yaml
+# Differences from default: key-person and customer-concentration risks
+# escalate more strongly, while ordinary succession signals are recorded
+# without automatically treating an owner transition as a red flag.
+
+rules:
+  leadership:
+    base: high
+    escalate_when:
+      - founder
+      - owner
+      - managing director
+      - multiple departures
+
+  regulatory:
+    base: medium
+    escalate_when:
+      - enforcement
+      - fine
+      - investigation
+
+  cyber:
+    base: high
+    escalate_when:
+      - customer data
+      - ransomware
+      - ico
+
+  distress:
+    base: high
+    escalate_when:
+      - insolvency
+      - administration
+      - overdue accounts
+      - charge registered
+      - key customer
+      - concentration

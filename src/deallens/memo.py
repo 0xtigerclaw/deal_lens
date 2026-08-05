@@ -83,10 +83,8 @@ def render_memo(result: ScreenResult) -> str:
             "This does not mean these claims are false.",
             "",
         ]
-        lines += [
-            f"- {f.candidate.claim} — insufficient qualifying evidence"
-            for f in rejected
-        ]
+        for finding in rejected:
+            lines += _finding_block(finding)
 
     coverage_issues = [cov for cov in result.coverage if cov.note]
     if coverage_issues:
@@ -121,6 +119,18 @@ def render_memo(result: ScreenResult) -> str:
         f"- LLM tokens: {usage.llm_input_tokens:,} in / {usage.llm_output_tokens:,} out",
         f"- Wall time: {usage.wall_seconds:.0f}s",
     ]
+    if result.retrieval_metrics.map_status == "not_recorded":
+        lines.append("- Retrieval contribution: not recorded for this historical artifact")
+    else:
+        lines += [
+            f"- Candidate contribution: Research {result.retrieval_metrics.research_candidates}; "
+            f"baseline +{result.retrieval_metrics.baseline_incremental_candidates}; "
+            f"first-party Map +{result.retrieval_metrics.map_incremental_candidates}",
+            f"- First-party Map: {result.retrieval_metrics.map_status.replace('_', ' ')}; "
+            f"{result.retrieval_metrics.map_urls_reviewed} URLs reviewed",
+            f"- Validated evidence yield: {result.retrieval_metrics.validated_evidence} passages "
+            f"for {result.retrieval_metrics.surfaced_claims} surfaced claims",
+        ]
     if usage.usage_notes:
         lines.append(f"- Usage notes: {'; '.join(usage.usage_notes)}")
     lines.append("")
@@ -461,10 +471,20 @@ def render_pdf(result: ScreenResult) -> bytes:
         category = CATEGORY_LABELS.get(finding.candidate.category, finding.candidate.category)
         severity = f" / {finding.severity.upper()} SEVERITY" if finding.severity else ""
         label = f"{index:02d} / {FINDING_LABELS[finding.status].upper()} / {category.upper()}{severity}"
+        methods = ", ".join(
+            dict.fromkeys(item.method.replace("_", " ") for item in finding.candidate.provenance)
+        ) or "not recorded"
         header = [
             Paragraph(_pdf_text(label), small_bold),
             Spacer(1, 1.5 * mm),
             Paragraph(_pdf_text(finding.candidate.claim), finding_title),
+            Paragraph(
+                _pdf_text(
+                    f"TAVILY PROVENANCE / {methods} / "
+                    f"{finding.tavily_credits:g} verification + extraction credits"
+                ),
+                small,
+            ),
         ]
         if finding.narrative:
             header.append(Paragraph(_pdf_text(finding.narrative), body))
@@ -521,6 +541,18 @@ def render_pdf(result: ScreenResult) -> bytes:
                 f'<link href="{_pdf_text(evidence.url)}" color="#2f6d55"><b>{_pdf_text(publisher)}</b></link>',
                 _pdf_text(evidence.source_tier.replace("_", " ").title()),
             ]
+            source_provenance = next(
+                (
+                    item
+                    for item in evidence.provenance
+                    if item.endpoint in ("search", "map")
+                ),
+                None,
+            )
+            if source_provenance and source_provenance.relevance_score is not None:
+                source_bits.append(
+                    f"Tavily relevance {source_provenance.relevance_score:.3f}"
+                )
             if evidence.published_date:
                 source_bits.append(_pdf_text(evidence.published_date))
             story.extend(
@@ -558,10 +590,25 @@ def render_pdf(result: ScreenResult) -> bytes:
         )
         for finding in rejected:
             category = CATEGORY_LABELS.get(finding.candidate.category, finding.candidate.category)
+            methods = ", ".join(
+                dict.fromkeys(
+                    item.method.replace("_", " ")
+                    for item in finding.candidate.provenance
+                )
+            ) or "not recorded"
             story.append(
                 Paragraph(
                     f"<b>{_pdf_text(category)}</b> - {_pdf_text(finding.candidate.claim)}",
                     body,
+                )
+            )
+            story.append(
+                Paragraph(
+                    _pdf_text(
+                        f"TAVILY PROVENANCE / {methods} / "
+                        f"{finding.tavily_credits:g} verification + extraction credits"
+                    ),
+                    small,
                 )
             )
 
@@ -616,12 +663,47 @@ def render_pdf(result: ScreenResult) -> bytes:
 
     story.append(Paragraph("Research footprint", heading))
     usage = result.usage
-    footprint = Table(
-        [
+    footprint_rows = [
             [Paragraph("TAVILY", small), Paragraph(f"{usage.tavily_credits:g} credits", small_bold)],
+    ]
+    if result.retrieval_metrics.map_status == "not_recorded":
+        footprint_rows.append(
+            [
+                Paragraph("RETRIEVAL CONTRIBUTION", small),
+                Paragraph("Not recorded for this historical artifact", small_bold),
+            ]
+        )
+    else:
+        footprint_rows.extend(
+            [[
+                Paragraph("RETRIEVAL CONTRIBUTION", small),
+                Paragraph(
+                    _pdf_text(
+                        f"Research {result.retrieval_metrics.research_candidates} / "
+                        f"baseline +{result.retrieval_metrics.baseline_incremental_candidates} / "
+                        f"Map +{result.retrieval_metrics.map_incremental_candidates}"
+                    ),
+                    small_bold,
+                ),
+            ], [
+                Paragraph("MAP + EVIDENCE", small),
+                Paragraph(
+                    _pdf_text(
+                        f"{result.retrieval_metrics.map_urls_reviewed} first-party URLs / "
+                        f"{result.retrieval_metrics.validated_evidence} validated passages"
+                    ),
+                    small_bold,
+                ),
+            ]]
+        )
+    footprint_rows.extend(
+        [
             [Paragraph("KIMI TOKENS", small), Paragraph(f"{usage.llm_input_tokens:,} input / {usage.llm_output_tokens:,} output", small_bold)],
             [Paragraph("WALL TIME", small), Paragraph(f"{usage.wall_seconds:.0f} seconds", small_bold)],
-        ],
+        ]
+    )
+    footprint = Table(
+        footprint_rows,
         colWidths=[content_width * 0.26, content_width * 0.74],
     )
     footprint.setStyle(
@@ -701,6 +783,7 @@ def _finding_block(finding: Finding) -> list[str]:
         lines += [finding.narrative, ""]
     for e in finding.evidence:
         tier = {"primary": "Primary source", "credible_secondary": "Source",
+                "first_party": "First-party disclosure",
                 "other": "Uncorroborated source"}[e.source_tier]
         dated = f", {e.published_date}" if e.published_date else ""
         relationships = []
@@ -715,11 +798,26 @@ def _finding_block(finding: Finding) -> list[str]:
             )
         relationship = f" — {'; '.join(relationships)}" if relationships else ""
         lines += [
-            f'> "{e.quote}"',
+            f'> "{" ".join(e.quote.split())}"',
             "",
             f"{tier}: [{e.publisher}]({e.url}){dated}{relationship}",
             "",
         ]
+        source_provenance = next(
+            (item for item in e.provenance if item.endpoint in ("search", "map")),
+            None,
+        )
+        if source_provenance:
+            relevance = (
+                f" · relevance {source_provenance.relevance_score:.3f}"
+                if source_provenance.relevance_score is not None
+                else ""
+            )
+            lines += [
+                f"Tavily provenance: {source_provenance.method.replace('_', ' ')}"
+                f" · `{source_provenance.endpoint}`{relevance}",
+                "",
+            ]
     if finding.extraction_failures:
         lines += [
             "Could not capture: " + ", ".join(finding.extraction_failures),
@@ -732,6 +830,23 @@ def _finding_block(finding: Finding) -> list[str]:
         ]
     if finding.policy_triggers:
         lines += [f"Policy triggered: {', '.join(finding.policy_triggers)}", ""]
+    methods = ", ".join(
+        dict.fromkeys(item.method.replace("_", " ") for item in finding.candidate.provenance)
+    ) or "not recorded"
+    lines += [
+        f"Claim retrieval: {methods}; {finding.tavily_credits:g} Tavily "
+        "verification/extraction credits",
+        "",
+    ]
+    for item in finding.candidate.provenance:
+        if item.query:
+            lines += [
+                f"- Tavily `{item.endpoint}` via {item.method.replace('_', ' ')}: "
+                f"`{item.query}`"
+                f"{' · country boost: ' + item.country if item.country else ''}",
+            ]
+    if finding.candidate.provenance:
+        lines.append("")
     return lines
 
 

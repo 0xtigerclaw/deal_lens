@@ -13,25 +13,41 @@ the browser tab and request-scoped worker memory.
 
 **Scope:**
 
-When a target moves toward investment committee, analysts/team have to assemble the
-specific facts that could change the decision: leadership departures,
+When a target moves toward investment committee, analysts and deal teams have
+to assemble the specific facts that could change the decision: leadership departures,
 regulatory scrutiny, litigation, breaches, and signs of financial distress.
 Those facts are scattered across the live web, easy to confuse with another
 legal entity, and difficult to cite consistently under time pressure.
 
-DealLens fits into that existing memo workflow. It turns a company name and
-website into a current, cited public-risk assessment that an analyst can
-review, edit, and export for IC. 
-
-Tavily provides live discovery, search, and extraction; 
-Kimi K3 runs through Nebius Token Factory; deterministic Python
-applies the source, entity, and evidence rules.
+DealLens is a standalone acquisition-screening workspace for that decision
+point. It turns a company name and website into a current, cited public-risk
+assessment that an analyst can review, edit, and export for IC. Tavily provides
+live discovery, adaptive search, bounded site mapping, and extraction; Kimi K3
+runs through Nebius Token Factory; deterministic Python applies the source,
+entity, and evidence rules.
 
 ![DealLens acquisition-intelligence homepage](docs/assets/deallens-home.png)
 
 ## Product walkthrough
 
-[Product Demo:](https://youtu.be/lMgXx2dGhcg)
+**Product demo:** [Watch the 58-second DealLens walkthrough on
+YouTube](https://youtu.be/lMgXx2dGhcg).
+
+**Build record — start here:** [review the shipped system in 31
+events](https://traces.com/s/jn7e7qtmxcms61t0x82tdm73b98bv5mh). This
+reviewer-first record opens with the live product, final commit, 75/75 tests,
+36/36 safety evals, 204-span LangSmith run, and deployment security. It then
+groups labelled excerpts from `fable` planning and `gpt-5.6-sol`
+implementation by decision—not by raw chronology. The generic starter and
+Watchtower appear only as explicitly rejected context; neither is the submitted
+product.
+
+**Detailed build record:** [follow the 1,535-event standalone
+chronology](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) from
+assignment and starter review through product selection, provider integration,
+evidence hardening, UI, evals, LangSmith, GCP deployment, and submission. Both
+records are unlisted, credential-scrubbed, identify Fable and GPT-5.6 Sol, and
+complement the sanitized [build log](BUILD_LOG.md).
 
 ## Why, when, and how
 
@@ -71,13 +87,20 @@ Most research agents let the same model discover a claim and grade it. DealLens
 separates recall from trust:
 
 - Tavily `/research` proposes concrete, dateable candidate events.
-- Tavily `/search` always runs a governed baseline for all four categories,
-  then verifies each candidate against configured source tiers.
+- Tavily `/search` adapts topic and recency by risk category, always runs a
+  governed baseline, then uses advanced search for candidate verification.
+- Tavily `/map` finds first-party investor, incident, leadership, filing, and
+  restructuring disclosures on the target's own website.
 - Tavily `/extract` returns claim-focused page content.
 - Kimi K3 identifies candidate claims, copies evidence passages, maps them to
   atomic assertions, and writes bounded memo prose.
 - Deterministic code checks legal-entity identity, publisher independence,
   verbatim quote provenance, assertion coverage, status, and severity.
+
+> **Country-aware Tavily retrieval.** Each jurisdiction pack supplies a Tavily
+> country boost for `general` searches (`united kingdom` for UK and
+> `netherlands` for NL). News and finance searches retain their specialized
+> topic ranking, while source tiers and exclusions continue to govern trust.
 
 The model can suggest evidence. It cannot award itself `VERIFIED`.
 
@@ -98,7 +121,7 @@ flowchart TB
     Config["Jurisdiction + severity YAML"] --> Worker
 
     subgraph Providers["External providers"]
-        Tavily["Tavily<br/>Research · Search · Extract"]
+        Tavily["Tavily<br/>Research · Search · Map · Extract"]
         Kimi["Kimi K3 via Nebius<br/>candidate + quote mapping"]
     end
 
@@ -125,7 +148,9 @@ flowchart LR
     A["Company + domain"] --> R["Tavily registry search"]
     R --> H{"Human confirms legal entity"}
     H -->|"confirmed / explicit skip"| D["Tavily Research"]
-    D --> B["4 governed baseline searches"]
+    D --> M["Tavily Map<br/>first-party disclosures"]
+    D --> B["4-category adaptive baseline<br/>topic · recency · country boost"]
+    M --> V
     B --> V["Candidate verification search"]
     V --> X["Tavily Extract"]
     X --> K["Kimi K3 on Nebius<br/>quote/assertion mapping"]
@@ -133,7 +158,7 @@ flowchart LR
     G --> O["IC memo<br/>PDF + Markdown<br/>evidence.json"]
 
     classDef tavily fill:#fff0e8,stroke:#f0522d,stroke-width:3px,color:#70230f
-    class R,D,B,V,X tavily
+    class R,D,M,B,V,X tavily
 ```
 
 ### Evidence state machine
@@ -157,8 +182,7 @@ The full component, sequence, trust-boundary, and trace diagrams are in
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 
-**Build Log:** [review the complete DealLens build on
-Traces](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc).[build log](BUILD_LOG.md).
+**Build log:** [Review the sanitized implementation record](BUILD_LOG.md).
 
 ## Try it
 
@@ -289,9 +313,13 @@ Additional invariants:
 2. Two pages from one configured publisher count as one publisher.
 3. Companies House evidence for a different company number is rejected.
 4. Search, author, tag, and sitemap pages cannot become evidence documents.
-5. A failed category interpretation becomes `REVIEW REQUIRED`, never a clean
+5. First-party disclosures can generate and support candidates but cannot
+   independently meet the verification threshold.
+6. Every claim and quote retains its Tavily method, query, relevance score,
+   source URL, and claim-scoped verification/extraction credits.
+7. A failed category interpretation becomes `REVIEW REQUIRED`, never a clean
    category.
-6. Severity comes from YAML policy after evidence status is determined.
+8. Severity comes from YAML policy after evidence status is determined.
 
 ## Evaluation
 
@@ -316,7 +344,7 @@ uv run deallens eval --json-out reports/evals/local-run.json
 uv run deallens eval --promote  # after label and result review
 ```
 
-The pytest suite is **75/75 passing**. Labels, the promote/review loop,
+The pytest suite is **83/83 passing**. Labels, the promote/review loop,
 limitations, and the machine-readable command are documented in
 [docs/EVALUATION.md](docs/EVALUATION.md); the committed case-level baseline is
 [docs/evaluation-results.json](docs/evaluation-results.json).
@@ -324,7 +352,7 @@ limitations, and the machine-readable command are documented in
 ## LangSmith observability
 
 Live tracing uses one root `deallens.screen` span with nested discovery,
-baseline, verification, capture, Tavily, and Nebius model spans. Root metadata
+first-party mapping, baseline, verification, capture, Tavily, and Nebius model spans. Root metadata
 includes target, jurisdiction, pipeline version, provider/model, candidate and
 finding counts, risk result, Tavily credits by endpoint, LLM tokens, and wall
 time. Entity lookup is a separate `deallens.resolve_entity` trace because it
@@ -350,16 +378,20 @@ in `docs/langsmith-verification.json`.*
 
 ## Configuration and outputs
 
-- `jurisdictions/uk.yaml`: source tiers, exclusions, and registry query.
+- `jurisdictions/uk.yaml`: Tavily country boost, source tiers, exclusions, and registry query.
 - `jurisdictions/nl.yaml`: explicit preview stub; it is not claimed as tested.
 - `policy.yaml`: standard severity policy.
-- `policy.searchfund.yaml`: owner-operator/search-fund escalation profile.
+- `policy.owner_operator.yaml`: owner-operator escalation profile.
 - `reports/`: local run artifacts, ignored by Git.
 - `examples/screens/`: curated public example artifacts used by the archive.
 
 Each screen writes a Markdown memo and complete typed JSON evidence package.
 The web app also renders a styled, source-linked PDF memo on demand for every
 completed screen, including retained archive entries.
+The evidence package and memo also include an online retrieval ablation:
+Research candidates, incremental baseline candidates, incremental Map
+candidates, first-party URLs reviewed, validated passages, and credits per
+surfaced claim.
 The usage ledger records Tavily credits per endpoint, Nebius token counts, wall
 time, and an explicit `usage_complete` flag. It reads Tavily's dedicated
 `research_usage` counter and briefly retries delayed updates; if the final
@@ -371,9 +403,9 @@ overstating cost.
 ```text
 src/deallens/
   entity.py         registry-constrained candidate resolution
-  discover.py       Research + four-category baseline recall
-  verify.py         trusted-domain and exact-entity search
-  capture.py        query-focused Extract + quote relationship selection
+  discover.py       Research + adaptive baseline + Map disclosure recall
+  verify.py         advanced trusted-domain and exact-entity search
+  capture.py        focused Extract + quote/provenance selection
   gate.py           deterministic assertion/source thresholds
   pipeline.py       orchestration, progress, trace metadata
   web.py            FastAPI job/archive/entity API
@@ -406,8 +438,10 @@ Submission documents:
   generated on demand from the typed result. MongoDB was
   deliberately deferred; adding infrastructure would not strengthen the core
   retrieval/evidence assignment.
-- Tavily Crawl is not used. Search locates claim-relevant sources and Extract
-  fetches only those pages, preserving page-level failure and cost accounting.
+- Tavily Crawl is not used. Map locates bounded first-party disclosure URLs,
+  Search locates external claim-relevant sources, and Extract captures only a
+  small deterministic set. Broad crawling would add content without
+  strengthening the external adverse-event evidence contract.
 
 ## License
 

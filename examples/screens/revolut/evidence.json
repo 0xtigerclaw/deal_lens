@@ -9,14 +9,15 @@
     {
       "candidate": {
         "category": "leadership",
-        "claim": "Revolut appointed B\u00e9atrice Cossa\u2011Dumurgier as CEO of its Western Europe headquarters on 24 June 2025.",
+        "claim": "Revolut appointed Béatrice Cossa‑Dumurgier as CEO of its Western Europe headquarters on 24 June 2025.",
         "date": "24 June 2025",
         "source_urls": [
           "https://www.revolut.com/en-NL/news/revolut_appoints_b_atrice_cossa_dumurgier_as_the_ceo_of_new_western_europe_hq"
         ],
-        "verification_query": "\"Revolut\" \"B\u00e9atrice Cossa\u2011Dumurgier\" \"CEO\"",
+        "verification_query": "\"Revolut\" \"Béatrice Cossa‑Dumurgier\" \"CEO\"",
+        "provenance": [],
         "assertions": [
-          "B\u00e9atrice Cossa\u2011Dumurgier was appointed as CEO of Revolut's Western Europe headquarters.",
+          "Béatrice Cossa‑Dumurgier was appointed as CEO of Revolut's Western Europe headquarters.",
           "The appointment was announced on 24 June 2025.",
           "The announcement appeared on Revolut's news site."
         ]
@@ -28,6 +29,7 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 3,
+      "tavily_credits": 0.0,
       "narrative": ""
     },
     {
@@ -39,6 +41,7 @@
           "https://www.revolut.com/news/revolut_appoints_mikko_salovaara_as_group_cfo_"
         ],
         "verification_query": "\"Revolut\" \"Mikko Salovaara\" \"Group CFO\"",
+        "provenance": [],
         "assertions": [
           "Mikko Salovaara was appointed Group CFO of Revolut.",
           "The appointment was announced on 12 May 2021.",
@@ -56,6 +59,7 @@
           "published_date": null,
           "source_tier": "credible_secondary",
           "quote": "Fintech firm Revolut said on that Thursday Chief Financial Officer Mikko Salovaara is leaving the company, after two years in the role.\n\nThe 31-year-old executive, who joined the London-based start-up in 2021, had resigned \"for personal reasons\", a spokesperson for the company said.",
+          "provenance": [],
           "supports_assertions": [
             0
           ],
@@ -66,6 +70,7 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 3,
+      "tavily_credits": 0.0,
       "narrative": "Reuters reported that Mikko Salovaara joined Revolut in 2021 and resigned as Chief Financial Officer after two years in the role, citing personal reasons according to a company spokesperson. The quoted evidence does not confirm the specific claim that Revolut announced Salovaara as Group CFO on 12 May 2021, so the claim is only partially supported."
     },
     {
@@ -77,6 +82,7 @@
           "https://www.clay.com/dossier/revolut-cfo"
         ],
         "verification_query": "\"Revolut\" \"Max Lapin\" \"CFO\"",
+        "provenance": [],
         "assertions": [
           "Max Lapin assumed the role of CFO at Revolut.",
           "His appointment occurred in March 2026.",
@@ -94,6 +100,7 @@
           "published_date": null,
           "source_tier": "credible_secondary",
           "quote": "Revolut chief financial officer Victor Stinga declined to comment on how much of the Wealth revenues came from crypto.",
+          "provenance": [],
           "supports_assertions": [],
           "contradicts_assertions": [
             0
@@ -104,20 +111,22 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 3,
+      "tavily_credits": 0.0,
       "narrative": "Reuters identifies Victor Stinga as Revolut's chief financial officer, quoting him declining to comment on the share of Wealth revenues derived from crypto. This contradicts the claim that Max Lapin was named CFO in March 2026, as the cited evidence names a different individual in the role. No source in the provided evidence supports the appointment of Max Lapin."
     },
     {
       "candidate": {
         "category": "leadership",
-        "claim": "Revolut appointed Fiona Fry and Peter Estlin as non\u2011executive directors on 10 December 2024.",
+        "claim": "Revolut appointed Fiona Fry and Peter Estlin as non‑executive directors on 10 December 2024.",
         "date": "10 December 2024",
         "source_urls": [
           "https://www.credit-connect.co.uk/news/revolut-appoints-new-board-members"
         ],
         "verification_query": "\"Revolut\" \"Fiona Fry\" \"Peter Estlin\" \"board\"",
+        "provenance": [],
         "assertions": [
-          "Fiona Fry was appointed as a non\u2011executive director of Revolut UK.",
-          "Peter Estlin was appointed as a non\u2011executive director of Revolut UK.",
+          "Fiona Fry was appointed as a non‑executive director of Revolut UK.",
+          "Peter Estlin was appointed as a non‑executive director of Revolut UK.",
           "Both appointments were announced on 10 December 2024."
         ]
       },
@@ -132,6 +141,7 @@
           "published_date": null,
           "source_tier": "credible_secondary",
           "quote": "The London-based banking company added Fiona Fry and Peter Estlin as non-executive directors while it works through the mobilisation period for its UK (",
+          "provenance": [],
           "supports_assertions": [
             0,
             1
@@ -143,12 +153,13 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 3,
+      "tavily_credits": 0.0,
       "narrative": "City A.M. reported that Revolut added Fiona Fry and Peter Estlin as non-executive directors while the company works through the mobilisation period for its UK banking licence. The available evidence excerpt does not confirm the appointment date of 10 December 2024, so the claim is only partially supported. No additional sources corroborating the specific date were provided."
     },
     {
       "candidate": {
         "category": "regulatory",
-        "claim": "The Bank of Lithuania fined Revolut \u20ac3.5\u202fmillion for anti\u2011money\u2011laundering failures in April 2025.",
+        "claim": "The Bank of Lithuania fined Revolut €3.5 million for anti‑money‑laundering failures in April 2025.",
         "date": "April 2025",
         "source_urls": [
           "https://www.fluxforce.ai/enforcement-actions/revolut-2023-bank-of-lithuania",
@@ -156,9 +167,10 @@
           "https://www.reuters.com/technology/lithuania-fines-revolut-35-million-euros-money-laundering-prevention-failures-2025-04-08"
         ],
         "verification_query": "\"Revolut\" \"Bank of Lithuania\" \"fine\" \"3.5 million\"",
+        "provenance": [],
         "assertions": [
-          "The Bank of Lithuania imposed a \u20ac3.5\u202fmillion fine on Revolut.",
-          "The fine was for anti\u2011money\u2011laundering and counter\u2011terrorist financing breaches.",
+          "The Bank of Lithuania imposed a €3.5 million fine on Revolut.",
+          "The fine was for anti‑money‑laundering and counter‑terrorist financing breaches.",
           "The penalty was announced in April 2025."
         ]
       },
@@ -174,7 +186,8 @@
           "publisher": "reuters.com",
           "published_date": null,
           "source_tier": "credible_secondary",
-          "quote": "Technology category\u00b7April 8, 2025 Lithuania fines Revolut 3.5 million euros for money-laundering prevention failures \nLithuania's central bank has fined Britain's most valuable start-up Revolut 3.5 million euros ($3.83 million) for failures in money-laundering prevention, the bank said on Monday.",
+          "quote": "Technology category·April 8, 2025 Lithuania fines Revolut 3.5 million euros for money-laundering prevention failures \nLithuania's central bank has fined Britain's most valuable start-up Revolut 3.5 million euros ($3.83 million) for failures in money-laundering prevention, the bank said on Monday.",
+          "provenance": [],
           "supports_assertions": [
             0,
             2
@@ -186,21 +199,23 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 2,
-      "narrative": "According to Reuters, the Bank of Lithuania fined Revolut \u20ac3.5 million ($3.83 million) for failures in money-laundering prevention, with the fine announced on April 7\u20138, 2025. Reuters described Revolut as Britain's most valuable start-up in its reporting of the penalty. The available evidence confirms the fine amount, the regulator, and the stated reason, but provides no further detail on the specific deficiencies identified."
+      "tavily_credits": 0.0,
+      "narrative": "According to Reuters, the Bank of Lithuania fined Revolut €3.5 million ($3.83 million) for failures in money-laundering prevention, with the fine announced on April 7–8, 2025. Reuters described Revolut as Britain's most valuable start-up in its reporting of the penalty. The available evidence confirms the fine amount, the regulator, and the stated reason, but provides no further detail on the specific deficiencies identified."
     },
     {
       "candidate": {
         "category": "regulatory",
-        "claim": "The UK Financial Conduct Authority investigated Revolut for releasing up to \u00a31.7\u202fmillion from accounts flagged as suspicious between July and August 2023.",
-        "date": "July\u2013August 2023",
+        "claim": "The UK Financial Conduct Authority investigated Revolut for releasing up to £1.7 million from accounts flagged as suspicious between July and August 2023.",
+        "date": "July–August 2023",
         "source_urls": [
           "https://www.fstech.co.uk/fst/FCA_Investigating_Revolut_Over_Transactions_From_Suspicious_Accounts.php",
           "https://www.amlintelligence.com/2023/09/news-fca-and-nca-probe-how-revolut-paid-out-up-to-1-7m-from-flagged-accounts-over-summer"
         ],
-        "verification_query": "\"Revolut\" \"FCA\" \"\u00a31.7 million\" \"suspicious accounts\"",
+        "verification_query": "\"Revolut\" \"FCA\" \"£1.7 million\" \"suspicious accounts\"",
+        "provenance": [],
         "assertions": [
           "The FCA and NCA reviewed Revolut's release of funds from flagged accounts.",
-          "The amount under review was up to \u00a31.7\u202fmillion.",
+          "The amount under review was up to £1.7 million.",
           "The transactions occurred during July and August 2023."
         ]
       },
@@ -213,12 +228,13 @@
       ],
       "processing_failures": [],
       "searches_run": 2,
+      "tavily_credits": 0.0,
       "narrative": "A potential regulatory reference was discovered, but the underlying source could not be captured for verification. Human review is required."
     },
     {
       "candidate": {
         "category": "regulatory",
-        "claim": "Italy\u2019s competition authority fined Revolut \u20ac11.5\u202fmillion for unfair commercial practices on 2 April 2026.",
+        "claim": "Italy’s competition authority fined Revolut €11.5 million for unfair commercial practices on 2 April 2026.",
         "date": "2 April 2026",
         "source_urls": [
           "https://www.fintechweekly.com/news/revolut-italy-agcm-fine-consumer-protection-2026",
@@ -226,8 +242,9 @@
           "https://www.reuters.com/sustainability/boards-policy-regulation/italy-regulator-fines-revolut-13-million-alleged-unfair-commercial-practices-2026-04-02"
         ],
         "verification_query": "\"Revolut\" \"Italy\" \"fine\" \"11.5 million\"",
+        "provenance": [],
         "assertions": [
-          "The Italian competition authority imposed an \u20ac11.5\u202fmillion penalty on Revolut.",
+          "The Italian competition authority imposed an €11.5 million penalty on Revolut.",
           "The fine was for unfair commercial practices.",
           "The penalty was announced on 2 April 2026."
         ]
@@ -244,7 +261,8 @@
           "publisher": "cityam.com",
           "published_date": null,
           "source_tier": "credible_secondary",
-          "quote": "Revolut has been slapped with a fine by the Italian competition watchdog after the firm was accused of misleading customers over its fees and terms of its investment products. The London-based fintech giant is expected to cough up \u20ac11.5m (\u00a310m)",
+          "quote": "Revolut has been slapped with a fine by the Italian competition watchdog after the firm was accused of misleading customers over its fees and terms of its investment products. The London-based fintech giant is expected to cough up €11.5m (£10m)",
+          "provenance": [],
           "supports_assertions": [
             0,
             1
@@ -256,7 +274,8 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 2,
-      "narrative": "City A.M. reports that Italy's competition authority fined Revolut \u20ac11.5 million (\u00a310 million) over allegations that the firm misled customers about fees and the terms of its investment products. The source describes the fine as expected rather than confirmed as paid, and does not specify the date of the decision. The claimed date of 2 April 2026 is therefore not supported by the quoted evidence."
+      "tavily_credits": 0.0,
+      "narrative": "City A.M. reports that Italy's competition authority fined Revolut €11.5 million (£10 million) over allegations that the firm misled customers about fees and the terms of its investment products. The source describes the fine as expected rather than confirmed as paid, and does not specify the date of the decision. The claimed date of 2 April 2026 is therefore not supported by the quoted evidence."
     },
     {
       "candidate": {
@@ -267,6 +286,7 @@
           "https://www.reuters.com/technology/revolut-delays-annual-report-filing-second-consecutive-year-2023-09-19"
         ],
         "verification_query": "\"Revolut\" \"2022 accounts\" \"filing extension\" \"September 2023\"",
+        "provenance": [],
         "assertions": [
           "Revolut received an extension to file its 2022 accounts.",
           "The extension was the second consecutive one.",
@@ -284,6 +304,7 @@
           "published_date": null,
           "source_tier": "credible_secondary",
           "quote": "British fintech company Revolut has secured permission to delay filing its 2022 accounts for the second consecutive year, a spokesperson told Reuters on Tuesday.",
+          "provenance": [],
           "supports_assertions": [
             0,
             1,
@@ -296,6 +317,7 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 3,
+      "tavily_credits": 0.0,
       "narrative": "Reuters reported that Revolut received permission to delay filing its 2022 annual accounts for the second consecutive year, according to a company spokesperson. The extension was reported on 19 September 2023. No further detail on the reasons for the delay is provided in the quoted evidence."
     },
     {
@@ -309,6 +331,7 @@
           "https://www.fintechfutures.com/cybersecurity/revolut-falls-victim-to-highly-targeted-cyber-attack"
         ],
         "verification_query": "\"Revolut\" \"data breach\" \"September 2022\" \"50,150\"",
+        "provenance": [],
         "assertions": [
           "A security incident at Revolut occurred in September 2022.",
           "The breach exposed personal data of 50,150 customers.",
@@ -322,22 +345,24 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 2,
+      "tavily_credits": 0.0,
       "narrative": ""
     },
     {
       "candidate": {
         "category": "cyber",
-        "claim": "A cyber\u2011crime forum listed a purported database of 75\u202fmillion Revolut user records on 29 July 2026.",
+        "claim": "A cyber‑crime forum listed a purported database of 75 million Revolut user records on 29 July 2026.",
         "date": "29 July 2026",
         "source_urls": [
           "https://cypro.co.uk/insights/cyber-bulletins/revolut-data-breach-allegations-75-million-records-at-risk",
           "https://cybernews.com/security/revolut-data-breach-75-million-records"
         ],
         "verification_query": "\"Revolut\" \"75 million\" \"data breach\" \"July 2026\"",
+        "provenance": [],
         "assertions": [
-          "A forum post on 29 July 2026 advertised 75\u202fmillion Revolut records for sale.",
+          "A forum post on 29 July 2026 advertised 75 million Revolut records for sale.",
           "The claim involved personal and partial card data.",
-          "The listing was reported by cyber\u2011security news sources."
+          "The listing was reported by cyber‑security news sources."
         ]
       },
       "status": "rejected",
@@ -347,6 +372,7 @@
       "extraction_failures": [],
       "processing_failures": [],
       "searches_run": 2,
+      "tavily_credits": 0.0,
       "narrative": ""
     }
   ],
@@ -393,5 +419,15 @@
     "usage_notes": [
       "Tavily Research credits unavailable from account usage endpoint"
     ]
+  },
+  "retrieval_metrics": {
+    "research_candidates": 0,
+    "baseline_incremental_candidates": 0,
+    "map_incremental_candidates": 0,
+    "map_urls_reviewed": 0,
+    "map_status": "not_recorded",
+    "validated_evidence": 0,
+    "surfaced_claims": 0,
+    "credits_per_surfaced_claim": null
   }
 }

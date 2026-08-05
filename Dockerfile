@@ -12,7 +12,7 @@ COPY src ./src
 COPY jurisdictions ./jurisdictions
 COPY fixtures ./fixtures
 COPY examples ./examples
-COPY policy.yaml policy.searchfund.yaml ./
+COPY policy.yaml policy.owner_operator.yaml ./
 
 RUN pip install --no-cache-dir .
 

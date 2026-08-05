@@ -152,3 +152,64 @@ def test_extract_uses_bounded_query_focused_chunks():
     assert tavily._client.kwargs["chunks_per_source"] == 5
     assert tavily._client.kwargs["extract_depth"] == "basic"
     assert tavily.ledger.credits_by_endpoint["extract"] == 1
+
+
+def test_search_forwards_adaptive_retrieval_parameters():
+    class SearchClient:
+        def __init__(self):
+            self.kwargs = None
+
+        def search(self, **kwargs):
+            self.kwargs = kwargs
+            return {"results": [], "usage": {"credits": 2}}
+
+    tavily = object.__new__(Tavily)
+    tavily._client = SearchClient()
+    tavily.ledger = UsageLedger()
+    tavily.search(
+        query="claim",
+        topic="news",
+        country="united kingdom",
+        search_depth="advanced",
+        chunks_per_source=99,
+        time_range="year",
+        exact_match=True,
+    )
+
+    assert tavily._client.kwargs["topic"] == "news"
+    assert "country" not in tavily._client.kwargs
+    assert tavily._client.kwargs["search_depth"] == "advanced"
+    assert tavily._client.kwargs["chunks_per_source"] == 3
+    assert tavily._client.kwargs["time_range"] == "year"
+    assert tavily._client.kwargs["exact_match"] is True
+    assert tavily.ledger.credits_by_endpoint["search"] == 2
+
+    tavily.search(query="claim", topic="general", country="united kingdom")
+    assert tavily._client.kwargs["country"] == "united kingdom"
+
+
+def test_map_is_bounded_to_the_target_site_and_books_usage():
+    class MapClient:
+        def __init__(self):
+            self.kwargs = None
+
+        def map(self, **kwargs):
+            self.kwargs = kwargs
+            return {"results": [], "usage": {"credits": 1}}
+
+    tavily = object.__new__(Tavily)
+    tavily._client = MapClient()
+    tavily.ledger = UsageLedger()
+    tavily.map(
+        url="https://acme.com",
+        instructions="Find disclosures",
+        max_depth=99,
+        max_breadth=999,
+        limit=999,
+    )
+
+    assert tavily._client.kwargs["allow_external"] is False
+    assert tavily._client.kwargs["max_depth"] == 5
+    assert tavily._client.kwargs["max_breadth"] == 500
+    assert tavily._client.kwargs["limit"] == 50
+    assert tavily.ledger.credits_by_endpoint["map"] == 1

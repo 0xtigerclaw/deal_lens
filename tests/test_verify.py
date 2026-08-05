@@ -7,6 +7,7 @@ from deallens.verify import _entity_matches, _is_document_url, pick_extraction_u
 
 PACK = JurisdictionPack(
     name="UK",
+    tavily_country="united kingdom",
     primary=["find-and-update.company-information.service.gov.uk"],
     credible_secondary=["ft.com"],
     exclude=["crunchbase.com"],
@@ -64,3 +65,19 @@ def test_non_article_indexes_are_not_evidence_documents():
     assert not _is_document_url("https://example.com/search/results")
     assert not _is_document_url("https://example.com/tag/cyber")
     assert _is_document_url("https://example.com/news/company-investigation")
+
+
+def test_first_party_disclosure_can_be_extracted_but_not_external_noise():
+    urls = pick_extraction_urls(
+        PACK,
+        candidate(
+            [
+                "https://acme.com/investors/security-incident",
+                "https://randomblog.example/rumour",
+            ]
+        ),
+        [],
+        target_domain="acme.com",
+    )
+
+    assert urls == ["https://acme.com/investors/security-incident"]

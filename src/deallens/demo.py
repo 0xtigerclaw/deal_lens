@@ -14,7 +14,16 @@ from pathlib import Path
 
 from .config import JurisdictionPack, Policy, load_jurisdiction, load_policy
 from .gate import apply_severity, classify, coverage, quote_in_content, risk_level
-from .models import CATEGORIES, Candidate, Evidence, Finding, ScreenResult, UsageLedger
+from .models import (
+    CATEGORIES,
+    Candidate,
+    Evidence,
+    Finding,
+    RetrievalMetrics,
+    RetrievalProvenance,
+    ScreenResult,
+    UsageLedger,
+)
 
 
 def build_result(fixture_path: Path, pack: JurisdictionPack, policy: Policy) -> ScreenResult:
@@ -24,6 +33,13 @@ def build_result(fixture_path: Path, pack: JurisdictionPack, policy: Policy) -> 
     sources_reviewed: dict[str, int] = {}
     for bundle in data["bundles"]:
         candidate = Candidate(**bundle["candidate"])
+        candidate.provenance = [
+            RetrievalProvenance(
+                method="fixture",
+                endpoint="search",
+                query=candidate.verification_query,
+            )
+        ]
         sources_reviewed[candidate.category] = (
             sources_reviewed.get(candidate.category, 0) + bundle.get("sources_reviewed", 0)
         )
@@ -40,6 +56,14 @@ def build_result(fixture_path: Path, pack: JurisdictionPack, policy: Policy) -> 
                     published_date=source.get("published_date"),
                     source_tier=pack.tier_for(source["url"]),
                     quote=source["quote"],
+                    provenance=[
+                        RetrievalProvenance(
+                            method="fixture",
+                            endpoint="extract",
+                            query=candidate.claim,
+                            source_url=source["url"],
+                        )
+                    ],
                 )
             )
 
@@ -66,6 +90,13 @@ def build_result(fixture_path: Path, pack: JurisdictionPack, policy: Policy) -> 
             {category: 1 for category in CATEGORIES},
         ),
         usage=UsageLedger(),  # fixture run: no credits spent — the point
+        retrieval_metrics=RetrievalMetrics(
+            baseline_incremental_candidates=len(findings),
+            validated_evidence=sum(len(finding.evidence) for finding in findings),
+            surfaced_claims=sum(
+                finding.status != "rejected" for finding in findings
+            ),
+        ),
     )
 
 

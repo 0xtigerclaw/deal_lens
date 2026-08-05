@@ -60,7 +60,7 @@ The initial exploration considered a general change-intelligence monitor. The
 scope was deliberately narrowed to one transaction workflow with an immediate
 output: enter one target and receive a source-backed public red-flag screen.
 
-The selected user is an acquisition/search-fund analyst preparing a target for
+The selected user is a GP or acquisition analyst preparing a target for
 investment committee. The product enters the workflow after initial interest
 and before full diligence: it assembles the current public evidence the analyst
 needs for the memo, while preserving the source trail for risk and compliance
@@ -194,54 +194,74 @@ improving the evidence contract.
 
 ## 9. AI collaboration record
 
-Development was distributed across three local Codex task streams:
+Development used two models with different responsibilities:
 
-1. **Core product and submission review:** problem selection, retrieval and
-   evidence architecture, Kimi/Nebius migration, entity confirmation, evals,
-   LangSmith verification, UI iteration, exports, and reviewer documentation.
-2. **Bring-your-own Tavily key:** browser-session key override, server request
-   plumbing, validation, and UI copy for reviewers who want to run a screen
-   against their own Tavily account.
-3. **GCP deployment:** container packaging, Cloud Run configuration, secret
-   wiring, deployment verification, and the public live application.
+- **`fable`:** landscape and Tavily API research, product selection, scope
+  review, and the initial offline evidence-gate core;
+- **`gpt-5.6-sol`:** provider integration, correctness hardening, live runs,
+  analyst UI, evaluations, observability, documentation, security, and GCP
+  deployment.
 
-The [complete DealLens Codex build
-trace](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc) is shared as an
-unlisted Traces link. Its title and opening guide identify both build models:
-`gpt-5.6-sol` and `fable`. Its eight chapters cover:
+The primary [reviewer build
+record](https://traces.com/s/jn7e7qtmxcms61t0x82tdm73b98bv5mh) is an
+unlisted 31-event index. It is intentionally grouped by reviewer question
+instead of chronology:
 
-1. assignment review, starter analysis, and product choice;
-2. Nebius/Kimi K3 migration, Tavily Research polling, and the first live run;
-3. assertion-level evidence governance and fail-closed redesign;
-4. legal-entity confirmation and the analyst UI;
-5. architecture, LangSmith, and deterministic evaluation work;
-6. the IC-memo narrative, exports, UK-first validation, and documentation;
-7. GCP hosting, live screening, and the reviewer walkthrough; and
-8. assignment mapping, public-demo security, and submission hardening.
+1. shipped product and proof snapshot;
+2. user, workflow, and product decision;
+3. explicitly rejected alternatives;
+4. load-bearing Tavily architecture and deterministic evidence rules;
+5. live provider integration and analyst workflow;
+6. labelled evaluation and LangSmith span contracts;
+7. deployment, public-demo security, and assignment mapping.
 
-It closes with a consolidated observability and evaluation appendix: a fresh
-read-only verification of the successful 204-span LangSmith root and separate
-entity-resolution root, followed by the exact pytest, labelled-suite,
-false-verify, abstention, baseline-comparison, and CI-gate results.
+Its first five events establish the final state: public repository, live GCP
+service, merge commit, 75/75 tests, 36/36 labelled evals, zero false verifies,
+4/4 entity abstentions, a successful 204-span LangSmith root with zero errors,
+and no server Tavily-key fallback. The record presents DealLens as a
+self-contained assignment product: product selection, architecture,
+implementation, verification, and shipping. Selected source excerpts are
+labelled by model and original event number; editorial summaries are explicit.
 
-The trace contains 1,540 events: 77 authentic user prompts, 403 assistant build
-updates, 530 substantive tool calls, and their 530 results. It was generated
-from 4,839 source events. Hidden reasoning, repeated polling and browser-control
-mechanics, environment-file contents, credentials, email addresses, personal
-paths, and unrelated machine output were omitted; short chapter markers are the
-only editorial additions. The source file and the rendered remote copy were
-both scanned for Tavily, LangSmith, OpenAI, Google, GitHub, bearer-token, OAuth,
-email, and personal-path patterns, with zero matches after redaction.
+The public record was scanned locally and after upload for provider and GitHub
+tokens, bearer credentials, email addresses, personal paths, and unrelated
+workflow framing, with zero matches after redaction.
 
-The raw core-product task remains local because its environment-debugging
-history contains credential-shaped output. The audited Traces export preserves
-the real decisions, patches, failures, tests, evaluations, pull requests, and
-deployment evidence without depending on third-party redaction. Together with
-this build log, repository commit history,
+The [detailed standalone build
+record](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) contains
+1,535 rendered events: 77 user prompts, 402 assistant build updates, 528
+substantive tool calls, and their 528 results. It begins with the assignment,
+starter review, and explicit DealLens product origin; eight chapters then cover
+provider integration, evidence correctness, analyst workflow, evaluation,
+LangSmith observability, GCP deployment, and final hardening. Its complete
+source and all eight remote page renderings passed the same narrative,
+credential, email, and personal-path audit.
+
+Together with this log, repository history,
 [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr), and
-the product walkthrough, it forms the shareable build record.
+the walkthrough, they satisfy the assignment's build-record deliverable without
+letting rejected concepts define the submitted product.
 
-## 10. Known next work
+## 10. Adaptive Tavily retrieval upgrade
+
+The P0 retrieval design expanded Tavily from a uniform three-endpoint sequence
+into four explicit, measurable responsibilities:
+
+- Research remains recall-first structured hypothesis generation;
+- baseline Search now selects news, finance, or general topic and recency by
+  risk category, adds a jurisdiction-configured country boost to general
+  searches, and uses advanced candidate verification;
+- Map discovers bounded, same-domain first-party disclosures before focused
+  Extract; and
+- every claim and quote carries typed Tavily provenance, relevance, and
+  claim-scoped verification/extraction credits.
+
+The deterministic evidence gate did not change. A new `first_party` tier can
+surface disclosures but cannot independently verify them. Each live result now
+records an online retrieval ablation showing Research candidate count and the
+incremental candidates added by baseline Search and Map.
+
+## 11. Known next work
 
 1. Build an analyst-labelled live-target eval for open-web recall.
 2. Detect syndicated/near-duplicate articles across publisher domains.

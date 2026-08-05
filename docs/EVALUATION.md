@@ -79,10 +79,19 @@ Measured on 2026-08-04 from the committed fixtures:
 | Source-governance contract | 12/12 | 12/12 full contract matches |
 | **Total** | **36/36** | **all gates pass** |
 
-The associated unit/API suite passes **75/75** tests.
+The associated unit/API suite passes **83/83** tests.
 
 The committed machine-readable baseline, including every case result, is
 [evaluation-results.json](evaluation-results.json).
+
+### Per-screen retrieval ablation
+
+Live and recorded screens also emit a typed retrieval contribution block in
+`evidence.json` and the memo. It reports Research candidate count, incremental
+baseline Search candidates after deterministic deduplication, incremental Map
+candidates, mapped first-party URLs, validated evidence yield, surfaced claims,
+and credits per surfaced claim. This measures what each Tavily stage added
+without allowing provider relevance scores to affect the evidence gate.
 
 ## Suite 1: evidence gate
 
@@ -98,6 +107,7 @@ Label coverage:
 - two independent secondary publishers verify;
 - two pages from one publisher only report;
 - one secondary publisher only reports;
+- a first-party disclosure alone remains not substantiated;
 - extraction failure becomes unresolved;
 - aggregator-only and empty results are rejected;
 - paraphrased and empty quotes are discarded;
@@ -164,6 +174,10 @@ The offline fixtures do not measure:
 - near-duplicate syndication across different publisher domains;
 - analyst usefulness of generated memo prose; or
 - coverage outside the supported UK workflow.
+
+The per-screen retrieval contribution is an operational ablation, not a causal
+quality score: it shows which stage added candidates after deduplication, but a
+blinded labelled target set is still required to compare recall and precision.
 
 A production pilot should build a blinded set of previously diligenced targets
 and measure event-level precision/recall, analyst acceptance, review time, and

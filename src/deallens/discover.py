@@ -9,23 +9,39 @@ from __future__ import annotations
 
 import json
 import re
+from urllib.parse import urlparse
 
 from langsmith import traceable
 
 from .llm import LLM, CandidateList
 from .config import JurisdictionPack
-from .models import CATEGORIES, Candidate, Category
+from .models import CATEGORIES, Candidate, Category, RetrievalProvenance
 from .tavily_client import Tavily
 
 MAX_CANDIDATES = 10
 MAX_BASELINE_CANDIDATES = 6
 MAX_BASELINE_CANDIDATES_PER_CATEGORY = 2
+MAX_FIRST_PARTY_CANDIDATES = 3
+MAX_FIRST_PARTY_URLS = 12
 
 BASELINE_QUERY_TERMS: dict[Category, str] = {
     "leadership": "CEO CFO founder director resigned appointed ownership acquisition",
     "regulatory": "regulator investigation enforcement lawsuit court fine penalty",
     "cyber": "cybersecurity ransomware data breach hacked incident regulator",
     "distress": "insolvency administration layoffs closure overdue accounts covenant distress",
+}
+
+BASELINE_SEARCH_POLICY: dict[Category, dict[str, str]] = {
+    "leadership": {"topic": "news", "time_range": "year"},
+    "regulatory": {"topic": "general"},
+    "cyber": {"topic": "news", "time_range": "year"},
+    "distress": {"topic": "finance"},
+}
+BASELINE_CHECK_COUNTS: dict[Category, int] = {
+    "leadership": 1,
+    "regulatory": 1,
+    "cyber": 1,
+    "distress": 2,
 }
 
 RESEARCH_PROMPT = """Conduct a red-flag screen of {company} ({domain}), a company in {jurisdiction}.
@@ -119,6 +135,23 @@ verbatim in at least one of its assertions.
 Results:
 {payload}"""
 
+FIRST_PARTY_MAP_INSTRUCTIONS = (
+    "Find investor relations, regulatory notices, security or data incident "
+    "disclosures, leadership announcements, filings, restructuring, layoffs, "
+    "closures, and financial distress pages. Exclude product, support, careers, "
+    "marketing, privacy policy, and generic legal pages."
+)
+
+FIRST_PARTY_DISCOVERY_PROMPT = """Review these pages published on {company}'s own website.
+Propose only concrete, dateable red-flag candidates explicitly stated in the
+content. First-party statements are hypotheses requiring independent
+verification. Use only URLs present below, preserve exact dates and quantities,
+and return at most {limit} candidates across leadership, regulatory, cyber, and
+distress. Split each claim into one to three atomic assertions.
+
+Pages:
+{payload}"""
+
 
 @traceable(name="deallens.discover")
 def discover(
@@ -139,7 +172,16 @@ def discover(
         ),
         output_schema=OUTPUT_SCHEMA,
     )
-    return _parse(response, company, llm)[:MAX_CANDIDATES]
+    candidates = _parse(response, company, llm)[:MAX_CANDIDATES]
+    for candidate in candidates:
+        candidate.provenance.append(
+            RetrievalProvenance(
+                method="research",
+                endpoint="research",
+                query=f"Acquisition red-flag screen for {company}",
+            )
+        )
+    return candidates
 
 
 def _parse(response: dict, company: str, llm: LLM) -> list[Candidate]:
@@ -183,19 +225,41 @@ def baseline_checks(
     """Run one governed check for every risk category, regardless of discovery."""
     output: dict[Category, list[dict]] = {}
     for category in CATEGORIES:
-        response = tavily.search(
-            # News rarely contains a registration number; legal-entity IDs are
-            # enforced later on registry URLs rather than reducing web recall.
-            query=f'"{company}" {BASELINE_QUERY_TERMS[category]}',
-            include_domains=pack.primary + pack.credible_secondary,
-            exclude_domains=pack.exclude,
-            max_results=8,
-        )
-        output[category] = [
-            result
-            for result in response.get("results", [])
-            if result.get("url") and not pack.is_excluded(result["url"])
-        ]
+        policies = [BASELINE_SEARCH_POLICY[category]]
+        if category == "distress":
+            policies.append({"topic": "general"})
+        query = f'"{company}" {BASELINE_QUERY_TERMS[category]}'
+        output[category] = []
+        for policy in policies:
+            response = tavily.search(
+                # News rarely contains a registration number; legal-entity IDs are
+                # enforced later on registry URLs rather than reducing web recall.
+                query=query,
+                include_domains=pack.primary + pack.credible_secondary,
+                exclude_domains=pack.exclude,
+                max_results=8,
+                search_depth="basic",
+                topic=policy["topic"],
+                country=(
+                    pack.tavily_country
+                    if policy["topic"] == "general"
+                    else None
+                ),
+                time_range=policy.get("time_range"),
+            )
+            for result in response.get("results", []):
+                if not result.get("url") or pack.is_excluded(result["url"]):
+                    continue
+                result = dict(result)
+                result["_deallens_query"] = query
+                result["_deallens_topic"] = policy["topic"]
+                result["_deallens_country"] = (
+                    pack.tavily_country
+                    if policy["topic"] == "general"
+                    else None
+                )
+                result["_deallens_search_depth"] = "basic"
+                output[category].append(result)
     return output
 
 
@@ -247,7 +311,100 @@ def discover_from_baseline(
         candidates.extend(
             category_candidates[:MAX_BASELINE_CANDIDATES_PER_CATEGORY]
         )
+        for candidate in category_candidates[:MAX_BASELINE_CANDIDATES_PER_CATEGORY]:
+            seen_searches: set[tuple[str, str]] = set()
+            for result in results:
+                query = str(
+                    result.get("_deallens_query") or f'"{company}" {category}'
+                )
+                topic = str(result.get("_deallens_topic") or "general")
+                if (query, topic) in seen_searches:
+                    continue
+                seen_searches.add((query, topic))
+                candidate.provenance.append(
+                    RetrievalProvenance(
+                        method="baseline_search",
+                        endpoint="search",
+                        query=query,
+                        topic=topic,
+                        country=result.get("_deallens_country"),
+                        search_depth="basic",
+                    )
+                )
     return candidates[:MAX_BASELINE_CANDIDATES], failures
+
+
+@traceable(name="deallens.first_party_discovery")
+def discover_first_party(
+    tavily: Tavily,
+    llm: LLM,
+    company: str,
+    domain: str,
+) -> tuple[list[Candidate], set[str], str | None]:
+    """Map and selectively extract the target site for disclosed risk signals.
+
+    This channel is recall-only. Its sources receive the non-qualifying
+    ``first_party`` tier during evidence capture and cannot verify themselves.
+    """
+    root_url = f"https://{domain}"
+    try:
+        mapped = tavily.map(
+            url=root_url,
+            instructions=FIRST_PARTY_MAP_INSTRUCTIONS,
+            limit=MAX_FIRST_PARTY_URLS,
+        )
+        host = (urlparse(root_url).hostname or "").removeprefix("www.")
+        urls = [
+            str(url)
+            for url in mapped.get("results", [])
+            if (urlparse(str(url)).hostname or "").removeprefix("www.") == host
+        ][:MAX_FIRST_PARTY_URLS]
+        if not urls:
+            return [], set(), None
+        extraction_query = (
+            f"{company} leadership regulatory security incident breach filings "
+            "restructuring layoffs closure financial distress"
+        )
+        extracted = tavily.extract(
+            urls=urls,
+            query=extraction_query,
+            chunks_per_source=3,
+        )
+        pages = [
+            {
+                "url": row.get("url"),
+                "content": (row.get("raw_content") or "")[:5000],
+            }
+            for row in extracted.get("results", [])
+            if row.get("url") and row.get("raw_content")
+        ]
+        if not pages:
+            return [], set(urls), None
+        parsed = llm.structured(
+            CandidateList,
+            FIRST_PARTY_DISCOVERY_PROMPT.format(
+                company=company,
+                limit=MAX_FIRST_PARTY_CANDIDATES,
+                payload=json.dumps(pages)[:16000],
+            ),
+        )
+        allowed_urls = {str(page["url"]) for page in pages}
+        candidates = parsed.candidates[:MAX_FIRST_PARTY_CANDIDATES]
+        for candidate in candidates:
+            candidate.source_urls = [
+                url for url in candidate.source_urls if url in allowed_urls
+            ]
+            candidate.provenance.append(
+                RetrievalProvenance(
+                    method="first_party_map",
+                    endpoint="map",
+                    query=FIRST_PARTY_MAP_INSTRUCTIONS,
+                    source_url=root_url,
+                )
+            )
+        return candidates, allowed_urls, None
+    except Exception as exc:
+        return [], set(), f"First-party disclosure mapping failed ({type(exc).__name__})."
 
 
 def merge_candidates(*candidate_lists: list[Candidate]) -> list[Candidate]:
@@ -255,14 +412,46 @@ def merge_candidates(*candidate_lists: list[Candidate]) -> list[Candidate]:
     merged: list[Candidate] = []
     for candidate in (item for group in candidate_lists for item in group):
         tokens = _claim_tokens(candidate.claim)
-        duplicate = any(
-            candidate.category == prior.category
-            and _jaccard(tokens, _claim_tokens(prior.claim)) >= 0.72
-            for prior in merged
+        duplicate = next(
+            (
+                prior
+                for prior in merged
+                if candidate.category == prior.category
+                and _jaccard(tokens, _claim_tokens(prior.claim)) >= 0.72
+            ),
+            None,
         )
-        if not duplicate:
+        if duplicate is None:
             merged.append(candidate)
+        else:
+            known = {item.model_dump_json() for item in duplicate.provenance}
+            duplicate.provenance.extend(
+                item
+                for item in candidate.provenance
+                if item.model_dump_json() not in known
+            )
+            duplicate.source_urls = list(
+                dict.fromkeys([*duplicate.source_urls, *candidate.source_urls])
+            )
     return merged[:MAX_CANDIDATES]
+
+
+def retrieval_ablation(
+    research: list[Candidate],
+    baseline: list[Candidate],
+    first_party: list[Candidate],
+) -> tuple[list[Candidate], dict[str, int]]:
+    """Measure the incremental candidate contribution of each retrieval stage."""
+    research_only = merge_candidates(research)
+    with_baseline = merge_candidates(research_only, baseline)
+    with_map = merge_candidates(with_baseline, first_party)
+    return with_map, {
+        "research_candidates": len(research_only),
+        "baseline_incremental_candidates": max(
+            0, len(with_baseline) - len(research_only)
+        ),
+        "map_incremental_candidates": max(0, len(with_map) - len(with_baseline)),
+    }
 
 
 def _claim_tokens(claim: str) -> set[str]:

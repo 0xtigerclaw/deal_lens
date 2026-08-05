@@ -12,10 +12,10 @@ const state = {
   activeScreensTimer: null,
 };
 
-const TAVILY_KEY_STORAGE = "deallens.tavilyApiKey";
+let tavilyApiKey = "";
 
 function personalTavilyKey() {
-  return sessionStorage.getItem(TAVILY_KEY_STORAGE) || "";
+  return tavilyApiKey;
 }
 
 function requiresPersonalTavilyKey() {
@@ -97,7 +97,6 @@ function toast(message) {
 async function api(path, options = {}) {
   const tavilyKey = personalTavilyKey();
   const needsTavilyKey =
-    path === "/api/health" ||
     path === "/api/entities/resolve" ||
     (path === "/api/screens" && options.method === "POST");
   const response = await fetch(path, {
@@ -128,7 +127,7 @@ async function loadHealth() {
   try {
     state.health = await api("/api/health");
     const providers = state.health.providers;
-    const ready = providers.tavily && providers.nebius;
+    const ready = (providers.tavily || Boolean(personalTavilyKey())) && providers.nebius;
     light.classList.toggle("is-ready", ready);
     light.classList.toggle("is-error", !ready);
     label.textContent = ready
@@ -176,7 +175,7 @@ function saveApiKey(event) {
     document.querySelector("#tavily-api-key").focus();
     return;
   }
-  sessionStorage.setItem(TAVILY_KEY_STORAGE, key);
+  tavilyApiKey = key;
   updateApiKeyTrigger();
   closeApiKeyDialog();
   loadHealth();
@@ -184,7 +183,7 @@ function saveApiKey(event) {
 }
 
 function removeApiKey() {
-  sessionStorage.removeItem(TAVILY_KEY_STORAGE);
+  tavilyApiKey = "";
   document.querySelector("#tavily-api-key").value = "";
   updateApiKeyTrigger();
   closeApiKeyDialog();

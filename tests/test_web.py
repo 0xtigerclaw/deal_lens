@@ -4,8 +4,8 @@ import time
 
 from fastapi.testclient import TestClient
 
-from deallens.entity import EntityCandidate, EntityResolution
 from deallens import web as web_module
+from deallens.entity import EntityCandidate, EntityResolution
 from deallens.web import ScreenRequest, app
 
 client = TestClient(app)
@@ -22,6 +22,10 @@ def test_interface_shell_is_served():
     assert "Use server key" not in response.text
     assert "Clear key" in response.text
 
+    script = client.get("/assets/app.js")
+    assert "sessionStorage" not in script.text
+    assert 'localStorage.setItem("deallens.tavilyApiKey"' not in script.text
+
 
 def test_health_reports_provider_presence_without_exposing_secrets(monkeypatch):
     monkeypatch.setenv("TAVILY_API_KEY", "server-tavily-secret")
@@ -37,15 +41,27 @@ def test_health_reports_provider_presence_without_exposing_secrets(monkeypatch):
     assert payload["observability"]["project"] == "Deal_Lens"
 
 
-def test_personal_tavily_key_is_accepted_without_being_exposed(monkeypatch):
+def test_health_does_not_accept_or_echo_a_personal_tavily_key(monkeypatch):
     monkeypatch.delenv("TAVILY_API_KEY", raising=False)
     response = client.get(
         "/api/health", headers={"X-Tavily-API-Key": "tvly-personal-secret"}
     )
 
     assert response.status_code == 200
-    assert response.json()["providers"]["tavily"] is True
+    assert response.json()["providers"]["tavily"] is False
     assert "personal-secret" not in response.text
+
+
+def test_security_headers_prevent_secret_caching_and_script_injection():
+    api_response = client.get("/api/health")
+    page_response = client.get("/")
+
+    assert api_response.headers["cache-control"] == "no-store"
+    assert api_response.headers["referrer-policy"] == "no-referrer"
+    assert api_response.headers["x-content-type-options"] == "nosniff"
+    assert "script-src 'self'" in page_response.headers["content-security-policy"]
+    assert "'unsafe-inline'" not in page_response.headers["content-security-policy"]
+    assert page_response.headers["x-frame-options"] == "DENY"
 
 
 def test_public_mode_requires_personal_tavily_key_and_caps_live_work(monkeypatch):
@@ -213,9 +229,7 @@ def test_duplicate_active_screen_submission_reuses_existing_job(
     assert submissions == []
 
 
-def test_archive_reopens_retained_wise_and_revolut_screens(
-    monkeypatch, tmp_path
-):
+def test_archive_reopens_retained_wise_and_revolut_screens(monkeypatch, tmp_path):
     # Prove the committed examples work on a fresh clone without local reports.
     monkeypatch.setattr(web_module, "WEB_REPORT_ROOT", tmp_path / "reports")
     monkeypatch.setattr(web_module, "LEGACY_ARCHIVE_JSONS", ())
@@ -225,7 +239,9 @@ def test_archive_reopens_retained_wise_and_revolut_screens(
     assert response.status_code == 200
     assert {record["target"] for record in archive} >= {"Wise Limited", "Revolut Ltd"}
 
-    wise_summary = next(record for record in archive if record["target"] == "Wise Limited")
+    wise_summary = next(
+        record for record in archive if record["target"] == "Wise Limited"
+    )
     assert wise_summary["pdf_url"].endswith("/pdf")
     assert wise_summary["memo_url"].endswith("/memo")
     assert wise_summary["evidence_url"].endswith("/evidence")
@@ -240,7 +256,7 @@ def test_archive_reopens_retained_wise_and_revolut_screens(
     pdf = client.get(payload["pdf_url"])
     assert pdf.status_code == 200
     assert pdf.headers["content-type"] == "application/pdf"
-    assert pdf.headers["content-disposition"].endswith("ic-diligence-memo.pdf\"")
+    assert pdf.headers["content-disposition"].endswith('ic-diligence-memo.pdf"')
     assert pdf.content.startswith(b"%PDF-")
     assert len(pdf.content) > 10_000
     assert client.get(payload["evidence_url"]).status_code == 200

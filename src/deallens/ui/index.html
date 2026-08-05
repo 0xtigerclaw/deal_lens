@@ -8,11 +8,6 @@
       content="The acquisition-intelligence layer analysts use to assemble current, governed evidence for investment committee memos."
     />
     <title>DealLens — Acquisition Intelligence for GPs</title>
-    <script>
-      if (window.location.protocol === "file:") {
-        window.location.replace("http://127.0.0.1:8000/");
-      }
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -390,15 +385,16 @@
         <p class="api-key-intro">
           Public live screens use your Tavily account. DealLens sends the key
           to this server only for the duration of Tavily requests and never
-          includes it in jobs, memos, logs, or traces.
+          includes it in jobs, memos, logs, or traces. The key stays only in
+          this page's memory and must be re-entered after a refresh.
         </p>
         <div class="field api-key-field">
           <label for="tavily-api-key">API key</label>
           <div class="secret-input-row">
-            <input id="tavily-api-key" name="tavily_api_key" type="password" autocomplete="off" spellcheck="false" placeholder="tvly-••••••••••••" />
+            <input id="tavily-api-key" name="tavily_api_key" type="password" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="tvly-••••••••••••" />
             <button id="toggle-api-key" type="button" aria-label="Show API key">Show</button>
           </div>
-          <p class="field-help">Stored for this tab and cleared when it closes.</p>
+          <p class="field-help">Held in page memory only; cleared on refresh or tab close.</p>
         </div>
         <div class="api-key-actions">
           <button class="remove-key-button" id="remove-api-key" type="button">Clear key</button>

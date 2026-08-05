@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import os
 import re
 import threading
@@ -15,10 +14,10 @@ from pathlib import Path
 from typing import Literal
 from urllib.parse import urlparse
 
-from fastapi import FastAPI, Header, HTTPException
+from dotenv import load_dotenv
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
 
 from .config import PACKAGE_ROOT, load_jurisdiction, load_policy
@@ -73,6 +72,31 @@ app = FastAPI(
 app.mount("/assets", StaticFiles(directory=UI_ROOT), name="assets")
 
 
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Content-Security-Policy"] = (
+        "default-src 'self'; "
+        "script-src 'self'; "
+        "style-src 'self' https://fonts.googleapis.com; "
+        "font-src https://fonts.gstatic.com; "
+        "img-src 'self' data:; "
+        "connect-src 'self'; "
+        "frame-ancestors 'none'; "
+        "base-uri 'self'; "
+        "form-action 'self'"
+    )
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Permissions-Policy"] = (
+        "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    )
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 class ScreenRequest(BaseModel):
     company: str = Field(min_length=2, max_length=160)
     domain: str = Field(min_length=3, max_length=253)
@@ -122,11 +146,6 @@ class JobRecord:
         self.demo = demo
         # Request-scoped secret. It is deliberately omitted from public().
         self.tavily_api_key = tavily_api_key
-        self.tavily_key_fingerprint = (
-            hashlib.sha256(tavily_api_key.encode()).hexdigest()
-            if tavily_api_key
-            else None
-        )
         self.status: Literal["queued", "running", "completed", "failed"] = "queued"
         self.stage = "queued"
         self.message = "Queued for memo preparation"
@@ -252,9 +271,7 @@ def _public_job(job: JobRecord) -> dict:
 def _active_jobs() -> list[JobRecord]:
     """Return every server-held job that is still consuming worker capacity."""
     with _jobs_lock:
-        jobs = [
-            job for job in _jobs.values() if job.status in ("queued", "running")
-        ]
+        jobs = [job for job in _jobs.values() if job.status in ("queued", "running")]
     return sorted(jobs, key=lambda job: job.created_at)
 
 
@@ -263,11 +280,6 @@ def _new_live_job(
 ) -> tuple[JobRecord, bool]:
     """Atomically create a live job or return its active identical run."""
     request_data = request.model_dump()
-    key_fingerprint = (
-        hashlib.sha256(tavily_api_key.encode()).hexdigest()
-        if tavily_api_key
-        else None
-    )
     with _jobs_lock:
         existing = next(
             (
@@ -276,7 +288,6 @@ def _new_live_job(
                 if job.status in ("queued", "running")
                 and job.request.model_dump() == request_data
                 and not job.demo
-                and job.tavily_key_fingerprint == key_fingerprint
             ),
             None,
         )
@@ -291,9 +302,7 @@ def _new_live_job(
                     "Archived memos and the deterministic fixture remain available."
                 ),
             )
-        job = JobRecord(
-            uuid.uuid4().hex[:12], request, tavily_api_key=tavily_api_key
-        )
+        job = JobRecord(uuid.uuid4().hex[:12], request, tavily_api_key=tavily_api_key)
         _jobs[job.id] = job
     return job, True
 
@@ -307,9 +316,8 @@ def _archive_records() -> dict[str, ArchiveRecord]:
 
     for evidence_path in candidates:
         memo_path = evidence_path.with_suffix(".md")
-        if (
-            not memo_path.exists()
-            and evidence_path.is_relative_to(EXAMPLE_ARCHIVE_ROOT)
+        if not memo_path.exists() and evidence_path.is_relative_to(
+            EXAMPLE_ARCHIVE_ROOT
         ):
             memo_path = evidence_path.parent / "memo.md"
         if not memo_path.exists():
@@ -456,7 +464,7 @@ def _execute_live(job_id: str) -> None:
 
 
 @app.get("/api/health")
-def health(x_tavily_api_key: str | None = Header(default=None)) -> dict:
+def health() -> dict:
     personal_key_required = _personal_tavily_key_required()
     server_tavily_available = bool(os.getenv("TAVILY_API_KEY"))
     limit = _live_screen_limit()
@@ -465,10 +473,7 @@ def health(x_tavily_api_key: str | None = Header(default=None)) -> dict:
     return {
         "status": "ok",
         "providers": {
-            "tavily": bool(
-                x_tavily_api_key
-                or (server_tavily_available and not personal_key_required)
-            ),
+            "tavily": bool(server_tavily_available and not personal_key_required),
             "nebius": bool(os.getenv("NEBIUS_API_KEY")),
             "langsmith": bool(os.getenv("LANGSMITH_API_KEY")),
         },
@@ -488,8 +493,7 @@ def health(x_tavily_api_key: str | None = Header(default=None)) -> dict:
             "project": os.getenv("LANGSMITH_PROJECT", "Deal_Lens"),
             "region": (
                 "EU"
-                if "eu.api.smith.langchain.com"
-                in os.getenv("LANGSMITH_ENDPOINT", "")
+                if "eu.api.smith.langchain.com" in os.getenv("LANGSMITH_ENDPOINT", "")
                 else "US"
             ),
             "root_span": "deallens.screen",

@@ -262,8 +262,13 @@ while a behavioral or safety-metric gate fails.
 - The public Cloud Run profile sets
   `DEALLENS_REQUIRE_PERSONAL_TAVILY_KEY=true`: entity resolution and new live
   screens require a request header and never fall back to a project-funded
-  Tavily credential. The request key is omitted from job payloads and cleared
-  from worker memory as soon as the Tavily client claims it.
+  Tavily credential. The browser retains the request key only in page memory,
+  sends it only to endpoints that call Tavily, and clears it on refresh or tab
+  close. The key is omitted from job payloads and removed from the queued job
+  as soon as the worker claims it; no key fingerprint is retained.
+- API responses use `Cache-Control: no-store`. A restrictive Content Security
+  Policy and companion referrer, framing, MIME-sniffing, and browser-permission
+  headers reduce client-side credential exposure.
 - `DEALLENS_LIVE_SCREEN_LIMIT=12`, one Cloud Run instance, and concurrency two
   bound server-funded Nebius exposure per container lifetime. Archived memos
   and the deterministic fixture do not consume that allowance.

@@ -92,7 +92,7 @@ separates recall from trust:
 - Tavily `/map` finds first-party investor, incident, leadership, filing, and
   restructuring disclosures on the target's own website.
 - Tavily `/extract` returns claim-focused page content.
-- Kimi K3 identifies candidate claims, copies evidence passages, maps them to
+- Kimi K3 (Nebius Token Factory) identifies candidate claims, copies evidence passages, maps them to
   atomic assertions, and writes bounded memo prose.
 - Deterministic code checks legal-entity identity, publisher independence,
   verbatim quote provenance, assertion coverage, status, and severity.

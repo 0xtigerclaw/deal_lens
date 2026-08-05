@@ -22,8 +22,7 @@ def test_interface_shell_is_served():
     assert "Use server key" not in response.text
     assert "Clear key" in response.text
     assert 'id="screen-allowance"' in response.text
-    assert "Public demo capacity" in response.text
-    assert "screens available" in response.text
+    assert "screening attempts available" in response.text
     assert 'window.location.protocol === "file:"' in response.text
 
     script = client.get("/assets/app.js")

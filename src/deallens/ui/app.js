@@ -152,7 +152,8 @@ function updateScreenAllowance() {
   allowance.hidden = remaining === null || remaining === undefined;
   if (allowance.hidden) return;
   count.textContent = String(remaining);
-  label.textContent = remaining === 1 ? "screen available" : "screens available";
+  label.textContent =
+    remaining === 1 ? "screening attempt available" : "screening attempts available";
   allowance.classList.toggle("is-exhausted", remaining === 0);
   allowance.title = `${remaining} live ${remaining === 1 ? "screen" : "screens"} remaining on this deployment`;
 }

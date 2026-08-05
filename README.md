@@ -48,6 +48,10 @@ assignment and starter review through product selection, provider integration,
 evidence hardening, UI, evals, LangSmith, GCP deployment, submission, and the
 v0.3 Tavily extension. 
 
+**Security hardening addendum:** [review the BYO-key threat review,
+implementation, and validation](https://traces.com/s/jn720w02np5cvwjwr5jt4492eh8bwh22),
+including the move from browser storage to page memory and the 84-test proof.
+
 [Review the sanitized implementation record](BUILD_LOG.md).
 
 ## Why, when, and how

@@ -17,7 +17,7 @@ correctness, and delivery decisions to their implementation and proof:
   contradiction states, and fail-closed category coverage.
 - **Product delivery:** the same typed result powers the CLI, analyst UI,
   archive, live progress, and PDF/Markdown/JSON IC-memo exports.
-- **Proof:** 83 tests, 36 labelled safety cases, zero false verifies in the
+- **Proof:** 84 tests, 36 labelled safety cases, zero false verifies in the
   adversarial set, correct entity abstention, CI, a live LangSmith run, a GCP
   deployment, and an auditable AI-development record.
 
@@ -27,6 +27,7 @@ The artifacts serve different reviewer questions:
 |---|---|
 | [Reviewer build record](https://traces.com/s/jn79bwm0m5eq2j5s7v2186kf3s8bw9cn) | The shipped product, load-bearing architecture, safety boundary, v0.3 extension, and verification evidence in a short guided path |
 | [Detailed build record](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) | The chronological decisions, implementation work, provider failures, corrections, eval growth, UI work, and shipping trail |
+| [BYO-key security addendum](https://traces.com/s/jn720w02np5cvwjwr5jt4492eh8bwh22) | The credential-lifetime review, browser-storage removal, response hardening, regression tests, and GitHub publication |
 | This build log | The causal narrative connecting decisions to code and proof |
 | [LangSmith contract](docs/LANGSMITH.md) | What actually happened inside a live provider run, including spans, failures, usage, tokens, and latency |
 

@@ -17,7 +17,7 @@ correctness, and delivery decisions to their implementation and proof:
   contradiction states, and fail-closed category coverage.
 - **Product delivery:** the same typed result powers the CLI, analyst UI,
   archive, live progress, and PDF/Markdown/JSON IC-memo exports.
-- **Proof:** 83 tests, 36 labelled safety cases, zero false verifies in the
+- **Proof:** 84 tests, 36 labelled safety cases, zero false verifies in the
   adversarial set, correct entity abstention, CI, a live LangSmith run, a GCP
   deployment, and an auditable AI-development record.
 
@@ -39,7 +39,7 @@ committee.
 | Proof point | Result |
 |---|---:|
 | Product version | `0.3.0` |
-| Python tests | **83/83 passed** |
+| Python tests | **84/84 passed** |
 | Labelled safety evaluation | **36/36 passed** |
 | False verifies | **0/11** |
 | Correct entity abstentions | **4/4** |
@@ -200,7 +200,7 @@ The original gate eval was expanded into three independent suites:
 
 Current measured result on 2026-08-05: **36/36**, false verifies **0/11**,
 correct entity abstentions **4/4**. The surrounding pytest suite passes
-**83/83** tests. Both commands are CI gates.
+**84/84** tests. Both commands are CI gates.
 
 The eval command now emits stable case-level reports and compares them with a
 committed reviewed baseline. It fails on behavior regressions, false-verify or
@@ -276,7 +276,23 @@ pipeline metrics, UI, memo/PDF rendering, examples, architecture, evaluation
 documentation, and tests. It added eight tests without changing the labelled
 safety result: 83/83 tests and 36/36 eval cases passed before merge.
 
-## 10. AI collaboration and trace deliverables
+## 10. BYO-key security hardening
+
+The public reviewer flow was tightened after a focused credential-lifetime
+review. The Tavily key now remains in JavaScript memory rather than Web Storage,
+is sent only to endpoints that call Tavily, and must be re-entered after a page
+refresh. The server no longer derives or retains a key fingerprint for active
+job deduplication. API responses use `Cache-Control: no-store`, and every UI/API
+response carries a restrictive Content Security Policy plus referrer,
+clickjacking, MIME-sniffing, and browser-permission protections.
+
+Regression coverage proves that the shipped JavaScript contains no
+`sessionStorage` key path, health checks ignore supplied personal keys, API
+responses are non-cacheable, and the CSP does not allow inline scripts. The
+result is **84/84 tests passing** with the labelled safety evaluation unchanged
+at **36/36**.
+
+## 11. AI collaboration and trace deliverables
 
 Development used two models with different responsibilities:
 
@@ -331,7 +347,7 @@ the inspectable engineering trail. Together with this log, repository history,
 the walkthrough, they make the build reproducible without allowing rejected
 concepts or unverified claims to define the submitted product.
 
-## 11. Known next work
+## 12. Known next work
 
 1. Build an analyst-labelled live-target eval for open-web recall.
 2. Detect syndicated/near-duplicate articles across publisher domains.

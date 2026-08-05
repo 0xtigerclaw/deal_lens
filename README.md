@@ -9,7 +9,8 @@ on Cloud Run.
 
 **Public demo policy:** archived memos and the deterministic fixture are open;
 new live screens require the reviewer’s Tavily API key. The key is held only in
-the browser tab and request-scoped worker memory.
+the current page's JavaScript memory and request-scoped worker memory, excluded
+from outputs and traces, and cleared by a refresh or tab close.
 
 **Scope:**
 
@@ -267,6 +268,13 @@ duplicate-active-run protection bound that exposure. Local development keeps
 the `.env` Tavily fallback unless `DEALLENS_REQUIRE_PERSONAL_TAVILY_KEY=true` is
 set explicitly.
 
+The public BYO-key flow deliberately avoids browser storage. The reviewer key
+is sent only in an HTTPS request header on endpoints that call Tavily, removed
+from the queued job as soon as its worker claims it, and never included in job
+responses, reports, or tracing metadata. API responses are non-cacheable, and
+the UI ships a restrictive Content Security Policy to reduce script-injection
+risk. Refreshing or closing the page clears the browser-held key.
+
 Open <http://127.0.0.1:8000>. A new analyst enters only a company name and
 website. If no company number is supplied, DealLens performs a Tavily search
 restricted to the official registry and presents up to three locally ranked
@@ -372,7 +380,7 @@ uv run deallens eval --json-out reports/evals/local-run.json
 uv run deallens eval --promote  # after label and result review
 ```
 
-The pytest suite is **83/83 passing**. Labels, the promote/review loop,
+The pytest suite is **84/84 passing**. Labels, the promote/review loop,
 limitations, and the machine-readable command are documented in
 [docs/EVALUATION.md](docs/EVALUATION.md); the committed case-level baseline is
 [docs/evaluation-results.json](docs/evaluation-results.json).

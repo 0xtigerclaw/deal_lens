@@ -1,6 +1,58 @@
-# Build log
+# DealLens build record
 
-## Build plan
+## What this record proves
+
+DealLens turns the assignment's generic search-agent starter into a bounded
+acquisition-intelligence product. This record connects the product, retrieval,
+correctness, and delivery decisions to their implementation and proof:
+
+- **Product judgment:** two directions were tested against the assignment,
+  Tavily depth, user specificity, evaluability, and delivery scope before
+  DealLens was selected.
+- **Retrieval engineering:** Tavily was separated into Research, adaptive
+  Search, bounded Map, and focused Extract responsibilities, with jurisdiction
+  boosts and source governance encoded outside prompts.
+- **Correctness engineering:** live failures drove assertion-level evidence,
+  verbatim quote checks, publisher independence, exact-entity filtering,
+  contradiction states, and fail-closed category coverage.
+- **Product delivery:** the same typed result powers the CLI, analyst UI,
+  archive, live progress, and PDF/Markdown/JSON IC-memo exports.
+- **Proof:** 83 tests, 36 labelled safety cases, zero false verifies in the
+  adversarial set, correct entity abstention, CI, a live LangSmith run, a GCP
+  deployment, and an auditable AI-development record.
+
+The artifacts serve different reviewer questions:
+
+| Artifact | What it demonstrates |
+|---|---|
+| [Reviewer build record](https://traces.com/s/jn79bwm0m5eq2j5s7v2186kf3s8bw9cn) | The shipped product, load-bearing architecture, safety boundary, v0.3 extension, and verification evidence in a short guided path |
+| [Detailed build record](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) | The chronological decisions, implementation work, provider failures, corrections, eval growth, UI work, and shipping trail |
+| This build log | The causal narrative connecting decisions to code and proof |
+| [LangSmith contract](docs/LANGSMITH.md) | What actually happened inside a live provider run, including spans, failures, usage, tokens, and latency |
+
+Together, they show not only what shipped, but why the architecture exists and
+how it was tested against the mistakes most likely to mislead an investment
+committee.
+
+## Delivery snapshot
+
+| Proof point | Result |
+|---|---:|
+| Product version | `0.3.0` |
+| Python tests | **83/83 passed** |
+| Labelled safety evaluation | **36/36 passed** |
+| False verifies | **0/11** |
+| Correct entity abstentions | **4/4** |
+| Tavily responsibilities | Research · adaptive Search · bounded Map · focused Extract |
+| v0.3 merge | PR [#7](https://github.com/0xtigerclaw/deal_lens/pull/7) · `07d7eaa` · CI passed |
+| Historical live proof | v0.2 Monzo run · 204 LangSmith spans · 0 span errors |
+
+The v0.3 retrieval work is merged into GitHub `main`. The committed LangSmith
+snapshot remains the verified v0.2 run until a new live screen records Map and
+country-aware Search; the historical artifact is not rewritten to imply those
+spans already occurred.
+
+## Build thesis and plan
 
 **Objective:** turn the generic Tavily search agent into one bounded product:
 an acquisition analyst enters a target and receives a current, source-backed
@@ -20,8 +72,9 @@ integrations remain outside the MVP.
 1. Inspect the starter and assignment; replace the open-ended agent loop with
    a reproducible pipeline and typed boundaries.
 2. Assign distinct Tavily responsibilities: Research for candidate recall,
-   Search for category coverage, verification, and entity resolution, and
-   Extract for claim-focused source capture.
+   adaptive Search for category coverage, verification, and entity resolution,
+   bounded Map for first-party discovery, and focused Extract for source
+   capture.
 3. Put trust decisions outside the model: confirm the legal entity, normalize
    publishers, validate quotes verbatim, evaluate atomic assertions, and apply
    status and severity rules deterministically.
@@ -49,10 +102,9 @@ integrations remain outside the MVP.
 - the repository contains the implementation, technical statement, and a
   shareable record of the AI-assisted build, but not `starter_agent.py`.
 
-This is the concise record of the product and engineering decisions that led
-to the submitted DealLens repository. The implementation was developed with AI
-coding assistance and continuously verified through source inspection, unit
-tests, offline evals, API smoke tests, live provider runs, and UI review.
+This plan became the working contract for the build. Each material live failure
+was converted into a code boundary or regression test rather than edited out of
+the narrative.
 
 ## 1. Problem selection
 
@@ -119,7 +171,7 @@ same `ScreenResult` used by the CLI. The UX evolved from an expert form to:
 - background progress and job resume;
 - retained Wise and Revolut example screens;
 - a result workspace for claims, coverage, sources, assertions, and usage; and
-- Markdown/JSON downloads.
+- PDF/Markdown/JSON downloads.
 
 The interface intentionally never recreates gate logic client-side.
 
@@ -146,9 +198,9 @@ The original gate eval was expanded into three independent suites:
 - legal-entity ranking: 8 cases; and
 - source-governance contract: 12 cases.
 
-Final measured result on 2026-08-04: **36/36**, false verifies **0/11**,
+Current measured result on 2026-08-05: **36/36**, false verifies **0/11**,
 correct entity abstentions **4/4**. The surrounding pytest suite passes
-**75/75** tests. Both commands are CI gates.
+**83/83** tests. Both commands are CI gates.
 
 The eval command now emits stable case-level reports and compares them with a
 committed reviewed baseline. It fails on behavior regressions, false-verify or
@@ -192,7 +244,39 @@ MongoDB was deferred. Typed JSON/Markdown is the right persistence boundary for
 this single-analyst MVP; database work would add submission surface without
 improving the evidence contract.
 
-## 9. AI collaboration record
+## 9. Adaptive Tavily retrieval upgrade
+
+The P0 retrieval work expanded Tavily from a uniform three-endpoint sequence
+into four explicit, measurable responsibilities. This was an architectural
+upgrade, not a prompt tweak:
+
+- Research remains recall-first structured hypothesis generation.
+- Baseline Search now chooses news, finance, or general topic and recency by
+  risk category; candidate verification uses advanced search.
+- Jurisdiction packs supply the country boost for general searches, improving
+  local regulator, court, and regional-business recall without hardcoding UK
+  logic into the pipeline.
+- Map discovers bounded, same-domain first-party disclosures before focused
+  Extract.
+- Every claim and quote carries typed Tavily method, query, source, relevance,
+  country, and claim-scoped credit provenance.
+- Every result records an online retrieval ablation: Research candidates,
+  incremental baseline and Map candidates, mapped URLs, validated evidence,
+  surfaced claims, and credits per surfaced claim.
+
+The safety boundary stayed deliberately asymmetric. A new `first_party` tier
+can generate and support candidates but cannot independently verify them.
+Country boosting can improve ranking but cannot override domain exclusions,
+source tiers, publisher independence, entity matching, or assertion coverage.
+Map failure is supplemental: it is recorded, while governed external screening
+continues.
+
+That work touched 34 files and added 1,421 lines across retrieval, typed models,
+pipeline metrics, UI, memo/PDF rendering, examples, architecture, evaluation
+documentation, and tests. It added eight tests without changing the labelled
+safety result: 83/83 tests and 36/36 eval cases passed before merge.
+
+## 10. AI collaboration and trace deliverables
 
 Development used two models with different responsibilities:
 
@@ -202,10 +286,13 @@ Development used two models with different responsibilities:
   analyst UI, evaluations, observability, documentation, security, and GCP
   deployment.
 
+The AI record is delivered as two complementary, credential-scrubbed Traces
+artifacts. This is intentional: one raw chronology is too slow for a reviewer,
+while one polished summary would hide the corrections and intermediate proof.
+
 The primary [reviewer build
-record](https://traces.com/s/jn7e7qtmxcms61t0x82tdm73b98bv5mh) is an
-unlisted 31-event index. It is intentionally grouped by reviewer question
-instead of chronology:
+record](https://traces.com/s/jn79bwm0m5eq2j5s7v2186kf3s8bw9cn) is an
+unlisted 32-event index grouped by reviewer question instead of chronology:
 
 1. shipped product and proof snapshot;
 2. user, workflow, and product decision;
@@ -213,53 +300,36 @@ instead of chronology:
 4. load-bearing Tavily architecture and deterministic evidence rules;
 5. live provider integration and analyst workflow;
 6. labelled evaluation and LangSmith span contracts;
-7. deployment, public-demo security, and assignment mapping.
+7. deployment, public-demo security, and assignment mapping; and
+8. the v0.3 Tavily retrieval extension with merge and validation proof.
 
-Its first five events establish the final state: public repository, live GCP
-service, merge commit, 75/75 tests, 36/36 labelled evals, zero false verifies,
-4/4 entity abstentions, a successful 204-span LangSmith root with zero errors,
-and no server Tavily-key fallback. The record presents DealLens as a
-self-contained assignment product: product selection, architecture,
-implementation, verification, and shipping. Selected source excerpts are
-labelled by model and original event number; editorial summaries are explicit.
+The opening establishes the deployed v0.2 baseline: public repository, live
+GCP service, 75 tests, 36 labelled evals, a successful 204-span LangSmith root,
+and public-demo security. The August 5 extension then records the merged v0.3
+retrieval architecture, 83 tests, unchanged safety gates, PR #7, and merge
+commit `07d7eaa`. It explicitly distinguishes “merged” from “deployed.”
+Selected source excerpts are labelled by model and original event number;
+editorial summaries are explicit.
 
 The public record was scanned locally and after upload for provider and GitHub
 tokens, bearer credentials, email addresses, personal paths, and unrelated
 workflow framing, with zero matches after redaction.
 
 The [detailed standalone build
-record](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) contains
-1,535 rendered events: 77 user prompts, 402 assistant build updates, 528
-substantive tool calls, and their 528 results. It begins with the assignment,
-starter review, and explicit DealLens product origin; eight chapters then cover
-provider integration, evidence correctness, analyst workflow, evaluation,
-LangSmith observability, GCP deployment, and final hardening. Its complete
-source and all eight remote page renderings passed the same narrative,
-credential, email, and personal-path audit.
+record](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) preserves
+the chronological work across 1,550 rendered events: assignment and starter
+review, product selection, provider integration, evidence correctness, analyst
+workflow, evaluation, LangSmith observability, GCP deployment, final hardening,
+and the v0.3 Tavily extension. It retains substantive prompts, implementation
+updates, tool calls, and results while removing repetitive polling, hidden
+reasoning, credentials, environment contents, personal paths, and unrelated
+machine output.
 
-Together with this log, repository history,
+The trace deliverable therefore exposes both the decision-quality summary and
+the inspectable engineering trail. Together with this log, repository history,
 [pull requests](https://github.com/0xtigerclaw/deal_lens/pulls?q=is%3Apr), and
-the walkthrough, they satisfy the assignment's build-record deliverable without
-letting rejected concepts define the submitted product.
-
-## 10. Adaptive Tavily retrieval upgrade
-
-The P0 retrieval design expanded Tavily from a uniform three-endpoint sequence
-into four explicit, measurable responsibilities:
-
-- Research remains recall-first structured hypothesis generation;
-- baseline Search now selects news, finance, or general topic and recency by
-  risk category, adds a jurisdiction-configured country boost to general
-  searches, and uses advanced candidate verification;
-- Map discovers bounded, same-domain first-party disclosures before focused
-  Extract; and
-- every claim and quote carries typed Tavily provenance, relevance, and
-  claim-scoped verification/extraction credits.
-
-The deterministic evidence gate did not change. A new `first_party` tier can
-surface disclosures but cannot independently verify them. Each live result now
-records an online retrieval ablation showing Research candidate count and the
-incremental candidates added by baseline Search and Map.
+the walkthrough, they make the build reproducible without allowing rejected
+concepts or unverified claims to define the submitted product.
 
 ## 11. Known next work
 

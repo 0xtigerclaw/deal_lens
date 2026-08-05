@@ -14,8 +14,9 @@ the browser tab and request-scoped worker memory.
 **Scope:**
 
 When a target moves toward investment committee, analysts and deal teams have
-to assemble the specific facts that could change the decision: leadership departures,
-regulatory scrutiny, litigation, breaches, and signs of financial distress.
+to assemble the specific facts that could change the decision: leadership
+departures, regulatory scrutiny, litigation, breaches, and signs of financial
+distress.
 Those facts are scattered across the live web, easy to confuse with another
 legal entity, and difficult to cite consistently under time pressure.
 
@@ -33,21 +34,20 @@ entity, and evidence rules.
 **Product demo:** [Watch the 58-second DealLens walkthrough on
 YouTube](https://youtu.be/lMgXx2dGhcg).
 
-**Build record — start here:** [review the shipped system in 31
-events](https://traces.com/s/jn7e7qtmxcms61t0x82tdm73b98bv5mh). This
-reviewer-first record opens with the live product, final commit, 75/75 tests,
-36/36 safety evals, 204-span LangSmith run, and deployment security. It then
-groups labelled excerpts from `fable` planning and `gpt-5.6-sol`
-implementation by decision—not by raw chronology. The generic starter and
-Watchtower appear only as explicitly rejected context; neither is the submitted
-product.
+**Build record — start here:** [review the shipped system in 32
+events](https://traces.com/s/jn79bwm0m5eq2j5s7v2186kf3s8bw9cn). This
+reviewer-first record establishes the shipped v0.2 product and its 204-span
+live proof, then closes with the v0.3 Tavily retrieval extension, **83/83**
+tests, **36/36** safety evals, and merge evidence. It groups labelled excerpts
+from `fable` planning and `gpt-5.6-sol` implementation by reviewer question,
+not by raw chronology.
 
-**Detailed build record:** [follow the 1,535-event standalone
+**Detailed build record:** [follow the 1,550-event standalone
 chronology](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) from
 assignment and starter review through product selection, provider integration,
-evidence hardening, UI, evals, LangSmith, GCP deployment, and submission. Both
-records are unlisted, credential-scrubbed, identify Fable and GPT-5.6 Sol, and
-complement the sanitized [build log](BUILD_LOG.md).
+evidence hardening, UI, evals, LangSmith, GCP deployment, submission, and the
+v0.3 Tavily extension. Both records are unlisted, credential-scrubbed, identify
+Fable and GPT-5.6 Sol, and complement the [build log](BUILD_LOG.md).
 
 ## Why, when, and how
 
@@ -181,6 +181,34 @@ flowchart TD
 The full component, sequence, trust-boundary, and trace diagrams are in
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+## LangSmith observability
+
+Live tracing uses one root `deallens.screen` span with nested discovery,
+first-party mapping, baseline, verification, capture, Tavily, and Nebius model
+spans. Root metadata includes target, jurisdiction, pipeline version,
+provider/model, candidate and finding counts, risk result, Tavily credits by
+endpoint, LLM tokens, and wall time. Entity lookup is a separate
+`deallens.resolve_entity` trace because it precedes user confirmation.
+
+```env
+LANGSMITH_TRACING="true"
+LANGSMITH_API_KEY="lsv2_..."
+LANGSMITH_PROJECT="Deal_Lens"
+LANGSMITH_ENDPOINT="https://eu.api.smith.langchain.com"
+```
+
+Tests force tracing off before importing application modules, so fixtures do
+not pollute the production project. See [docs/LANGSMITH.md](docs/LANGSMITH.md)
+for the span contract and the verified Monzo v0.2 run (`204` spans, `0`
+errors). The next live verification will record the v0.3 Map and country-aware
+Search spans rather than rewriting the historical run.
+
+![LangSmith trace history for the live DealLens application](docs/assets/langsmith-trace-history.png)
+
+*LangSmith EU captures successful and failed entity-resolution and screening
+runs with per-run status, latency, token, and cost data. The verified Monzo root
+shown here completed in 191.09 seconds; its nested 204-span contract is recorded
+in `docs/langsmith-verification.json`.*
 
 **Build log:** [Review the sanitized implementation record](BUILD_LOG.md).
 
@@ -348,33 +376,6 @@ The pytest suite is **83/83 passing**. Labels, the promote/review loop,
 limitations, and the machine-readable command are documented in
 [docs/EVALUATION.md](docs/EVALUATION.md); the committed case-level baseline is
 [docs/evaluation-results.json](docs/evaluation-results.json).
-
-## LangSmith observability
-
-Live tracing uses one root `deallens.screen` span with nested discovery,
-first-party mapping, baseline, verification, capture, Tavily, and Nebius model spans. Root metadata
-includes target, jurisdiction, pipeline version, provider/model, candidate and
-finding counts, risk result, Tavily credits by endpoint, LLM tokens, and wall
-time. Entity lookup is a separate `deallens.resolve_entity` trace because it
-precedes user confirmation.
-
-```env
-LANGSMITH_TRACING="true"
-LANGSMITH_API_KEY="lsv2_..."
-LANGSMITH_PROJECT="Deal_Lens"
-LANGSMITH_ENDPOINT="https://eu.api.smith.langchain.com"
-```
-
-Tests force tracing off before importing application modules, so fixtures do
-not pollute the production project. See [docs/LANGSMITH.md](docs/LANGSMITH.md)
-for the span contract and the verified Monzo run (`204` spans, `0` errors).
-
-![LangSmith trace history for the live DealLens application](docs/assets/langsmith-trace-history.png)
-
-*LangSmith EU captures successful and failed entity-resolution and screening
-runs with per-run status, latency, token, and cost data. The verified Monzo root
-shown here completed in 191.09 seconds; its nested 204-span contract is recorded
-in `docs/langsmith-verification.json`.*
 
 ## Configuration and outputs
 

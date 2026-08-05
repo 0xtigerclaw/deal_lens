@@ -47,7 +47,7 @@ assignment and starter review through product selection, provider integration,
 evidence hardening, UI, evals, LangSmith, GCP deployment, submission, and the
 v0.3 Tavily extension. 
 
-[Review the sanitized implementation record](BUILD_LOG.md).
+[Review the implementation record](BUILD_LOG.md).
 
 ## Why, when, and how
 

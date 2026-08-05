@@ -34,20 +34,20 @@ entity, and evidence rules.
 **Product demo:** [Watch the 58-second DealLens walkthrough on
 YouTube](https://youtu.be/lMgXx2dGhcg).
 
-**Build record — start here:** [review the shipped system in 32
+**Build record:** [review the shipped system in 32
 events](https://traces.com/s/jn79bwm0m5eq2j5s7v2186kf3s8bw9cn). This
 reviewer-first record establishes the shipped v0.2 product and its 204-span
 live proof, then closes with the v0.3 Tavily retrieval extension, **83/83**
 tests, **36/36** safety evals, and merge evidence. It groups labelled excerpts
-from `fable` planning and `gpt-5.6-sol` implementation by reviewer question,
-not by raw chronology.
+from `fable` planning and `gpt-5.6-sol` implementation.
 
 **Detailed build record:** [follow the 1,550-event standalone
 chronology](https://traces.com/s/jn776x8hyry34rr99q4k1tvscx8bvjjr) from
 assignment and starter review through product selection, provider integration,
 evidence hardening, UI, evals, LangSmith, GCP deployment, submission, and the
-v0.3 Tavily extension. Both records are unlisted, credential-scrubbed, identify
-Fable and GPT-5.6 Sol, and complement the [build log](BUILD_LOG.md).
+v0.3 Tavily extension. 
+
+[Review the sanitized implementation record](BUILD_LOG.md).
 
 ## Why, when, and how
 
@@ -211,7 +211,6 @@ runs with per-run status, latency, token, and cost data. The latest successful
 Shell screen appears at the top; the verified Monzo nested-span contract remains
 recorded in `docs/langsmith-verification.json`.*
 
-**Build log:** [Review the sanitized implementation record](BUILD_LOG.md).
 
 ## Try it
 

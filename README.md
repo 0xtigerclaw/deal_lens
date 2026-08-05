@@ -289,7 +289,8 @@ The interface also includes:
   visible and resumable across targets and browser tabs;
 - direct `?screen=<job-id>` resume links for reconnecting to a live run;
 - duplicate-run protection while the same target is already active;
-- retained Wise and Revolut example screens on a fresh clone;
+- retained Wise, Revolut, Monzo, Shell UK, and Starling example screens on a
+  fresh clone;
 - category coverage and source-review counts;
 - atomic assertion support/contradiction relationships;
 - verbatim evidence with clickable source links; and

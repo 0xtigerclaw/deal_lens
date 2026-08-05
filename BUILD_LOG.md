@@ -169,7 +169,7 @@ same `ScreenResult` used by the CLI. The UX evolved from an expert form to:
 - optional advanced company number/jurisdiction/policy;
 - known-company presets;
 - background progress and job resume;
-- retained Wise and Revolut example screens;
+- retained Wise, Revolut, Monzo, Shell UK, and Starling example screens;
 - a result workspace for claims, coverage, sources, assertions, and usage; and
 - PDF/Markdown/JSON downloads.
 

@@ -77,7 +77,7 @@ async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["Content-Security-Policy"] = (
         "default-src 'self'; "
-        "script-src 'self'; "
+        "script-src 'self' 'sha256-6XfkJ1w3VxpsaJ/WZYuwcBFUw7npdJVdUlLpFLJl8RM='; "
         "style-src 'self' https://fonts.googleapis.com; "
         "font-src https://fonts.gstatic.com; "
         "img-src 'self' data:; "

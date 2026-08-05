@@ -11,7 +11,9 @@ on Cloud Run.
 new live screens require the reviewer’s Tavily API key. The key is held only in
 the browser tab and request-scoped worker memory.
 
-When a target moves toward investment committee, analysts have to assemble the
+**Scope:**
+
+When a target moves toward investment committee, analysts/team have to assemble the
 specific facts that could change the decision: leadership departures,
 regulatory scrutiny, litigation, breaches, and signs of financial distress.
 Those facts are scattered across the live web, easy to confuse with another
@@ -19,29 +21,17 @@ legal entity, and difficult to cite consistently under time pressure.
 
 DealLens fits into that existing memo workflow. It turns a company name and
 website into a current, cited public-risk assessment that an analyst can
-review, edit, and export for IC. Tavily provides live discovery, search, and
-extraction; Kimi K3 runs through Nebius Token Factory; deterministic Python
-applies the source, entity, and evidence rules.
+review, edit, and export for IC. 
 
-> DealLens is a triage tool, not a legal or financial opinion. “No qualifying
-> findings” means four governed checks completed without qualifying public
-> evidence; it never means the company is cleared.
+Tavily provides live discovery, search, and extraction; 
+Kimi K3 runs through Nebius Token Factory; deterministic Python
+applies the source, entity, and evidence rules.
 
 ![DealLens acquisition-intelligence homepage](docs/assets/deallens-home.png)
 
 ## Product walkthrough
 
-[Watch the 58-second DealLens demo on YouTube](https://youtu.be/lMgXx2dGhcg)
-
-**AI-assisted build trace:** [review the complete DealLens build on
-Traces](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc). The trace
-identifies both build models—`gpt-5.6-sol` and `fable`—in its title and opening
-guide. The unlisted, 1,540-event record follows the work from assignment review
-and product choice through Tavily/Nebius integration, evidence governance, live
-failures, UI, evaluations, LangSmith, GCP deployment, and final security
-hardening. Its final appendix consolidates the live LangSmith span contract and
-current deterministic eval gates. It is a credential-scrubbed export of the
-authentic sessions and complements the sanitized [build log](BUILD_LOG.md).
+[Product Demo:](https://youtu.be/lMgXx2dGhcg)
 
 ## Why, when, and how
 
@@ -165,6 +155,10 @@ flowchart TD
 
 The full component, sequence, trust-boundary, and trace diagrams are in
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+
+**Build Log:** [review the complete DealLens build on
+Traces](https://traces.com/s/jn70hz1vfrf34qgph11xayh2098bvbzc).[build log](BUILD_LOG.md).
 
 ## Try it
 
